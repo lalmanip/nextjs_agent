@@ -24,17 +24,16 @@ function SignInForm() {
     try {
       const data = await authenticate(form.userName, form.password);
       console.log("Auth success - full response:", JSON.stringify(data));
-      const token = data.token ?? data.accessToken ?? data.jwtToken ?? data.access_token ?? "";
-      const userId = data.userId ?? data.id ?? data.user?.id ?? data.user?.userId ?? "";
-      console.log("Extracted token:", token);
-      console.log("Extracted userId:", userId);
-      if (!token) {
-        setError("Login succeeded but no token received. Check console for response details.");
+      const user = data.response;
+      if (!user || data.status !== "success") {
+        setError("Login failed. Please check your credentials.");
         return;
       }
-      localStorage.setItem("token", token);
-      localStorage.setItem("userId", String(userId));
-      localStorage.setItem("userName", form.userName);
+      localStorage.setItem("userId", String(user.userId));
+      localStorage.setItem("userName", user.userName);
+      localStorage.setItem("firstName", user.firstName);
+      localStorage.setItem("lastName", user.lastName);
+      localStorage.setItem("email", user.email);
       router.push("/dashboard");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Invalid credentials. Please try again.");

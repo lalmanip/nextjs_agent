@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getProfile, updateProfile, changePassword } from "@/lib/api";
+import { updateProfile, changePassword } from "@/lib/api";
 
 type Profile = Record<string, string | number | null>;
 
@@ -37,20 +37,28 @@ export default function DashboardPage() {
   const [editSuccess, setEditSuccess] = useState("");
 
   const [showPwd, setShowPwd] = useState(false);
-  const [pwdForm, setPwdForm] = useState({ oldPassword: "", newPassword: "", confirmPassword: "" });
+  const [pwdForm, setPwdForm] = useState({ newPassword: "", confirmPassword: "" });
   const [pwdLoading, setPwdLoading] = useState(false);
   const [pwdError, setPwdError] = useState("");
   const [pwdSuccess, setPwdSuccess] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token") ?? "";
     const userId = localStorage.getItem("userId") ?? "";
-    if (!token || !userId) { router.push("/"); return; }
+    if (!userId) { router.push("/"); return; }
 
-    getProfile(userId, token)
-      .then((data) => { setProfile(data); setEditForm(data); })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    setProfile({
+      firstName: localStorage.getItem("firstName") ?? "",
+      lastName: localStorage.getItem("lastName") ?? "",
+      email: localStorage.getItem("email") ?? "",
+      userName: localStorage.getItem("userName") ?? "",
+    });
+    setEditForm({
+      firstName: localStorage.getItem("firstName") ?? "",
+      lastName: localStorage.getItem("lastName") ?? "",
+      email: localStorage.getItem("email") ?? "",
+      userName: localStorage.getItem("userName") ?? "",
+    });
+    setLoading(false);
   }, [router]);
 
   const handleLogout = () => {
@@ -83,10 +91,10 @@ export default function DashboardPage() {
     }
     setPwdLoading(true);
     try {
-      const token = localStorage.getItem("token") ?? "";
-      await changePassword(token, { oldPassword: pwdForm.oldPassword, newPassword: pwdForm.newPassword });
+      const userName = localStorage.getItem("userName") ?? "";
+      await changePassword(userName, pwdForm.newPassword);
       setPwdSuccess("Password changed successfully.");
-      setPwdForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
+      setPwdForm({ newPassword: "", confirmPassword: "" });
     } catch (err: unknown) {
       setPwdError(err instanceof Error ? err.message : "Failed to change password.");
     } finally {
@@ -187,7 +195,6 @@ export default function DashboardPage() {
             {pwdSuccess && <div className="mb-4 rounded-lg bg-green-500/20 border border-green-400/40 px-4 py-2 text-sm text-green-300">{pwdSuccess}</div>}
             <form onSubmit={handlePwdSubmit} className="space-y-4">
               {[
-                { name: "oldPassword", label: "Current Password" },
                 { name: "newPassword", label: "New Password" },
                 { name: "confirmPassword", label: "Confirm New Password" },
               ].map(({ name, label }) => (

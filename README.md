@@ -2,6 +2,9 @@
 
 Vivance Agent Module Application
 
+# How to run application locally
+npm run dev
+
 # AI Bot prompt
 
 You are an experienced nextjs developer. You have following requirement -
@@ -60,3 +63,9 @@ Once we get response, we call second API -
     with username and password
 
 ## 2. After successful login, agent will be navigated to dashboard page where they can see their profile details and option to edit profile and change password.
+
+## when login credentials are provided, it should call - {{baseURL}}/vivapi-user/user/authenticate (POST) with request - {
+
+"userName" : "<Username from entry>",
+"password" : "<Password from entry>"
+}

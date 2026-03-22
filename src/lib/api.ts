@@ -85,15 +85,16 @@ export async function updateProfile(userId: string | number, token: string, payl
   return data;
 }
 
-export async function changePassword(token: string, payload: { oldPassword: string; newPassword: string }) {
-  console.log("[changePassword] REQUEST", `${PROXY}/vivapi-user/user/change-password`, payload);
-  const res = await fetch(`${PROXY}/vivapi-user/user/change-password`, {
+export async function changePassword(userName: string, password: string) {
+  const reqBody = { userName, password };
+  console.log("[changePassword] REQUEST", `${PROXY}/vivapi-user/user/reset`, reqBody);
+  const res = await fetch(`${PROXY}/vivapi-user/user/reset`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(reqBody),
   });
   const data = await res.json();
   console.log("[changePassword] RESPONSE", res.status, data);
-  if (!res.ok) throw new Error(JSON.stringify(data));
+  if (!res.ok || data.response !== "success") throw new Error(data.message ?? "Failed to change password.");
   return data;
 }
