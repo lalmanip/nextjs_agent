@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agent-portal-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # remove if not using cert-manager
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - agent.vivancetravels.com
+      secretName: agent-portal-tls
+  rules:
+    - host: agent.vivancetravels.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: agent-portal-svc
+                port:
+                  number: 80

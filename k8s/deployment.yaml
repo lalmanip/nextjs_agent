@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-portal
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agent-portal
+  template:
+    metadata:
+      labels:
+        app: agent-portal
+    spec:
+      containers:
+        - name: agent-portal
+          image: vivance/agent-portal:latest # replace with your image
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NEXT_PUBLIC_API_BASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: agent-portal-secret
+                  key: NEXT_PUBLIC_API_BASE_URL
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
