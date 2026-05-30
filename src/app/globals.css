@@ -1,3 +1,249 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes marquee-rtl {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-rtl {
+  animation: marquee-rtl 35s linear infinite;
+}
+
+/* Flight search loading overlay — background motion */
+@keyframes flight-loading-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes flight-loading-orb-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.12;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.22;
+  }
+}
+
+@keyframes flight-loading-cloud-drift {
+  0% {
+    transform: translateX(-15vw) translateY(0);
+  }
+  100% {
+    transform: translateX(115vw) translateY(-12px);
+  }
+}
+
+@keyframes flight-loading-plane-cross {
+  0% {
+    transform: translateX(-12vw) translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.35;
+  }
+  92% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateX(112vw) translateY(-6px) rotate(-2deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flight-loading-plane-cross-reverse {
+  0% {
+    transform: translateX(112vw) scaleX(-1) translateY(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.28;
+  }
+  92% {
+    opacity: 0.28;
+  }
+  100% {
+    transform: translateX(-12vw) scaleX(-1) translateY(8px);
+    opacity: 0;
+  }
+}
+
+@keyframes flight-loading-route-dash {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+@keyframes flight-loading-dot-float {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-14px);
+    opacity: 0.7;
+  }
+}
+
+@keyframes flight-loading-bg-zoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes flight-loading-hub-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes flight-loading-hub-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes flight-loading-hub-flash {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 0.95;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes flight-loading-active-route {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@keyframes flight-loading-ambient-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes flight-loading-ghost-plane {
+  0% {
+    transform: translate(0, 0) rotate(-12deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translate(55vw, -8vh) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flight-loading-ghost-plane-reverse {
+  0% {
+    transform: translate(0, 0) scaleX(-1) rotate(10deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.4;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(-50vw, 6vh) scaleX(-1) rotate(-6deg);
+    opacity: 0;
+  }
+}
+
+.flight-loading-hub-pulse {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: flight-loading-hub-pulse 3.5s ease-in-out infinite;
+}
+
+.flight-loading-hub-ring {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: flight-loading-hub-ring 2.2s ease-out infinite;
+}
+
+.flight-loading-hub-flash {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: flight-loading-hub-flash 2.2s ease-in-out infinite;
+}
+
+.flight-loading-active-route {
+  animation: flight-loading-active-route 1.4s linear infinite;
+}
+
+.flight-loading-ghost-plane {
+  font-size: 1.5rem;
+  animation: flight-loading-ghost-plane linear infinite;
+}
+
+.flight-loading-ghost-plane-reverse {
+  font-size: 1.35rem;
+  animation: flight-loading-ghost-plane-reverse linear infinite;
+}
+
+.flight-loading-travel-plane {
+  filter: drop-shadow(0 0 2px rgba(252, 102, 3, 0.75));
+}
+
+/* Planes bursting outward from center on search loading */
+@keyframes flight-loading-plane-burst {
+  0% {
+    transform: translateX(6vmin) scale(0.35) rotate(-8deg);
+    opacity: 0;
+    filter: blur(0);
+  }
+  12% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateX(92vmin) scale(1.35) rotate(4deg);
+    opacity: 0;
+    filter: blur(4px);
+  }
+}

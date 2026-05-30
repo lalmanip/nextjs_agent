@@ -1,0 +1,41 @@
+# Server-side env for the Next.js app (read by src/lib/config.ts in Node).
+# Not for secrets — use a Secret + secretKeyRef for passwords / API keys.
+#
+# Apply:
+#   kubectl apply -f k8s/configmap-nextjs-env.yaml
+#
+# Wire into your existing Deployment (merge into the nextjs container spec):
+#   envFrom:
+#     - configMapRef:
+#         name: nextjs-ui-env
+#
+# Or mount as files instead of env (optional):
+#   volumes:
+#     - name: nextjs-env
+#       configMap:
+#         name: nextjs-ui-env
+#
+# Adjust namespace / service names if your cluster differs.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextjs-ui-env
+  namespace: default
+  labels:
+    app.kubernetes.io/name: nextjs
+    app.kubernetes.io/component: ui
+data:
+  # remote = use *_API_BASE_URL below (see src/lib/config.ts)
+  API_MODE: "remote"
+  # In-cluster MT (flight/payment) API — keeps server-side calls (e.g. commit-booking)
+  # off the public host so they don't make a second Kong hop. That extra hop's default
+  # 60s read-timeout is what kills long TBO commit-booking calls. Path stays /vivapi-mt
+  # (matches the backend context path, same as local mode).
+  MT_API_BASE_URL: "http://vivance-api-service:8080/vivapi-mt"
+  # In-cluster user API (auth/bookings/passengers) — same reasoning as MT.
+  USER_API_BASE_URL: "http://vivance-user-api-service:8082/vivapi-user"
+  # In-cluster hotel HTTP API — required when Ingress sends /api/hotels/* to Next
+  # (do not set this to https://next.vivancetravels.com — that causes self-fetch loops).
+  HOTEL_API_BASE_URL: "http://vivance-hotel-api-service:8090"
+  # Hotel auth login (getHotelAuthTokenCached)
+  AUTH_API_BASE_URL: "http://vivance-auth-api-service:8084"

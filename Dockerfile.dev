@@ -1,0 +1,18 @@
+# Dev image for Kubernetes (Next.js dev server)
+FROM node:20-alpine
+
+WORKDIR /app
+
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+
+EXPOSE 3005
+
+# Bind to all interfaces for K8s
+CMD ["npm", "run", "dev", "--", "-H", "0.0.0.0", "-p", "3005"]
+

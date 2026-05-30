@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"http://localhost:8080/vivapi-mt/airport/all\" -H \"X-API-KEY: viv-8806f318-1ecf-11ee-b64f-36e9be0141c6\")",
+      "Bash(npx tsc:*)",
+      "Bash(node_modules/.bin/tsc --noEmit)"
+    ]
+  }
+}
