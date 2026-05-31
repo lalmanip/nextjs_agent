@@ -1,0 +1,90 @@
+"use client";
+
+import { useState } from "react";
+import ContactUsModal from "@/Components/ContactUsModal";
+
+export default function Footer() {
+  const [contactOpen, setContactOpen] = useState(false);
+
+  return (
+    <>
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div>
+              <h3 className="text-xl font-bold text-primary mb-4">
+                Vivance Travels
+              </h3>
+              <p className="text-gray-400">
+                Your trusted travel partner for unforgettable journeys worldwide.
+              </p>
+            </motion.div>
+
+            <motion.div>
+              <h4 className="font-semibold mb-4">Services</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-primary">
+                    Flight Booking
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary">
+                    Hotel Reservations
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary">
+                    Cruise Packages
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary">
+                    Holiday Packages
+                  </a>
+                </li>
+              </ul>
+            </motion.div>
+
+            <motion.div>
+              <h4 className="font-semibold mb-4">Support</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <a href="#" className="hover:text-primary">
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => setContactOpen(true)}
+                    className="hover:text-primary text-left"
+                  >
+                    Contact Us
+                  </button>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary">
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary">
+                    Privacy Policy
+                  </a>
+                </li>
+              </ul>
+            </motion.div>
+          </motion.div>
+
+          <motion.div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 Vivance Travels. All rights reserved.</p>
+          </motion.div>
+        </motion.div>
+      </footer>
+
+      <ContactUsModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
+    </>
+  );
+}
+
