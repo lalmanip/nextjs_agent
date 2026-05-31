@@ -346,7 +346,7 @@ export default function UserDashboard({
     try {
       localStorage.removeItem("user");
     } catch {}
-    onBack();
+    router.push("/agent/login");
   };
 
   const resolveDashboardTab = (tab: string): "overview" | "bookings" | "family" =>

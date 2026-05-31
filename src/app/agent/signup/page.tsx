@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUser, addAgent } from "@/lib/api";
+import { createAgentUser, addAgentProfile } from "@/lib/agentSignup";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type PersonalInfo = {
@@ -138,16 +138,17 @@ export default function SignUpPage() {
     }
     setLoading(true);
     try {
-      const userRes = await createUser({
+      const userRes = await createAgentUser({
         email: personal.email,
         userName: login.userName,
         password: login.password,
         firstName: personal.firstName,
         lastName: personal.lastName,
         countryCode: personal.countryCode,
+        phone: personal.mobile,
       });
-      await addAgent({
-        userId: userRes.userId ?? userRes.id,
+      await addAgentProfile({
+        userId: userRes.userId,
         address: company.address,
         countryName: personal.countryCode,
         state: personal.state,
@@ -158,7 +159,7 @@ export default function SignUpPage() {
         gstNumber: company.iata,
         officePhone: company.officePhone,
       });
-      router.push("/?registered=1");
+      router.push("/agent/login?registered=1");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
     } finally {
@@ -167,7 +168,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-10">
+    <main className="flex min-h-screen items-center justify-center px-4 py-10 bg-gradient-to-br from-orange-950 via-orange-900 to-stone-900">
       <div className="w-full max-w-2xl rounded-2xl bg-white/10 backdrop-blur-md shadow-2xl p-8 text-white">
         {/* Brand */}
         <div className="mb-6 text-center">
@@ -273,7 +274,7 @@ export default function SignUpPage() {
 
         <p className="mt-6 text-center text-xs text-sky-300">
           Already have an account?{" "}
-          <a href="/" className="font-semibold text-white hover:underline">Sign In</a>
+          <a href="/agent/login" className="font-semibold text-white hover:underline">Sign In</a>
         </p>
       </div>
     </main>

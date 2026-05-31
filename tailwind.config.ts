@@ -14,6 +14,11 @@ const config: Config = {
       colors: {
         primary: "#FC6603",
         "primary-dark": "#e55a03",
+        brand: {
+          DEFAULT: "#fc6603",
+          light: "#fd8535",
+          dark: "#d95200",
+        },
       },
     },
   },
