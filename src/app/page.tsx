@@ -33,7 +33,7 @@ export default function Home() {
     if (params.get("hdfc_return") === "1") return;
     const saved = localStorage.getItem("user");
     if (!saved) {
-      router.replace("/agent/login");
+      router.replace("/agent");
     }
   }, [router]);
 

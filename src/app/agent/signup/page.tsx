@@ -22,8 +22,8 @@ type LoginInfo = { userName: string; password: string; confirmPassword: string }
 const STEPS = ["Personal Info", "Company Details", "Bank Details", "Login Info"];
 
 const inputCls =
-  "w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-brand";
-const labelCls = "block text-xs font-medium text-brand-light mb-1";
+  "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary";
+const labelCls = "block text-xs font-medium text-gray-700 mb-1";
 
 function Field({
   label, name, type = "text", value, onChange, placeholder, required = false,
@@ -51,7 +51,7 @@ function FileField({
     <div>
       <label className={labelCls}>{label}{required && <span className="text-red-400 ml-0.5">*</span>}</label>
       <input name={name} type="file" onChange={onChange} required={required}
-        className="w-full text-sm text-brand-light file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-brand file:text-white file:text-xs hover:file:bg-brand-light cursor-pointer" />
+        className="w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-primary file:text-white file:text-xs hover:file:bg-primary-dark cursor-pointer" />
     </div>
   );
 }
@@ -159,7 +159,7 @@ export default function SignUpPage() {
         gstNumber: company.iata,
         officePhone: company.officePhone,
       });
-      router.push("/agent/login?registered=1");
+      router.push("/agent?registered=1");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
     } finally {
@@ -168,13 +168,13 @@ export default function SignUpPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-10 bg-gradient-to-br from-orange-950 via-orange-900 to-stone-900">
-      <div className="w-full max-w-2xl rounded-2xl bg-white/10 backdrop-blur-md shadow-2xl p-8 text-white">
+    <main className="flex min-h-screen items-center justify-center px-4 py-10 bg-gray-50">
+      <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl p-8">
         {/* Brand */}
         <div className="mb-6 text-center">
           <span className="text-3xl">✈️</span>
-          <h1 className="mt-1 text-2xl font-bold tracking-wide">Vivance Travel</h1>
-          <p className="text-sm text-brand-light">Agent Registration — B2B</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-wide text-gray-900">Vivance Travel</h1>
+          <p className="text-sm text-primary">Agent Registration — B2B</p>
         </div>
 
         {/* Stepper */}
@@ -182,11 +182,11 @@ export default function SignUpPage() {
           {STEPS.map((label, i) => (
             <div key={i} className="flex-1 flex flex-col items-center">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
-                i < step ? "bg-brand border-brand" : i === step ? "border-brand text-brand-light" : "border-white/20 text-white/30"
+                i < step ? "bg-primary border-primary text-white" : i === step ? "border-primary text-primary" : "border-gray-300 text-gray-400"
               }`}>
                 {i < step ? "✓" : i + 1}
               </div>
-              <span className={`mt-1 text-[10px] text-center hidden sm:block ${i === step ? "text-brand-light" : "text-white/40"}`}>{label}</span>
+              <span className={`mt-1 text-[10px] text-center hidden sm:block ${i === step ? "text-primary" : "text-gray-400"}`}>{label}</span>
               {i < STEPS.length - 1 && (
                 <div className="absolute" style={{ display: "none" }} />
               )}
@@ -195,7 +195,7 @@ export default function SignUpPage() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-500/20 border border-red-400/40 px-4 py-2 text-sm text-red-300">
+          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-2 text-sm text-red-600">
             {error}
           </div>
         )}
@@ -210,9 +210,9 @@ export default function SignUpPage() {
             <div>
               <label className={labelCls}>Country</label>
               <select name="countryCode" value={personal.countryCode} onChange={handlePersonal}
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand">
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary">
                 {COUNTRY_CODES.map((c) => (
-                  <option key={`${c.name}-${c.code}`} value={c.code} className="bg-orange-950 text-white">
+                  <option key={`${c.name}-${c.code}`} value={c.code} className="text-gray-900">
                     {c.name} (+{c.code})
                   </option>
                 ))}
@@ -272,9 +272,9 @@ export default function SignUpPage() {
           </form>
         )}
 
-        <p className="mt-6 text-center text-xs text-sky-300">
+        <p className="mt-6 text-center text-xs text-gray-600">
           Already have an account?{" "}
-          <a href="/agent/login" className="font-semibold text-white hover:underline">Sign In</a>
+          <a href="/agent" className="font-semibold text-primary hover:underline">Sign In</a>
         </p>
       </div>
     </main>
@@ -290,12 +290,12 @@ function StepButtons({
     <div className="sm:col-span-2 flex gap-3 mt-2">
       {step > 0 && (
         <button type="button" onClick={() => setStep((s) => s - 1)}
-          className="flex-1 rounded-lg border border-white/20 py-2.5 text-sm font-medium text-brand-light hover:bg-white/10 transition-colors">
+          className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
           Back
         </button>
       )}
       <button type="submit" disabled={loading}
-        className="flex-1 rounded-lg bg-brand hover:bg-brand-light disabled:opacity-60 transition-colors py-2.5 font-semibold text-white">
+        className="flex-1 rounded-lg bg-primary hover:bg-primary-dark disabled:opacity-60 transition-colors py-2.5 font-semibold text-white">
         {loading ? "Submitting…" : isLast ? "Create Account" : "Next"}
       </button>
     </div>

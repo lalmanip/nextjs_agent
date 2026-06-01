@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import AgentLoginForm from "@/Components/AgentLoginForm";
 
-export default function SignInPage() {
+export default function AgentLoginPage() {
   return (
     <Suspense>
       <AgentLoginForm />

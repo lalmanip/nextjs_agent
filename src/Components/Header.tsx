@@ -75,7 +75,7 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSignOut = () => { localStorage.removeItem("user"); setUser(null); router.push("/agent/login"); };
+  const handleSignOut = () => { localStorage.removeItem("user"); setUser(null); router.push("/agent"); };
 
   const openAuthModal = (mode: "signin" | "signup") => { setAuthMode(mode); setShowAuthModal(true); };
 
