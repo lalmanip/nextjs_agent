@@ -69,3 +69,124 @@ export async function fetchAgentWallet(userId: number | string): Promise<AgentWa
   }
   return parseAgentWallet(data);
 }
+
+export type WalletLedgerEntry = {
+  id: number;
+  transactionType: string;
+  amount: number;
+  balanceAfter: number;
+  dueAmountAfter: number;
+  creditLimitAfter: number;
+  idempotencyKey: string | null;
+  appReference: string | null;
+  description: string | null;
+  createdDatetime: string;
+};
+
+export type WalletRequestResponse = {
+  status?: string;
+  message?: string;
+  response?: {
+    id: number;
+    status: string;
+    amount: number;
+    requestType?: string;
+  };
+};
+
+function makeIdempotencyKey(prefix: string): string {
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const seq = String(Date.now()).slice(-6);
+  return `${prefix}-${date}-${seq}`;
+}
+
+async function postWalletAction(
+  userId: number | string,
+  path: string,
+  body: Record<string, unknown>,
+): Promise<WalletRequestResponse> {
+  const res = await fetch(`/api/user/wallet/${encodeURIComponent(String(userId))}/${path}`, {
+    method: path === "credit-limit" ? "PUT" : "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data?.message || data?.error || `Request failed (${res.status})`);
+  }
+  return data as WalletRequestResponse;
+}
+
+export async function submitTopupRequest(
+  userId: number | string,
+  performedByUserId: number | string,
+  amount: number,
+  description: string,
+) {
+  return postWalletAction(userId, "topup", {
+    amount,
+    idempotencyKey: makeIdempotencyKey("topup"),
+    appReference: null,
+    description,
+    performedByUserId: Number(performedByUserId),
+  });
+}
+
+export async function submitSettlementRequest(
+  userId: number | string,
+  performedByUserId: number | string,
+  amount: number,
+  description: string,
+) {
+  return postWalletAction(userId, "settle", {
+    amount,
+    idempotencyKey: makeIdempotencyKey("settle"),
+    description,
+    performedByUserId: Number(performedByUserId),
+  });
+}
+
+export async function submitCreditLimitRequest(
+  userId: number | string,
+  performedByUserId: number | string,
+  creditLimit: number,
+  description: string,
+) {
+  return postWalletAction(userId, "credit-limit", {
+    creditLimit,
+    description,
+    performedByUserId: Number(performedByUserId),
+  });
+}
+
+export async function fetchWalletLedger(userId: number | string): Promise<WalletLedgerEntry[]> {
+  const res = await fetch(`/api/user/wallet/${encodeURIComponent(String(userId))}/ledger`, {
+    method: "GET",
+    cache: "no-store",
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(data?.message || data?.error || `Failed to load ledger (${res.status})`);
+  }
+  const rows = (data as { response?: unknown })?.response;
+  if (!Array.isArray(rows)) return [];
+  return rows.map((row: Record<string, unknown>) => ({
+    id: Number(row.id),
+    transactionType: String(row.transactionType ?? ""),
+    amount: Number(row.amount ?? 0),
+    balanceAfter: Number(row.balanceAfter ?? 0),
+    dueAmountAfter: Number(row.dueAmountAfter ?? 0),
+    creditLimitAfter: Number(row.creditLimitAfter ?? 0),
+    idempotencyKey: row.idempotencyKey != null ? String(row.idempotencyKey) : null,
+    appReference: row.appReference != null ? String(row.appReference) : null,
+    description: row.description != null ? String(row.description) : null,
+    createdDatetime: String(row.createdDatetime ?? ""),
+  }));
+}
+
+export function formatWalletDateTime(iso: string): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+}

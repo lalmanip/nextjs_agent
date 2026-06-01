@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect, useRef, type ReactNode } from "react";
+import { useState, useEffect, useRef, useCallback, type ReactNode } from "react";
 import AuthModal from "./AuthModal";
 import AgentLoginModal from "./AgentLoginModal";
+import AgentWalletModal from "./AgentWalletModal";
 import { Plane, Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -59,6 +60,7 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [wallet, setWallet] = useState<AgentWallet | null>(null);
   const [walletLoading, setWalletLoading] = useState(false);
+  const [showWalletModal, setShowWalletModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const currencyRef = useRef<HTMLDivElement>(null);
 
@@ -69,30 +71,25 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
     if (savedCurrency) setSelectedCurrency(JSON.parse(savedCurrency));
   }, []);
 
-  useEffect(() => {
+  const loadWallet = useCallback(async () => {
     const userId = user?.userId ?? user?.id;
     if (!userId) {
       setWallet(null);
       return;
     }
-
-    let cancelled = false;
     setWalletLoading(true);
-    fetchAgentWallet(userId)
-      .then((data) => {
-        if (!cancelled) setWallet(data);
-      })
-      .catch(() => {
-        if (!cancelled) setWallet(null);
-      })
-      .finally(() => {
-        if (!cancelled) setWalletLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    try {
+      setWallet(await fetchAgentWallet(userId));
+    } catch {
+      setWallet(null);
+    } finally {
+      setWalletLoading(false);
+    }
   }, [user?.userId, user?.id]);
+
+  useEffect(() => {
+    loadWallet();
+  }, [loadWallet]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -387,6 +384,15 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
                         👨‍👩‍👧‍👦 Family
                       </button>
                       <button
+                        onClick={() => {
+                          setShowWalletModal(true);
+                          setShowProfileDropdown(false);
+                        }}
+                        className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        💰 Manage Wallet
+                      </button>
+                      <button
                         onClick={() => { setShowChangePasswordModal(true); setShowProfileDropdown(false); }}
                         className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                       >
@@ -492,6 +498,14 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
               <div>Due: <span className={`font-semibold ${wallet.dueAmount > 0 ? "text-red-600" : ""}`}>{formatWalletAmount(wallet.dueAmount)}</span></div>
             </div>
           )}
+          {user && (
+            <button
+              onClick={() => { setShowWalletModal(true); setMobileMenuOpen(false); }}
+              className="flex items-center gap-1.5 text-sm font-semibold text-primary border border-primary rounded-lg px-3 py-2 hover:bg-primary hover:text-white transition-colors mt-1"
+            >
+              💰 Manage Wallet
+            </button>
+          )}
           <button
             onClick={() => { user ? onShowProfile?.() : openAuthModal("signin"); setMobileMenuOpen(false); }}
             className="flex items-center gap-1.5 text-sm font-semibold text-primary border border-primary rounded-lg px-3 py-2 hover:bg-primary hover:text-white transition-colors mt-1"
@@ -528,6 +542,16 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
           isOpen={showChangePasswordModal}
           onClose={() => setShowChangePasswordModal(false)}
           initialMode="reset"
+        />
+      )}
+
+      {user && showWalletModal && (
+        <AgentWalletModal
+          isOpen={showWalletModal}
+          onClose={() => setShowWalletModal(false)}
+          userId={user.userId ?? user.id}
+          performedByUserId={user.userId ?? user.id}
+          onWalletUpdated={loadWallet}
         />
       )}
     </>
