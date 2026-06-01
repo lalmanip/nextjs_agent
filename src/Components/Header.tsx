@@ -9,6 +9,11 @@ import {
   HEADER_NAV_MAINTENANCE_MESSAGE,
   type HeaderNavProductKey,
 } from "@/lib/headerNavConfig";
+import {
+  fetchAgentWallet,
+  formatWalletAmount,
+  type AgentWallet,
+} from "@/lib/agentWallet";
 
 interface HeaderProps {
   onShowProfile?: (initialTab?: string) => void;
@@ -52,6 +57,8 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
   const [currencySearch, setCurrencySearch] = useState("");
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [wallet, setWallet] = useState<AgentWallet | null>(null);
+  const [walletLoading, setWalletLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const currencyRef = useRef<HTMLDivElement>(null);
 
@@ -61,6 +68,31 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
     const savedCurrency = localStorage.getItem("currency");
     if (savedCurrency) setSelectedCurrency(JSON.parse(savedCurrency));
   }, []);
+
+  useEffect(() => {
+    const userId = user?.userId ?? user?.id;
+    if (!userId) {
+      setWallet(null);
+      return;
+    }
+
+    let cancelled = false;
+    setWalletLoading(true);
+    fetchAgentWallet(userId)
+      .then((data) => {
+        if (!cancelled) setWallet(data);
+      })
+      .catch(() => {
+        if (!cancelled) setWallet(null);
+      })
+      .finally(() => {
+        if (!cancelled) setWalletLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.userId, user?.id]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -75,7 +107,12 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSignOut = () => { localStorage.removeItem("user"); setUser(null); router.push("/agent"); };
+  const handleSignOut = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    setWallet(null);
+    router.push("/agent");
+  };
 
   const openAuthModal = (mode: "signin" | "signup") => { setAuthMode(mode); setShowAuthModal(true); };
 
@@ -276,6 +313,34 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
                 )}
               </div>
 
+              {/* Agent wallet summary */}
+              {user && (walletLoading || wallet) && (
+                <div className="hidden lg:flex items-center gap-3 rounded-lg border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs">
+                  {walletLoading && !wallet ? (
+                    <span className="text-gray-500">Loading wallet…</span>
+                  ) : wallet ? (
+                    <>
+                      <span className="text-gray-600">
+                        Balance{" "}
+                        <span className="font-semibold text-gray-900">{formatWalletAmount(wallet.balance)}</span>
+                      </span>
+                      <span className="text-orange-300">|</span>
+                      <span className="text-gray-600">
+                        Available to Book{" "}
+                        <span className="font-semibold text-gray-900">{formatWalletAmount(wallet.availableToBook)}</span>
+                      </span>
+                      <span className="text-orange-300">|</span>
+                      <span className="text-gray-600">
+                        Due{" "}
+                        <span className={`font-semibold ${wallet.dueAmount > 0 ? "text-red-600" : "text-gray-900"}`}>
+                          {formatWalletAmount(wallet.dueAmount)}
+                        </span>
+                      </span>
+                    </>
+                  ) : null}
+                </div>
+              )}
+
               {/* Auth / Profile */}
               {user ? (
                 <div className="relative" ref={dropdownRef}>
@@ -420,6 +485,13 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
             🏖️ Holidays
           </NavProductControl>
           <button onClick={() => { onShowContact?.(); setMobileMenuOpen(false); }} className="text-left text-gray-700 hover:text-primary py-2 text-sm font-medium">📞 Contact</button>
+          {user && wallet && (
+            <div className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-xs text-gray-700 space-y-1">
+              <div>Balance: <span className="font-semibold">{formatWalletAmount(wallet.balance)}</span></div>
+              <div>Available to Book: <span className="font-semibold">{formatWalletAmount(wallet.availableToBook)}</span></div>
+              <div>Due: <span className={`font-semibold ${wallet.dueAmount > 0 ? "text-red-600" : ""}`}>{formatWalletAmount(wallet.dueAmount)}</span></div>
+            </div>
+          )}
           <button
             onClick={() => { user ? onShowProfile?.() : openAuthModal("signin"); setMobileMenuOpen(false); }}
             className="flex items-center gap-1.5 text-sm font-semibold text-primary border border-primary rounded-lg px-3 py-2 hover:bg-primary hover:text-white transition-colors mt-1"
