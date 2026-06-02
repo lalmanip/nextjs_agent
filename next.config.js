@@ -33,6 +33,8 @@ const defaultAdultDob =
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Required for reliable static asset serving in the K8s Docker image
+  output: "standalone",
   env: {
     NEXT_PUBLIC_FLIGHT_HOLD_ENABLED: flightHoldRaw,
     ...(defaultAdultDob ? { NEXT_PUBLIC_DEFAULT_ADULT_DOB: defaultAdultDob } : {}),
