@@ -36,12 +36,12 @@ export default function AgentLoginForm() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 bg-gradient-to-br from-orange-950 via-orange-900 to-stone-900">
-      <div className="w-full max-w-md rounded-2xl bg-white/10 backdrop-blur-md shadow-2xl p-8 text-white">
+    <main className="agent-auth-screen">
+      <div className="agent-auth-card">
         <div className="mb-6 text-center">
           <span className="text-3xl">✈️</span>
           <h1 className="mt-1 text-2xl font-bold tracking-wide">Vivance Travel</h1>
-          <p className="text-sm text-orange-200">Agent Portal — B2B</p>
+          <p className="agent-auth-subtitle">Agent Portal — B2B</p>
         </div>
 
         {registered && (
@@ -58,34 +58,34 @@ export default function AgentLoginForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-orange-200 mb-1">
+            <label className="agent-auth-label">
               User Name <span className="text-red-400">*</span>
             </label>
             <input
               name="userName" type="text" value={form.userName} onChange={handleChange}
               placeholder="your_username" required
-              className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="agent-auth-input"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-orange-200 mb-1">
+            <label className="agent-auth-label">
               Password <span className="text-red-400">*</span>
             </label>
             <input
               name="password" type="password" value={form.password} onChange={handleChange}
               placeholder="••••••••" required
-              className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="agent-auth-input"
             />
           </div>
           <button
             type="submit" disabled={loading}
-            className="w-full rounded-lg bg-primary hover:bg-primary-dark disabled:opacity-60 transition-colors py-2.5 font-semibold text-white"
+            className="agent-auth-btn"
           >
             {loading ? "Signing in…" : "Sign In"}
           </button>
         </form>
 
-        <p className="mt-5 text-center text-xs text-orange-200">
+        <p className="mt-5 text-center text-xs agent-auth-subtitle">
           New to Vivance?{" "}
           <a href="/agent/signup" className="font-semibold text-white hover:underline">
             Create an Account

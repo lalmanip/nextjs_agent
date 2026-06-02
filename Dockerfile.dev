@@ -1,18 +1,32 @@
-# Dev image for Kubernetes (Next.js dev server)
-FROM node:20-alpine
-
+# Production build for Kubernetes (stable CSS, no dev-server JIT quirks)
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY package*.json ./
 RUN npm ci
 
 COPY . .
+# Optional build-time public env (runtime server env still comes from K8s ConfigMap)
+COPY .env.production ./.env.production
+
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.js ./next.config.js
+
+RUN npm ci --omit=dev && npm cache clean --force
 
 EXPOSE 3005
 
-# Bind to all interfaces for K8s
-CMD ["npm", "run", "dev", "--", "-H", "0.0.0.0", "-p", "3005"]
-
+CMD ["npm", "run", "start"]

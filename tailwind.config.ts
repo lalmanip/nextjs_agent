@@ -23,5 +23,14 @@ const config: Config = {
     },
   },
   plugins: [],
+  safelist: [
+    "bg-gradient-to-br",
+    "from-orange-950",
+    "via-orange-900",
+    "to-stone-900",
+    "bg-white/10",
+    "backdrop-blur-md",
+    "text-orange-200",
+  ],
 };
 export default config;

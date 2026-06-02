@@ -168,8 +168,8 @@ export default function SignUpPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-10 bg-gradient-to-br from-orange-950 via-orange-900 to-stone-900">
-      <div className="w-full max-w-2xl rounded-2xl bg-white/10 backdrop-blur-md shadow-2xl p-8 text-white">
+    <main className="agent-auth-screen py-10">
+      <div className="agent-auth-card agent-auth-card--wide">
         {/* Brand */}
         <div className="mb-6 text-center">
           <span className="text-3xl">✈️</span>
