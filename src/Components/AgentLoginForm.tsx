@@ -1,17 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { authAPI } from "@/lib/api";
+import { getAgentPortalSignupUrl, getB2cAppUrl } from "@/lib/agentPortal";
+import { getUserSession, setUserSession } from "@/lib/authSession";
 
 export default function AgentLoginForm() {
-  const router = useRouter();
   const params = useSearchParams();
   const registered = params.get("registered") === "1";
 
   const [form, setForm] = useState({ userName: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (getUserSession()) {
+      window.location.href = getB2cAppUrl();
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -23,8 +30,8 @@ export default function AgentLoginForm() {
     try {
       const result = await authAPI.signIn({ userName: form.userName, password: form.password });
       if (result?.status === "success" && result?.response) {
-        localStorage.setItem("user", JSON.stringify(result.response));
-        router.push("/");
+        setUserSession(result.response);
+        window.location.href = getB2cAppUrl();
       } else {
         setError(result?.message || "Invalid credentials. Please try again.");
       }
@@ -87,7 +94,7 @@ export default function AgentLoginForm() {
 
         <p className="mt-5 text-center text-xs agent-auth-subtitle">
           New to Vivance?{" "}
-          <a href="/agent/signup" className="font-semibold text-white hover:underline">
+          <a href={getAgentPortalSignupUrl()} className="font-semibold text-white hover:underline">
             Create an Account
           </a>
         </p>

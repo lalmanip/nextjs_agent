@@ -15,6 +15,8 @@ import {
   formatWalletAmount,
   type AgentWallet,
 } from "@/lib/agentWallet";
+import { getAgentPortalLoginUrl } from "@/lib/agentPortal";
+import { clearUserSession, syncUserSessionFromCookie } from "@/lib/authSession";
 
 interface HeaderProps {
   onShowProfile?: (initialTab?: string) => void;
@@ -65,6 +67,7 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
   const currencyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    syncUserSessionFromCookie();
     const savedUser = localStorage.getItem("user");
     if (savedUser) setUser(JSON.parse(savedUser));
     const savedCurrency = localStorage.getItem("currency");
@@ -105,10 +108,10 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
   }, []);
 
   const handleSignOut = () => {
-    localStorage.removeItem("user");
+    clearUserSession();
     setUser(null);
     setWallet(null);
-    router.push("/agent");
+    window.location.href = getAgentPortalLoginUrl();
   };
 
   const openAuthModal = (mode: "signin" | "signup") => { setAuthMode(mode); setShowAuthModal(true); };

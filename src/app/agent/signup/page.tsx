@@ -159,7 +159,7 @@ export default function SignUpPage() {
         gstNumber: company.iata,
         officePhone: company.officePhone,
       });
-      router.push("/agent?registered=1");
+      router.push("/?registered=1");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
     } finally {
@@ -274,7 +274,7 @@ export default function SignUpPage() {
 
         <p className="mt-6 text-center text-xs text-orange-200">
           Already have an account?{" "}
-          <a href="/agent" className="font-semibold text-white hover:underline">Sign In</a>
+          <a href="/" className="font-semibold text-white hover:underline">Sign In</a>
         </p>
       </div>
     </main>

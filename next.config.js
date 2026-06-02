@@ -40,7 +40,11 @@ const nextConfig = {
     ...(defaultAdultDob ? { NEXT_PUBLIC_DEFAULT_ADULT_DOB: defaultAdultDob } : {}),
     ...lccLeadEnv,
   },
-  allowedDevOrigins: ["next.vivancetravels.com", "*.vivancetravels.com"],
+  allowedDevOrigins: [
+    "next.vivancetravels.com",
+    "agent-dev.vivancetravels.com",
+    "*.vivancetravels.com",
+  ],
   images: {
     domains: [
       "logos-world.net",

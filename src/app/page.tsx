@@ -14,6 +14,8 @@ import {
   type SearchState,
 } from "@/lib/bookingState";
 import { commitBooking } from "@/lib/commitBooking";
+import { getAgentPortalLoginUrl } from "@/lib/agentPortal";
+import { getUserSessionRaw, syncUserSessionFromCookie } from "@/lib/authSession";
 
 export default function Home() {
   const router = useRouter();
@@ -31,9 +33,9 @@ export default function Home() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("hdfc_return") === "1") return;
-    const saved = localStorage.getItem("user");
+    const saved = getUserSessionRaw();
     if (!saved) {
-      router.replace("/agent");
+      window.location.href = getAgentPortalLoginUrl();
     }
   }, [router]);
 
