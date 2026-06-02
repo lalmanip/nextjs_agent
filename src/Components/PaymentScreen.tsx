@@ -17,6 +17,15 @@ import {
 import { formatUserDate } from "@/lib/dateLocale";
 import type { LeadPassengerAddress } from "@/lib/leadPassengerAddress";
 import { isFlightHoldBookingActive } from "@/lib/flightHoldConfig";
+import {
+  debitAgentWallet,
+  fetchAgentWallet,
+  formatWalletAmount,
+  isAgentWalletUser,
+  makeFlightWalletAppReference,
+  resolveAgentUserId,
+  type AgentWallet,
+} from "@/lib/agentWallet";
 
 const HDFC_PENDING_KEY = "hdfc_pending_booking";
 
@@ -36,7 +45,11 @@ interface PaymentScreenProps {
   leadPassengerAddress?: LeadPassengerAddress;
   tripType: string;
   timeRemaining?: number;
-  onPaymentSuccess: (paymentData: any, paymentProof: { gateway: "razorpay" | "hdfc"; payId?: string; orderId?: string }) => void;
+  user?: { userId?: number | string; id?: number | string } | null;
+  onPaymentSuccess: (
+    paymentData: any,
+    paymentProof: { gateway: "razorpay" | "hdfc" | "wallet"; payId?: string; orderId?: string; appReference?: string },
+  ) => void;
   onBack: () => void;
 }
 
@@ -52,6 +65,7 @@ export default function PaymentScreen({
   leadPassengerAddress,
   tripType,
   timeRemaining = 900,
+  user,
   onPaymentSuccess,
   onBack,
 }: PaymentScreenProps) {
@@ -60,9 +74,22 @@ export default function PaymentScreen({
     "summary",
   );
   const [error, setError] = useState("");
-  const [detectedGateway, setDetectedGateway] = useState<"razorpay" | "hdfc" | null>(null);
+  const [detectedGateway, setDetectedGateway] = useState<"razorpay" | "hdfc" | "wallet" | null>(null);
+  const [agentWallet, setAgentWallet] = useState<AgentWallet | null>(null);
+  const agentPayment = isAgentWalletUser(user);
   /** Hold flow: amount to charge now (from hold-fee API), loaded from flight state or refetched. */
   const [holdPaymentInr, setHoldPaymentInr] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!agentPayment || !user) {
+      setAgentWallet(null);
+      return;
+    }
+    const userId = resolveAgentUserId(user);
+    fetchAgentWallet(userId)
+      .then(setAgentWallet)
+      .catch(() => setAgentWallet(null));
+  }, [agentPayment, user]);
 
   // Type 1 Roundtrip: separate OB/IB (regular or advance return)
   const isType1Roundtrip = isSeparateLegRoundtripPayment(selectedFlight);
@@ -355,6 +382,34 @@ export default function PaymentScreen({
       }
       if (!resultToken) {
         throw new Error("Onward flight token is missing. Go back and select flights again.");
+      }
+
+      // Agent B2B: debit wallet (available to book) instead of payment gateway
+      if (agentPayment && user) {
+        setDetectedGateway("wallet");
+        setStep("validating");
+        const userId = resolveAgentUserId(user);
+        const wallet = await fetchAgentWallet(userId);
+        if (!wallet) {
+          throw new Error("Unable to load wallet balance. Please try again.");
+        }
+        if (amountToCharge > wallet.availableToBook) {
+          throw new Error(
+            `Insufficient available to book. Required ${formatWalletAmount(amountToCharge)}, available ${formatWalletAmount(wallet.availableToBook)}.`,
+          );
+        }
+
+        const appReference = makeFlightWalletAppReference(resultToken);
+        const debitRes = await debitAgentWallet(
+          userId,
+          userId,
+          amountToCharge,
+          appReference,
+          holdBooking ? "Flight hold booking" : "Flight booking",
+        );
+
+        onPaymentSuccess(debitRes, { gateway: "wallet", appReference });
+        return;
       }
 
       const orderRes = await flightAPI.initiatePayment(
@@ -1032,12 +1087,18 @@ export default function PaymentScreen({
                     style={{ borderColor: `${accentColor} ${accentColor} ${accentColor} transparent` }}
                   />
                   <p className="text-sm font-semibold text-gray-700">
-                    {detectedGateway === "hdfc" ? "Redirecting to HDFC…" : "Opening Razorpay…"}
+                    {detectedGateway === "wallet"
+                      ? "Debiting wallet…"
+                      : detectedGateway === "hdfc"
+                        ? "Redirecting to HDFC…"
+                        : "Opening Razorpay…"}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {detectedGateway === "hdfc"
-                      ? "You will be redirected to the HDFC payment page"
-                      : "Please complete payment in the popup"}
+                    {detectedGateway === "wallet"
+                      ? "Using your available to book balance"
+                      : detectedGateway === "hdfc"
+                        ? "You will be redirected to the HDFC payment page"
+                        : "Please complete payment in the popup"}
                   </p>
                 </div>
               )}
@@ -1051,10 +1112,12 @@ export default function PaymentScreen({
                     }}
                   />
                   <p className="text-sm font-semibold text-gray-700">
-                    Validating Payment…
+                    {detectedGateway === "wallet" ? "Confirming wallet debit…" : "Validating Payment…"}
                   </p>
                   <p className="text-xs text-gray-400">
-                    Confirming with payment gateway
+                    {detectedGateway === "wallet"
+                      ? "Proceeding to book your flight"
+                      : "Confirming with payment gateway"}
                   </p>
                 </div>
               )}
@@ -1074,13 +1137,28 @@ export default function PaymentScreen({
                     ? holdFeePending
                       ? "Loading hold fee…"
                       : `Confirm Hold · ₹${(payNowAmount as number).toLocaleString()}`
-                    : `Pay ₹${totalAmount.toLocaleString()}`}
+                    : agentPayment
+                      ? `Pay with Wallet · ₹${totalAmount.toLocaleString()}`
+                      : `Pay ₹${totalAmount.toLocaleString()}`}
                 </button>
+              )}
+
+              {agentPayment && agentWallet && step === "summary" && (
+                <div className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-xs text-gray-700">
+                  Available to book:{" "}
+                  <span className="font-semibold text-gray-900">
+                    {formatWalletAmount(agentWallet.availableToBook)}
+                  </span>
+                </div>
               )}
 
               <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
                 <span>🔐</span>
-                <span>256-bit SSL encrypted · {detectedGateway === "hdfc" ? "HDFC Payment Gateway" : "Razorpay"}</span>
+                <span>
+                  {agentPayment
+                    ? "256-bit SSL encrypted · B2B wallet debit"
+                    : `256-bit SSL encrypted · ${detectedGateway === "hdfc" ? "HDFC Payment Gateway" : "Razorpay"}`}
+                </span>
               </div>
             </div>
           </div>

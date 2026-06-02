@@ -330,6 +330,7 @@ export default function PaymentPage() {
             timeRemaining={bookingTimeRemaining}
             onPaymentSuccess={handlePaymentSuccess}
             onBack={() => router.push("/flights/booking")}
+            user={user}
           />
         </div>
       </main>

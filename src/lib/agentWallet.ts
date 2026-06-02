@@ -117,6 +117,63 @@ async function postWalletAction(
   return data as WalletRequestResponse;
 }
 
+export type WalletDebitResponse = {
+  status?: string;
+  message?: string | null;
+  response?: AgentWallet & {
+    b2bUserDetailsId?: number;
+    userOid?: number;
+  };
+};
+
+export function isAgentWalletUser(user: unknown): user is { userId: number | string } {
+  if (!user || typeof user !== "object") return false;
+  const u = user as Record<string, unknown>;
+  return u.userId != null || u.id != null;
+}
+
+export function resolveAgentUserId(user: { userId?: number | string; id?: number | string }): string {
+  return String(user.userId ?? user.id ?? "");
+}
+
+/** Booking reference sent to wallet debit (matches backend samples like JV26-ABC123). */
+export function makeFlightWalletAppReference(resultToken: string): string {
+  const tail = String(resultToken || "")
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .slice(-8)
+    .toUpperCase();
+  const suffix = tail || Date.now().toString(36).toUpperCase().slice(-8);
+  return `JV26-${suffix}`;
+}
+
+export async function debitAgentWallet(
+  userId: number | string,
+  performedByUserId: number | string,
+  amount: number,
+  appReference: string,
+  description: string,
+): Promise<WalletDebitResponse> {
+  const res = await fetch(`/api/user/wallet/${encodeURIComponent(String(userId))}/debit`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      amount,
+      idempotencyKey: `debit-${appReference}`,
+      appReference,
+      description,
+      performedByUserId: Number(performedByUserId),
+    }),
+  });
+  const data = (await res.json().catch(() => ({}))) as WalletDebitResponse;
+  if (!res.ok) {
+    throw new Error(data?.message || (data as { error?: string })?.error || `Wallet debit failed (${res.status})`);
+  }
+  if (String(data?.status ?? "").toLowerCase() !== "success") {
+    throw new Error(data?.message || "Wallet debit was not successful.");
+  }
+  return data;
+}
+
 export async function submitTopupRequest(
   userId: number | string,
   performedByUserId: number | string,
