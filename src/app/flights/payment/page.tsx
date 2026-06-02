@@ -251,7 +251,12 @@ export default function PaymentPage() {
 
   const handlePaymentSuccess = async (
     validationData: any,
-    paymentProof: { gateway: "razorpay" | "hdfc"; payId?: string; orderId?: string },
+    paymentProof: {
+      gateway: "razorpay" | "hdfc" | "wallet";
+      payId?: string;
+      orderId?: string;
+      appReference?: string;
+    },
   ) => {
     const pData = {
       passengerDetails: paymentData.passengerDetails,

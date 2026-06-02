@@ -248,7 +248,7 @@
   }
 }
 
-/* Agent auth — explicit styles so gradient/glass UI works even if Tailwind JIT misses utilities in K8s */
+/* Agent auth - explicit styles so gradient/glass UI works even if Tailwind JIT misses utilities in K8s */
 .agent-auth-screen {
   min-height: 100vh;
   display: flex;

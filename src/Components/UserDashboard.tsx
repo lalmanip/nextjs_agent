@@ -326,7 +326,7 @@ function getPassengerMealAndSeatDisplay(p: any): { meals: string; seats: string 
     /* ignore */
   }
 
-  const uniq = (arr: string[]) => [...new Set(arr)];
+  const uniq = (arr: string[]) => Array.from(new Set(arr));
   return {
     meals: uniq(meals).join(" · ") || "",
     seats: uniq(seats).join(" · ") || "",
