@@ -1,0 +1,38 @@
+# Example: route ALL traffic on next.vivancetravels.com to nextjs-agent (one Next app).
+#
+# Problem if split across two deployments:
+#   /agent           -> nextjs-agent (production build, hashed /_next/static/css/...)
+#   /_next/static/*  -> nextjs (dev server) -> 404 for agent assets -> unstyled /agent
+#
+# Apply ONLY after confirming your deployment labels and service name:
+#   kubectl get deploy nextjs-agent -o yaml | grep -A5 labels
+#   kubectl get svc | grep nextjs
+#
+# If Kong (not nginx ingress) fronts the cluster, update the Kong route/service upstream
+# the same way: one host -> nextjs-agent Service port 3005 only.
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextjs-agent-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - next.vivancetravels.com
+      secretName: nextjs-agent-tls
+  rules:
+    - host: next.vivancetravels.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # Must match your Service for deployment/nextjs-agent
+                name: nextjs-agent
+                port:
+                  number: 3005
