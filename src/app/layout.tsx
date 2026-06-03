@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
 import { DateLocaleProvider } from "@/Components/DateLocaleProvider";
@@ -15,10 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-      </head>
       <body className="antialiased">
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
         <DateLocaleProvider>{children}</DateLocaleProvider>
       </body>
     </html>

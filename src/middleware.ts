@@ -4,7 +4,9 @@ import {
   getAgentPortalBaseUrl,
   getB2cAppBaseUrl,
   isAgentPortalHost,
+  isCombinedAgentAndB2cHost,
 } from "@/lib/agentPortal";
+import { USER_COOKIE_NAME, hasValidUserSessionCookie } from "@/lib/authSession";
 
 const B2C_APP_URL = getB2cAppBaseUrl();
 const AGENT_PORTAL_URL = getAgentPortalBaseUrl();
@@ -40,6 +42,10 @@ export function middleware(request: NextRequest) {
   }
 
   if (pathname === "/" || pathname === "/login" || pathname === "/login/") {
+    const sessionCookie = request.cookies.get(USER_COOKIE_NAME)?.value;
+    if (hasValidUserSessionCookie(sessionCookie)) {
+      return NextResponse.next();
+    }
     const url = request.nextUrl.clone();
     url.pathname = "/agent";
     return NextResponse.rewrite(url);
@@ -51,12 +57,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // Agent portal is auth-only; everything else goes to B2C on next.vivancetravels.com
+  // Agent portal is auth-only on a separate host; B2C routes live on NEXT_PUBLIC_B2C_APP_URL.
+  // Local dev often uses the same host for both — redirecting to self causes ERR_TOO_MANY_REDIRECTS.
   if (
     !pathname.startsWith("/api") &&
     !pathname.startsWith("/_next") &&
     pathname !== "/favicon.ico"
   ) {
+    if (isCombinedAgentAndB2cHost(host)) {
+      return NextResponse.next();
+    }
     const dest = `${B2C_APP_URL}${pathname}${request.nextUrl.search}`;
     return NextResponse.redirect(dest);
   }

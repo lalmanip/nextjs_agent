@@ -1,7 +1,23 @@
 /** Share agent login across *.vivancetravels.com via cookie + localStorage. */
 
 const USER_STORAGE_KEY = "user";
-const USER_COOKIE_NAME = "vivance_agent_user";
+export const USER_COOKIE_NAME = "vivance_agent_user";
+
+/** Used by middleware to skip agent-login rewrite when the user is already signed in. */
+export function hasValidUserSessionCookie(value: string | undefined): boolean {
+  if (!value?.trim()) return false;
+  try {
+    JSON.parse(decodeURIComponent(value));
+    return true;
+  } catch {
+    try {
+      JSON.parse(value);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
 const COOKIE_MAX_AGE_SEC = 60 * 60 * 24 * 7; // 7 days
 
 function canUseSharedCookie(): boolean {
@@ -23,21 +39,25 @@ function readUserCookie(): string | null {
 }
 
 function writeUserCookie(json: string): void {
-  if (!canUseSharedCookie()) return;
-  document.cookie = [
+  if (typeof document === "undefined") return;
+  const parts = [
     `${USER_COOKIE_NAME}=${encodeURIComponent(json)}`,
     "path=/",
-    "domain=.vivancetravels.com",
     `max-age=${COOKIE_MAX_AGE_SEC}`,
     "SameSite=Lax",
-    "Secure",
-  ].join("; ");
+  ];
+  if (canUseSharedCookie()) {
+    parts.push("domain=.vivancetravels.com", "Secure");
+  }
+  document.cookie = parts.join("; ");
 }
 
 function clearUserCookie(): void {
   if (typeof document === "undefined") return;
-  if (!canUseSharedCookie()) return;
-  document.cookie = `${USER_COOKIE_NAME}=; path=/; domain=.vivancetravels.com; max-age=0; SameSite=Lax; Secure`;
+  document.cookie = `${USER_COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
+  if (canUseSharedCookie()) {
+    document.cookie = `${USER_COOKIE_NAME}=; path=/; domain=.vivancetravels.com; max-age=0; SameSite=Lax; Secure`;
+  }
 }
 
 export function setUserSession(user: unknown): void {

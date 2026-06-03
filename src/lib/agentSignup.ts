@@ -42,7 +42,7 @@ export async function createAgentUser(payload: {
   phone: string;
 }) {
   const data = await postAuth("signup", {
-    userType: "4",
+    userType: "3",
     status: "0",
     emailActivation: false,
     ...payload,

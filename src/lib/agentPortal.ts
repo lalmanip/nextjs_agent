@@ -34,6 +34,18 @@ export function getB2cAppBaseUrl(): string {
   return url.replace(/\/$/, "");
 }
 
+/** True when agent portal and B2C share one origin (typical local dev on :3005). */
+export function isCombinedAgentAndB2cHost(host: string | null | undefined): boolean {
+  const requestHost = normalizeHost(host);
+  if (!requestHost) return false;
+  try {
+    const b2cHost = normalizeHost(new URL(`${getB2cAppBaseUrl()}/`).host);
+    return b2cHost === requestHost;
+  } catch {
+    return false;
+  }
+}
+
 /** Login URL on the agent portal (no /agent path). */
 export function getAgentPortalLoginUrl(): string {
   return `${getAgentPortalBaseUrl()}/`;

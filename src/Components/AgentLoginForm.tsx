@@ -15,9 +15,10 @@ export default function AgentLoginForm() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (getUserSession()) {
-      window.location.href = getB2cAppUrl();
-    }
+    const session = getUserSession();
+    if (!session) return;
+    setUserSession(session);
+    window.location.href = getB2cAppUrl();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
