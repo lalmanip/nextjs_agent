@@ -24,7 +24,12 @@ export function middleware(request: NextRequest) {
     if (pathname === "/agent/login" || pathname === "/agent/login/") {
       return NextResponse.redirect(`${AGENT_PORTAL_URL}/`);
     }
-    if (pathname === "/agent/signup" || pathname.startsWith("/agent/signup/")) {
+    if (
+      pathname === "/agent/signup" ||
+      pathname.startsWith("/agent/signup/") ||
+      pathname === "/signup" ||
+      pathname === "/signup/"
+    ) {
       return NextResponse.redirect(`${AGENT_PORTAL_URL}/signup`);
     }
     return NextResponse.next();

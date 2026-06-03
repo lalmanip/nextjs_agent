@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, type MouseEvent } from "react";
+import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent } from "react";
 import { flightAPI, Airport, FlightSearchRequest, CalendarFareRequest } from "@/lib/api";
 import FlightSearchLoading from "@/Components/FlightSearchLoading";
 import { useDateLocale } from "@/Components/DateLocaleProvider";
@@ -254,7 +254,7 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
   };
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: globalThis.MouseEvent) => {
       const target = event.target as Node;
       if (
         target instanceof Element &&
@@ -678,7 +678,7 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
     const recentAirports = getRecentAirports();
     const showRecent = !query && recentAirports.length > 0;
     const list = query ? options : [];
-    const pickAirport = (airport: Airport, e: MouseEvent) => {
+    const pickAirport = (airport: Airport, e: ReactMouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
       onSelect(airport);
