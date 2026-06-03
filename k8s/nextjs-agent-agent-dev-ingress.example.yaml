@@ -1,23 +1,23 @@
-# agent-dev.vivancetravels.com — agent login/signup only (deployment nextjs-agent).
-# B2C remains on next.vivancetravels.com (deployment nextjs).
-#
-# DNS: agent-dev.vivancetravels.com -> Kong / LB IP
-# All paths (/, /signup, /_next, /api) must hit nextjs-agent:3005 — same pod only.
+# Kong Ingress: agent-dev.vivancetravels.com -> nextjs-agent-svc (all paths).
+# Pair with k8s/agent-dev-certificate.yaml for TLS.
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nextjs-agent-agent-dev-ingress
+  name: nextjs-agent-dev-ingress
   namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    konghq.com/strip-path: "false"
+    konghq.com/protocols: "http,https"
+    konghq.com/ssl-redirect: "true"
+    konghq.com/https-redirect-status-code: "301"
+    # TLS secret from k8s/agent-dev-certificate.yaml (do not also rely on ingress-shim unless you remove the Certificate CR)
 spec:
-  ingressClassName: nginx
+  ingressClassName: kong
   tls:
     - hosts:
         - agent-dev.vivancetravels.com
-      secretName: nextjs-agent-agent-dev-tls
+      secretName: agent-dev-vivancetravels-tls
   rules:
     - host: agent-dev.vivancetravels.com
       http:
@@ -26,6 +26,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: nextjs-agent
+                name: nextjs-agent-svc
                 port:
-                  number: 3005
+                  number: 80

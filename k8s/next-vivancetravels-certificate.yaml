@@ -1,0 +1,25 @@
+# TLS for next.vivancetravels.com via cert-manager (Let's Encrypt).
+# Pair with tls: on nextjs-ingress (see k8s/vivance-combined-ingress.example.yaml).
+#
+# Apply:
+#   kubectl apply -f k8s/next-vivancetravels-certificate.yaml
+#   kubectl apply -f k8s/vivance-combined-ingress.example.yaml   # or patch nextjs-ingress tls block
+#
+# Watch:
+#   kubectl describe certificate next-vivancetravels-com -n default
+#   kubectl get secret next-vivancetravels-tls -n default
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: next-vivancetravels-com
+  namespace: default
+  annotations:
+    cert-manager.io/acme-http01-ingress-class: kong
+spec:
+  secretName: next-vivancetravels-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - next.vivancetravels.com

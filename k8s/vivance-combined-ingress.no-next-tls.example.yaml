@@ -1,0 +1,119 @@
+# Use this when next HTTPS already works outside Kong but next-vivancetravels-tls
+# does not exist yet. Referencing a missing TLS secret on nextjs-ingress can break
+# Kong SNI for agent-dev (browser "Not secure" despite agent-dev cert Ready).
+#
+# Apply:
+#   kubectl apply -f vivance-combined-ingress.no-next-tls.yaml
+#   kubectl rollout restart deployment -n kong -l app.kubernetes.io/name=kong
+#
+# Fix next cert separately, then switch to vivance-combined-ingress.example.yaml.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: agent-dev-vivancetravels-com
+  namespace: default
+  annotations:
+    cert-manager.io/acme-http01-ingress-class: kong
+spec:
+  secretName: agent-dev-vivancetravels-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - agent-dev.vivancetravels.com
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextjs-ingress
+  namespace: default
+  annotations:
+    konghq.com/strip-path: "false"
+    konghq.com/protocols: "http,https"
+    konghq.com/ssl-redirect: "false"
+    konghq.com/https-redirect-status-code: "301"
+spec:
+  ingressClassName: kong
+  # No spec.tls — next HTTPS via outer proxy until next-vivancetravels-tls exists
+  rules:
+    - host: next.vivancetravels.com
+      http:
+        paths:
+          - path: /vivapi-user
+            pathType: Prefix
+            backend:
+              service:
+                name: vivance-user-api-service
+                port:
+                  number: 8082
+          - path: /vivapi-mt
+            pathType: Prefix
+            backend:
+              service:
+                name: vivance-api-service
+                port:
+                  number: 8080
+          - path: /hdfc-pgw/api
+            pathType: Prefix
+            backend:
+              service:
+                name: hdfc-payment-service
+                port:
+                  number: 8083
+          - path: /vivapi-auth
+            pathType: Prefix
+            backend:
+              service:
+                name: vivance-auth-api-service
+                port:
+                  number: 8084
+          - path: /api/supervision
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-supervision-svc
+                port:
+                  number: 80
+          - path: /supervision
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-supervision-svc
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-svc
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextjs-agent-dev-ingress
+  namespace: default
+  annotations:
+    konghq.com/protocols: http,https
+    konghq.com/strip-path: "false"
+    konghq.com/ssl-redirect: "true"
+    konghq.com/https-redirect-status-code: "301"
+spec:
+  ingressClassName: kong
+  tls:
+    - hosts:
+        - agent-dev.vivancetravels.com
+      secretName: agent-dev-vivancetravels-tls
+  rules:
+    - host: agent-dev.vivancetravels.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-agent-svc
+                port:
+                  number: 80

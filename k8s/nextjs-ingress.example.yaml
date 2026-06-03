@@ -1,0 +1,80 @@
+# B2C + APIs on next.vivancetravels.com (matches production nextjs-ingress).
+#
+# Your live ingress has no spec.tls — HTTPS may come from an outer proxy, or Kong default cert.
+# For in-cluster Let's Encrypt (same as agent-dev):
+#   kubectl apply -f k8s/next-vivancetravels-certificate.yaml
+#   kubectl get secret next-vivancetravels-tls -n default
+#   then uncomment the tls: block below and re-apply.
+#
+# Traefik annotations in old files are ignored when ingressClassName is kong.
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextjs-ingress
+  namespace: default
+  annotations:
+    konghq.com/strip-path: "false"
+    konghq.com/protocols: "http,https"
+    konghq.com/ssl-redirect: "false"
+    konghq.com/https-redirect-status-code: "301"
+spec:
+  ingressClassName: kong
+  # Uncomment after secret next-vivancetravels-tls exists (type kubernetes.io/tls):
+  # tls:
+  #   - hosts:
+  #       - next.vivancetravels.com
+  #     secretName: next-vivancetravels-tls
+  rules:
+    - host: next.vivancetravels.com
+      http:
+        paths:
+          - path: /vivapi-user
+            pathType: Prefix
+            backend:
+              service:
+                name: vivance-user-api-service
+                port:
+                  number: 8082
+          - path: /vivapi-mt
+            pathType: Prefix
+            backend:
+              service:
+                name: vivance-api-service
+                port:
+                  number: 8080
+          - path: /hdfc-pgw/api
+            pathType: Prefix
+            backend:
+              service:
+                name: hdfc-payment-service
+                port:
+                  number: 8083
+          - path: /vivapi-auth
+            pathType: Prefix
+            backend:
+              service:
+                name: vivance-auth-api-service
+                port:
+                  number: 8084
+          - path: /api/supervision
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-supervision-svc
+                port:
+                  number: 80
+          - path: /supervision
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-supervision-svc
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-svc
+                port:
+                  number: 80

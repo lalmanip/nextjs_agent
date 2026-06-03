@@ -1,0 +1,31 @@
+# TLS for agent-dev.vivancetravels.com via cert-manager (Let's Encrypt).
+#
+# Prereqs:
+#   - cert-manager installed in the cluster
+#   - ClusterIssuer "letsencrypt-prod" (or change issuerRef below)
+#   - DNS A record: agent-dev.vivancetravels.com -> your public IP (already done)
+#   - Ingress nextjs-agent-dev-ingress routes host agent-dev to nextjs-agent-svc (HTTP reachable on :80)
+#
+# Apply:
+#   kubectl apply -f k8s/agent-dev-certificate.yaml
+#   kubectl apply -f k8s/nextjs-agent-agent-dev-ingress.example.yaml
+#
+# Watch:
+#   kubectl describe certificate agent-dev-vivancetravels-com -n default
+#   kubectl get certificaterequest,order,challenge -n default
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: agent-dev-vivancetravels-com
+  namespace: default
+  annotations:
+    # Cluster uses Kong, not Traefik — must match ingressClassName on Ingress resources
+    cert-manager.io/acme-http01-ingress-class: kong
+spec:
+  secretName: agent-dev-vivancetravels-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - agent-dev.vivancetravels.com
