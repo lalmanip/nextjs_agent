@@ -55,6 +55,8 @@ export interface PaymentDataState {
   cellCountryCode: string;
   discount: number;
   promoCode: string;
+  /** Server-issued token from POST /api/coupons/validate — required for redeem at payment. */
+  appliedToken?: string;
   /** LCC — configured default address, sent on lead passenger in commit-booking. */
   leadPassengerAddress?: LeadPassengerAddress;
 }

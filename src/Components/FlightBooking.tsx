@@ -65,6 +65,12 @@ import {
   sanitizePassengerFirstName,
   sanitizePassengerLastName,
 } from "@/lib/passengerNameRules";
+import {
+  validateCoupon,
+  releaseCoupon,
+  couponErrorMessage,
+  getBookingChannel,
+} from "@/lib/couponClient";
 
 const OG = "#FC6603";
 const HOLD_BLUE = "#1e40af";
@@ -119,7 +125,10 @@ export default function FlightBooking({
   const dialCodeRef = useRef<HTMLDivElement | null>(null);
   const [promoCode, setPromoCode]         = useState("");
   const [discount, setDiscount]           = useState(0);
+  const [appliedToken, setAppliedToken]     = useState("");
   const [promoApplied, setPromoApplied]   = useState(false);
+  const [promoApplying, setPromoApplying]   = useState(false);
+  const promoFareSnapshotRef = useRef<number | null>(null);
   const [passengerDetails, setPassengerDetails] = useState<any[]>([]);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [editingIdx, setEditingIdx]       = useState<number | null>(null);
@@ -1063,6 +1072,7 @@ export default function FlightBooking({
       cellCountryCode,
       discount,
       promoCode,
+      appliedToken: appliedToken || undefined,
     };
     if (isLccBooking) {
       data.leadPassengerAddress = getLccDefaultLeadPassengerAddress();
@@ -1096,19 +1106,72 @@ export default function FlightBooking({
     }
   };
 
-  const handleApplyPromo = () => {
-    if (!promoCode.trim()) { alert("Please enter a promo code"); return; }
-    const CODES: Record<string, number> = { SAVE10: 10, FLAT500: 500, WELCOME: 5 };
-    const val = CODES[promoCode.toUpperCase()];
-    if (val) {
-      const calc = promoCode.toUpperCase() === "FLAT500"
-        ? Math.min(val, totalFare)
-        : Math.round(totalFare * val / 100);
-      setDiscount(calc); setPromoApplied(true);
-    } else {
-      alert("Invalid promo code");
+  const clearPromoState = () => {
+    setPromoCode("");
+    setDiscount(0);
+    setAppliedToken("");
+    setPromoApplied(false);
+    promoFareSnapshotRef.current = null;
+  };
+
+  const handleRemovePromo = async () => {
+    const userOid = Number(user?.userId);
+    if (appliedToken && userOid > 0) {
+      try {
+        await releaseCoupon({ appliedToken, userOid });
+      } catch {
+        /* still clear UI */
+      }
+    }
+    clearPromoState();
+  };
+
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) {
+      alert("Please enter a promo code");
+      return;
+    }
+    const userOid = Number(user?.userId);
+    if (!userOid || userOid <= 0) {
+      alert("Please sign in to apply a promo code");
+      return;
+    }
+    const fareForCoupon = Math.round((totalFare + addOnTotal) * 100) / 100;
+    setPromoApplying(true);
+    try {
+      const result = await validateCoupon({
+        code: promoCode.trim(),
+        userOid,
+        channel: getBookingChannel(),
+        totalFare: fareForCoupon,
+        resultTokenHash: String(
+          selectedFlight?.resultToken || selectedFlight?.ResultToken || "",
+        ).slice(0, 128) || undefined,
+      });
+      if (!result.valid || !result.discountAmount) {
+        alert(couponErrorMessage(result));
+        return;
+      }
+      setDiscount(Math.round(result.discountAmount));
+      setPromoCode(result.promoCode || promoCode.trim().toUpperCase());
+      setAppliedToken(result.appliedToken || "");
+      setPromoApplied(true);
+      promoFareSnapshotRef.current = fareForCoupon;
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Could not apply promo code");
+    } finally {
+      setPromoApplying(false);
     }
   };
+
+  useEffect(() => {
+    if (!promoApplied || promoFareSnapshotRef.current == null) return;
+    const current = Math.round((totalFare + addOnTotal) * 100) / 100;
+    if (Math.abs(current - promoFareSnapshotRef.current) > 0.01) {
+      void handleRemovePromo();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalFare, addOnTotal, promoApplied]);
 
 
   const paxTypeIcon: Record<string, string> = { Adult: "🧑", Child: "👦", Infant: "👶" };
@@ -2440,7 +2503,7 @@ export default function FlightBooking({
             ) : (
               <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
                 <span className="text-green-700 text-sm font-semibold">{promoCode} — saved ₹{discount}</span>
-                <button onClick={() => { setPromoCode(""); setDiscount(0); setPromoApplied(false); }} className="text-red-500 text-xs ml-2">✕</button>
+                <button type="button" onClick={() => void handleRemovePromo()} className="text-red-500 text-xs ml-2">✕</button>
               </div>
             )}
           </div>

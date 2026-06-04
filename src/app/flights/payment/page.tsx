@@ -14,6 +14,7 @@ import {
 } from "@/lib/bookingState";
 import { commitBooking, commitBookingSkipBook } from "@/lib/commitBooking";
 import { isFlightHoldFeatureEnabled } from "@/lib/flightHoldConfig";
+import { redeemCoupon } from "@/lib/couponClient";
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -267,6 +268,15 @@ export default function PaymentPage() {
     };
     try {
       const result = await commitBooking(flightState.flight, pData, tripType);
+      const userOid = Number(user?.userId);
+      if (paymentData.appliedToken && userOid > 0) {
+        void redeemCoupon({
+          appliedToken: paymentData.appliedToken,
+          userOid,
+          appReference: result.appReference,
+          paymentOrderId: paymentProof.orderId,
+        }).catch((err) => console.warn("[coupon] redeem failed:", err));
+      }
       bookingState.saveTicket({
         ticketDetails: result.ticketDetails,
         pnr: result.pnr,

@@ -7,6 +7,10 @@ import { DateLocaleProvider } from "@/Components/DateLocaleProvider";
 export const metadata: Metadata = {
   title: "Vivance Travels - Book Flights, Hotels, Cruises & Holiday Packages",
   description: "Your trusted travel partner for flights, hotels, cruises, and holiday packages worldwide.",
+  icons: {
+    icon: [{ url: "/vivance-logo.png", type: "image/png" }],
+    apple: [{ url: "/vivance-logo.png", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
