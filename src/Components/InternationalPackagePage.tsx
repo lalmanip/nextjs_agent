@@ -13,6 +13,7 @@ import {
   type ApiPackageCard,
   type ApiPackageCategory,
 } from "@/lib/holidaysApi";
+import { resolveHolidayImageUrl } from "@/lib/holidayImageUrl";
 
 type PackageCategory = {
   id: string;
@@ -159,7 +160,9 @@ export default function InternationalPackagePage({
 
       <section
         className="relative bg-cover bg-center"
-        style={{ backgroundImage: `url('${destination.heroImageUrl}')` }}
+        style={{
+          backgroundImage: `url('${resolveHolidayImageUrl(destination.heroImageUrl)}')`,
+        }}
       >
         <div className="absolute inset-0 bg-black/55" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 text-white">
@@ -216,7 +219,7 @@ export default function InternationalPackagePage({
               >
                 <div className="group relative h-60 overflow-hidden bg-gray-200">
                   <img
-                    src={pkg.imageUrl}
+                    src={resolveHolidayImageUrl(pkg.imageUrl)}
                     alt={pkg.title}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
