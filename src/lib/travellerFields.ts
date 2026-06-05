@@ -239,7 +239,7 @@ export function applySavedTravellerToPassenger<T extends BookingPassengerPatch>(
   const dob = readTravellerDateOfBirthIso(m);
   if (dob) next.dob = dob;
 
-  const pan = String(m.pan ?? m.PAN ?? "").trim();
+  const pan = String(m.pan ?? m.PAN ?? m.panNumber ?? m.PanNumber ?? "").trim();
   if (pan) next.pan = pan;
 
   if (includePassport) {
@@ -263,4 +263,38 @@ export function applySavedTravellerToPassenger<T extends BookingPassengerPatch>(
   }
 
   return next;
+}
+
+/** Stable id (`origin`) from a saved traveller API row. */
+export function getTravellerIdFromMember(member: unknown): string {
+  if (!member || typeof member !== "object") return "";
+  const m = member as Record<string, unknown>;
+  const candidates = [
+    m.origin,
+    m.Origin,
+    m.travellerId,
+    m.TravellerId,
+    m.id,
+    m.Id,
+  ];
+  for (const c of candidates) {
+    const s = String(c ?? "").trim();
+    if (s) return s;
+  }
+  return "";
+}
+
+export function formatTravellerDisplayName(member: Record<string, unknown>): string {
+  const fn = String(member.firstName ?? member.FirstName ?? "").trim();
+  const ln = String(member.lastName ?? member.LastName ?? "").trim();
+  return `${fn} ${ln}`.trim();
+}
+
+export function formatTravellerTypeaheadSecondary(member: Record<string, unknown>): string {
+  const phone = String(member.phoneNumber ?? member.PhoneNumber ?? "").trim();
+  const lead = String(member.leadPassengerName ?? member.LeadPassengerName ?? "").trim();
+  const parts: string[] = [];
+  if (phone) parts.push(phone);
+  if (lead) parts.push(`Lead: ${lead}`);
+  return parts.join(" · ");
 }

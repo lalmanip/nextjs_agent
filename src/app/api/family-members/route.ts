@@ -22,11 +22,12 @@ export async function POST(request: NextRequest) {
   try {
     const data = withPassportIssuingCountryForApi(await request.json());
 
-    const dobErr = validateRequiredTravellerDateOfBirth(
-      (data as { dateOfBirth?: string | null }).dateOfBirth,
-    );
-    if (dobErr) {
-      return NextResponse.json({ error: dobErr }, { status: 400 });
+    const dob = (data as { dateOfBirth?: string | null }).dateOfBirth;
+    if (dob !== undefined && dob !== null && String(dob).trim()) {
+      const dobErr = validateRequiredTravellerDateOfBirth(dob);
+      if (dobErr) {
+        return NextResponse.json({ error: dobErr }, { status: 400 });
+      }
     }
 
     const endpoint = `${API_BASE_URL_USER}/userTravellerDetails/create`;

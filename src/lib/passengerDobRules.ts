@@ -138,8 +138,8 @@ export function inferPaxTypeFromDob(
 }
 
 /**
- * Whether a saved family member belongs in a booking slot — based on DOB vs travel date only.
- * No API pax type; members without DOB are omitted from all family dropdowns.
+ * Whether a saved traveller fits a booking slot.
+ * When DOB is missing (e.g. domestic adult saves), the profile is eligible for Adult slots only.
  */
 export function travellerMatchesPaxType(
   member: unknown,
@@ -147,7 +147,7 @@ export function travellerMatchesPaxType(
   refLocal: Date,
 ): boolean {
   const dob = readTravellerDateOfBirthIso(member);
-  if (!dob) return false;
+  if (!dob) return slotType === "Adult";
   const inferred = inferPaxTypeFromDob(dob, refLocal);
   return inferred === slotType;
 }

@@ -35,17 +35,19 @@ import { formatUserDate } from "@/lib/dateLocale";
 import { useDateLocale } from "@/Components/DateLocaleProvider";
 import {
   applySavedTravellerToPassenger,
+  getTravellerIdFromMember,
   normalizeTravellerMember,
   readTravellerTitle,
   toDateOnlyIso,
 } from "@/lib/travellerFields";
+import { saveBookingPassengersAsTravellers } from "@/lib/agentTravellerSave";
+import PassengerTravellerTypeahead from "@/Components/PassengerTravellerTypeahead";
 import { openVivaAgent } from "@/Components/AgentAssist";
 import {
   clampDobToBounds,
   getDobInputBoundsIso,
   getPaxAgeValidationError,
   PAX_DOB_HINT,
-  travellerMatchesPaxType,
 } from "@/lib/passengerDobRules";
 import {
   flightDetailsIsSpiceJet,
@@ -412,8 +414,8 @@ export default function FlightBooking({
       list.push({
         type: "Adult",
         title: i === 0 ? leadTitle : "Mr",
-        firstName: i === 0 && user?.firstName ? user.firstName : "",
-        lastName: i === 0 && user?.lastName ? user.lastName : "",
+        firstName: "",
+        lastName: "",
         dob: defaultAdultDob,
         gender: i === 0 ? leadGender : "Male",
         index: i,
@@ -426,10 +428,11 @@ export default function FlightBooking({
         ffNumber: "",
         obMeal: null, obBaggage: null, obSeat: null,
         ibMeal: null, ibBaggage: null, ibSeat: null,
+        savedTravellerOrigin: null,
       });
     }
-    for (let i = 0; i < (passengers?.children || 0); i++) list.push({ type: "Child",  title: "Mstr", firstName: "", lastName: "", dob: "", gender: "Male", index: i, pan: "", passport: "", passportIssue: "", passportExpiry: "", passportIssueCountry: "IN", ffAirlineCode: "", ffNumber: "", obMeal: null, obBaggage: null, obSeat: null, ibMeal: null, ibBaggage: null, ibSeat: null });
-    for (let i = 0; i < (passengers?.infants  || 0); i++) list.push({ type: "Infant", title: "Mstr", firstName: "", lastName: "", dob: "", gender: "Male", index: i, pan: "", passport: "", passportIssue: "", passportExpiry: "", passportIssueCountry: "IN", ffAirlineCode: "", ffNumber: "", obMeal: null, obBaggage: null, obSeat: null, ibMeal: null, ibBaggage: null, ibSeat: null });
+    for (let i = 0; i < (passengers?.children || 0); i++) list.push({ type: "Child",  title: "Mstr", firstName: "", lastName: "", dob: "", gender: "Male", index: i, pan: "", passport: "", passportIssue: "", passportExpiry: "", passportIssueCountry: "IN", ffAirlineCode: "", ffNumber: "", obMeal: null, obBaggage: null, obSeat: null, ibMeal: null, ibBaggage: null, ibSeat: null, savedTravellerOrigin: null });
+    for (let i = 0; i < (passengers?.infants  || 0); i++) list.push({ type: "Infant", title: "Mstr", firstName: "", lastName: "", dob: "", gender: "Male", index: i, pan: "", passport: "", passportIssue: "", passportExpiry: "", passportIssueCountry: "IN", ffAirlineCode: "", ffNumber: "", obMeal: null, obBaggage: null, obSeat: null, ibMeal: null, ibBaggage: null, ibSeat: null, savedTravellerOrigin: null });
     setPassengerDetails(
       applyDefaultFreeAncillariesToPassengers(
         list,
@@ -704,6 +707,7 @@ export default function FlightBooking({
     }
     updated[idx].obMeal = null; updated[idx].obBaggage = null; updated[idx].obSeat = null;
     updated[idx].ibMeal = null; updated[idx].ibBaggage = null; updated[idx].ibSeat = null;
+    updated[idx].savedTravellerOrigin = getTravellerIdFromMember(member) || null;
     setPassengerDetails(
       applyDefaultFreeAncillariesToPassengers(
         updated,
@@ -995,6 +999,15 @@ export default function FlightBooking({
 
     if (holdTicketEnabledRef.current) {
       await loadHoldFeeFnRef.current?.();
+    }
+
+    if (user?.userId) {
+      await saveBookingPassengersAsTravellers({
+        passengers: passengerDetails,
+        userId: user.userId,
+        familyMembers,
+      });
+      await fetchFamilyMembers();
     }
 
     setStep(2);
@@ -1553,9 +1566,6 @@ export default function FlightBooking({
                   const dobRefDay = getPassengerAgeReferenceDate();
                   return passengerDetails.map((pax, idx) => {
                   const dobBounds = getDobInputBoundsIso(pax.type, dobRefDay);
-                  const familyForSlot = familyMembers.filter((member) =>
-                    travellerMatchesPaxType(member, pax.type, dobRefDay),
-                  );
                   return (
                   <div key={idx} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
                     <div className="flex items-center gap-2 mb-3">
@@ -1564,36 +1574,12 @@ export default function FlightBooking({
                       <span className="ml-auto text-[11px] px-2 py-0.5 rounded-full font-semibold text-white" style={{ background: OG }}>{pax.type}</span>
                     </div>
                     
-                    {user && familyForSlot.length > 0 && (
-                      <div className="mb-3">
-                        <label className="block text-[11px] font-semibold text-gray-500 mb-1">Select from Family</label>
-                        <select
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              const member = familyForSlot[parseInt(e.target.value, 10)];
-                              if (member) handleSelectFamilyMember(idx, member);
-                            }
-                          }}
-                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none"
-                          style={{ borderColor: OG }}
-                        >
-                          <option value="">-- Select or enter new --</option>
-                          {familyForSlot.map((member, mIdx) => (
-                            <option
-                              key={
-                                member.travellerId ??
-                                member.TravellerId ??
-                                `${member.firstName}-${member.lastName}-${mIdx}`
-                              }
-                              value={mIdx}
-                            >
-                              {member.firstName} {member.lastName}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                    {user?.userId && (
+                      <p className="mb-2 text-[11px] text-gray-500">
+                        Type a passenger name to search saved profiles from previous bookings.
+                      </p>
                     )}
-                    
+
                     <div className="grid grid-cols-3 gap-3">
                       <div>
                         <label className="block text-[11px] font-semibold text-gray-500 mb-1">Title *</label>
@@ -1637,19 +1623,33 @@ export default function FlightBooking({
                             </span>
                           </span>
                         </label>
-                        <input
-                          type="text"
-                          value={pax.firstName}
-                          placeholder="As on ID"
-                          maxLength={PASSENGER_FIRST_NAME_MAX}
-                          onChange={(e) => handlePassengerChange(idx, "firstName", e.target.value)}
-                          onKeyDown={(e) => {
-                            if (/[0-9]/.test(e.key)) e.preventDefault();
-                          }}
-                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none"
-                          onFocus={e => e.target.style.boxShadow = `0 0 0 2px ${OG}33`}
-                          onBlur={e => e.target.style.boxShadow = ""}
-                        />
+                        {user?.userId ? (
+                          <PassengerTravellerTypeahead
+                            userId={user.userId}
+                            value={pax.firstName}
+                            paxType={pax.type}
+                            travelRefDate={dobRefDay}
+                            accentColor={OG}
+                            placeholder="Type name to search saved pax"
+                            maxLength={PASSENGER_FIRST_NAME_MAX}
+                            onValueChange={(v) => handlePassengerChange(idx, "firstName", v)}
+                            onSelect={(member) => handleSelectFamilyMember(idx, member)}
+                          />
+                        ) : (
+                          <input
+                            type="text"
+                            value={pax.firstName}
+                            placeholder="As on ID"
+                            maxLength={PASSENGER_FIRST_NAME_MAX}
+                            onChange={(e) => handlePassengerChange(idx, "firstName", e.target.value)}
+                            onKeyDown={(e) => {
+                              if (/[0-9]/.test(e.key)) e.preventDefault();
+                            }}
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none"
+                            onFocus={e => e.target.style.boxShadow = `0 0 0 2px ${OG}33`}
+                            onBlur={e => e.target.style.boxShadow = ""}
+                          />
+                        )}
                       </div>
                       <div>
                         <label className="flex items-center gap-1 text-[11px] font-semibold text-gray-500 mb-1">
