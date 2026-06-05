@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createAgentUser, addAgentProfile } from "@/lib/agentSignup";
+import {
+  createAgentUser,
+  addAgentProfile,
+  uploadAgentSignupDocuments,
+} from "@/lib/agentSignup";
 import {
   validateAgentSignupPersonal,
   validateAgentSignupLocation,
@@ -10,6 +14,7 @@ import {
   validateAgentSignupBank,
   validateAgentSignupLogin,
   firstAgentSignupError,
+  maxEstablishmentDateIso,
   type AgentPersonalInfo,
   type AgentCompanyDetails,
   type AgentBankDetails,
@@ -137,7 +142,6 @@ export default function SignUpPage() {
     firstName: "",
     lastName: "",
     mobile: "",
-    email: "",
     addressProof: null,
   });
   const [company, setCompany] = useState<AgentCompanyDetails>({
@@ -166,15 +170,6 @@ export default function SignUpPage() {
     password: "",
     confirmPassword: "",
   });
-  /** False until the user edits User Name on step 4 — then we stop syncing from email. */
-  const [userNameEdited, setUserNameEdited] = useState(false);
-
-  useEffect(() => {
-    if (step !== 3 || userNameEdited) return;
-    const email = personal.email.trim();
-    if (email) setLogin((p) => ({ ...p, userName: email }));
-  }, [step, personal.email, userNameEdited]);
-
   const clearFieldError = (name: string) => {
     setFieldErrors((prev) => {
       if (!prev[name]) return prev;
@@ -189,11 +184,7 @@ export default function SignUpPage() {
     if (e.target.type === "file") {
       setPersonal((p) => ({ ...p, [e.target.name]: (e.target as HTMLInputElement).files?.[0] ?? null }));
     } else {
-      const value = e.target.value;
-      setPersonal((p) => ({ ...p, [e.target.name]: value }));
-      if (e.target.name === "email" && !userNameEdited) {
-        setLogin((p) => ({ ...p, userName: value.trim() }));
-      }
+      setPersonal((p) => ({ ...p, [e.target.name]: e.target.value }));
     }
   };
 
@@ -217,9 +208,7 @@ export default function SignUpPage() {
 
   const handleLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
     clearFieldError(e.target.name);
-    const value = e.target.value;
-    if (e.target.name === "userName") setUserNameEdited(true);
-    setLogin((p) => ({ ...p, [e.target.name]: value }));
+    setLogin((p) => ({ ...p, [e.target.name]: e.target.value }));
   };
 
   const validateStep = (stepIndex: number): boolean => {
@@ -280,27 +269,57 @@ export default function SignUpPage() {
           c.cityName === location.cityKey,
       );
       const cityOid = cityRow?.cityCode?.trim() || location.getCityName();
+      const cityNumeric = parseInt(String(cityOid).replace(/\D/g, ""), 10);
+      const annualAmount = parseFloat(company.annualTransaction.replace(/,/g, ""));
+      const employeeCount = parseInt(company.noOfEmployee, 10);
 
+      if (!personal.addressProof || !company.panFile || !company.gstFile) {
+        setError("Address proof, PAN, and GST documents are required.");
+        setLoading(false);
+        return;
+      }
+
+      const loginId = login.userName.trim();
       const userRes = await createAgentUser({
-        email: personal.email.trim(),
-        userName: login.userName.trim(),
+        email: loginId,
+        userName: loginId,
         password: login.password,
         firstName: personal.firstName.trim(),
         lastName: personal.lastName.trim(),
         countryCode: dialCode,
         phone: personal.mobile.replace(/[\s\-\(\)]/g, ""),
       });
+
+      const docs = await uploadAgentSignupDocuments(userRes.userId, {
+        addressProof: personal.addressProof,
+        panFile: company.panFile,
+        gstFile: company.gstFile,
+      });
+
       await addAgentProfile({
         userId: userRes.userId,
         address: company.address.trim(),
         countryName: dialCode,
         state: stateOid,
-        city: cityOid,
+        city: Number.isFinite(cityNumeric) ? cityNumeric : 0,
+        cityName: location.getCityName(),
         pinCode: company.pinCode.trim(),
         companyName: company.companyName.trim(),
+        corporateId: company.corporateId.trim(),
+        salesPersonName: company.salesPerson.trim(),
         panNumber: company.panNumber.trim().toUpperCase(),
+        panCardHolderName: company.panCardHolderName.trim(),
         gstNumber: company.iata.trim(),
         officePhone: company.officePhone.replace(/[\s\-\(\)]/g, ""),
+        establishmentDate: company.establishmentDate,
+        annualTransactionAmount: Number.isFinite(annualAmount) ? annualAmount : 0,
+        noOfEmployees: Number.isFinite(employeeCount) ? employeeCount : 0,
+        bankAccountNumber: bank.accountNumber.trim(),
+        bankIfsc: bank.ifscCode.trim().toUpperCase(),
+        bankAccountHolderName: bank.accountHolderName.trim(),
+        addressProof: docs.addressProof,
+        panFilePath: docs.panFilePath,
+        gstFilePath: docs.gstFilePath,
       });
       router.push("/?registered=1");
     } catch (err: unknown) {
@@ -379,15 +398,6 @@ export default function SignUpPage() {
               placeholder="10-digit mobile"
               required
               error={fieldErrors.mobile}
-            />
-            <Field
-              label="Email"
-              name="email"
-              type="email"
-              value={personal.email}
-              onChange={handlePersonal}
-              required
-              error={fieldErrors.email}
             />
             <AgentSignupLocationFields
               location={location}
@@ -504,6 +514,7 @@ export default function SignUpPage() {
               type="date"
               value={company.establishmentDate}
               onChange={handleCompany}
+              max={maxEstablishmentDateIso()}
               required
               error={fieldErrors.establishmentDate}
             />
@@ -593,24 +604,15 @@ export default function SignUpPage() {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4" noValidate>
             <div className="sm:col-span-2">
               <Field
-                label="User Name"
+                label="Username"
                 name="userName"
                 value={login.userName}
                 onChange={handleLogin}
-                placeholder={
-                  personal.email.trim()
-                    ? `Default: ${personal.email.trim()}`
-                    : "Prefilled from your email"
-                }
+                placeholder="Email address or username (used to sign in)"
                 required
                 error={fieldErrors.userName}
                 maxLength={100}
               />
-              {!userNameEdited && personal.email.trim() && (
-                <p className="mt-1 text-xs text-orange-200/80">
-                  Pre-filled from your email — edit if you prefer a different login name.
-                </p>
-              )}
             </div>
             <Field
               label="Password"

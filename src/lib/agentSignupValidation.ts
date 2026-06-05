@@ -20,7 +20,6 @@ export type AgentPersonalInfo = {
   firstName: string;
   lastName: string;
   mobile: string;
-  email: string;
   addressProof: File | null;
 };
 
@@ -90,13 +89,30 @@ function validatePinCode(pinCode: string, countryIso: string): string | null {
   return validateOptionalSignUpPincode(pinCode) ?? null;
 }
 
+/** Today's date (YYYY-MM-DD, local) for establishment date input max attribute. */
+export function maxEstablishmentDateIso(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function parseIsoDateLocal(value: string): Date | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
+  if (!m) return null;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  if (Number.isNaN(d.getTime())) return null;
+  return d;
+}
+
 function validateEstablishmentDate(value: string): string | null {
   if (!value?.trim()) return "Establishment date is required";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return "Enter a valid establishment date";
+  const d = parseIsoDateLocal(value);
+  if (!d) return "Enter a valid establishment date";
   const today = new Date();
-  today.setHours(23, 59, 59, 999);
-  if (d > today) return "Establishment date cannot be in the future";
+  today.setHours(0, 0, 0, 0);
+  if (d.getTime() > today.getTime()) return "Establishment date cannot be in the future";
   return null;
 }
 
@@ -120,7 +136,7 @@ function validateEmployeeCount(value: string): string | null {
 function validateUserName(userName: string): string | null {
   if (!userName?.trim()) return "User name is required";
   const t = userName.trim();
-  // Default signup uses email as login id (same as B2C AuthModal)
+  // Username may be an email or alphanumeric id (same value sent as email + userName on user/create)
   if (t.includes("@")) return validateEmail(t);
   if (!USERNAME_RE.test(t)) {
     return "User name must be 3–30 characters (letters, numbers, underscore) or a valid email";
@@ -176,7 +192,6 @@ export function validateAgentSignupPersonal(p: AgentPersonalInfo): Record<string
   set("firstName", validateName(p.firstName, "First name"));
   set("lastName", validateName(p.lastName, "Last name"));
   set("mobile", validatePhone(p.mobile));
-  set("email", validateEmail(p.email));
   set("addressProof", validateRequiredFile(p.addressProof, "Address proof"));
 
   return errors;

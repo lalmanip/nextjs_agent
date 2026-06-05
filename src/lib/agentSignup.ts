@@ -3,6 +3,8 @@
 // token injected (same path the B2C AuthModal uses), rather than calling the
 // backend directly from the browser.
 
+export type AgentDocumentKind = "ADDRESS_PROOF" | "PAN" | "GST";
+
 async function postAuth(action: string, payload: Record<string, unknown>) {
   console.log(`[agentSignup] REQUEST action="${action}" ->`, "/api/auth", payload);
   const res = await fetch("/api/auth", {
@@ -30,6 +32,45 @@ async function postAuth(action: string, payload: Record<string, unknown>) {
     );
   }
   return data;
+}
+
+function extractStoredPath(data: any): string {
+  const path =
+    data?.response?.storedPath ??
+    data?.storedPath ??
+    data?.response?.stored_path;
+  if (!path || typeof path !== "string") {
+    throw new Error("Upload succeeded but no file path was returned.");
+  }
+  return path;
+}
+
+/** Upload one KYC document after user account exists. */
+export async function uploadAgentDocument(
+  userId: string | number,
+  documentType: AgentDocumentKind,
+  file: File,
+): Promise<string> {
+  const form = new FormData();
+  form.append("userId", String(userId));
+  form.append("documentType", documentType);
+  form.append("file", file, file.name);
+
+  const res = await fetch("/api/agent/documents/upload", {
+    method: "POST",
+    body: form,
+  });
+  const text = await res.text();
+  let data: any = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    throw new Error(`Unexpected upload response (${res.status}).`);
+  }
+  if (!res.ok || data?.status === "failed") {
+    throw new Error(data?.message || data?.error || `Document upload failed (${res.status}).`);
+  }
+  return extractStoredPath(data);
 }
 
 export async function createAgentUser(payload: {
@@ -60,19 +101,50 @@ export async function addAgentProfile(payload: {
   address: string;
   countryName: number;
   state: string;
-  city: string;
+  city: number;
+  cityName: string;
   pinCode: string;
   companyName: string;
+  corporateId: string;
+  salesPersonName: string;
   panNumber: string;
+  panCardHolderName: string;
   gstNumber: string;
   officePhone: string;
+  establishmentDate: string;
+  annualTransactionAmount: number;
+  noOfEmployees: number;
+  bankAccountNumber: string;
+  bankIfsc: string;
+  bankAccountHolderName: string;
+  addressProof: string;
+  panFilePath: string;
+  gstFilePath: string;
 }) {
   return postAuth("agent-add", {
     userType: 3,
-    addressProof: null,
-    panFilePath: null,
-    gstFilePath: null,
     emailActivation: false,
     ...payload,
   });
+}
+
+export type AgentUploadedDocuments = {
+  addressProof: string;
+  panFilePath: string;
+  gstFilePath: string;
+};
+
+/** Upload address proof, PAN, and GST files for a new agent user. */
+export async function uploadAgentSignupDocuments(
+  userId: string | number,
+  files: {
+    addressProof: File;
+    panFile: File;
+    gstFile: File;
+  },
+): Promise<AgentUploadedDocuments> {
+  const addressProof = await uploadAgentDocument(userId, "ADDRESS_PROOF", files.addressProof);
+  const panFilePath = await uploadAgentDocument(userId, "PAN", files.panFile);
+  const gstFilePath = await uploadAgentDocument(userId, "GST", files.gstFile);
+  return { addressProof, panFilePath, gstFilePath };
 }
