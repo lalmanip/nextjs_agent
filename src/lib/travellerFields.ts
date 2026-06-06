@@ -172,15 +172,46 @@ export function withPassportIssuingCountryForApi<T extends Record<string, unknow
   return { ...body, passportIssuingCountry: country };
 }
 
-/** Ensures normalized `dateOfBirth`, `title`, and issuing country when the API uses alternate keys. */
+const EMAIL_KEYS = ["email", "Email"];
+const PHONE_KEYS = ["phoneNumber", "PhoneNumber", "phone", "Phone", "mobile", "Mobile"];
+
+/** Read email from saved traveller / search API rows. */
+export function readTravellerEmail(member: unknown): string {
+  if (!member || typeof member !== "object") return "";
+  for (const src of travellerRecordSources(member as Record<string, unknown>)) {
+    for (const key of EMAIL_KEYS) {
+      const raw = String(src[key] ?? "").trim();
+      if (raw) return raw;
+    }
+  }
+  return "";
+}
+
+/** Read phone digits for lead-contact mobile input (last 10 digits). */
+export function readTravellerPhoneLocal(member: unknown): string {
+  if (!member || typeof member !== "object") return "";
+  for (const src of travellerRecordSources(member as Record<string, unknown>)) {
+    for (const key of PHONE_KEYS) {
+      const raw = String(src[key] ?? "").trim();
+      if (raw) return raw.replace(/\D/g, "").slice(-10);
+    }
+  }
+  return "";
+}
+
+/** Ensures normalized `dateOfBirth`, `title`, contact fields, and issuing country when the API uses alternate keys. */
 export function normalizeTravellerMember<T extends Record<string, unknown>>(member: T): T {
   const dateOfBirth = readTravellerDateOfBirthIso(member);
   const title = readTravellerTitle(member, String(member.passengerType ?? member.PassengerType ?? "Adult"));
   const issuing = readPassportIssuingCountry(member);
+  const email = readTravellerEmail(member);
+  const phoneNumber = readTravellerPhoneLocal(member);
   return {
     ...member,
     ...(dateOfBirth ? { dateOfBirth } : {}),
     ...(title ? { title } : {}),
+    ...(email ? { email } : {}),
+    ...(phoneNumber ? { phoneNumber } : {}),
     ...(issuing
       ? {
           passportIssuingCountry: issuing,
@@ -291,9 +322,11 @@ export function formatTravellerDisplayName(member: Record<string, unknown>): str
 }
 
 export function formatTravellerTypeaheadSecondary(member: Record<string, unknown>): string {
-  const phone = String(member.phoneNumber ?? member.PhoneNumber ?? "").trim();
+  const email = readTravellerEmail(member);
+  const phone = readTravellerPhoneLocal(member);
   const lead = String(member.leadPassengerName ?? member.LeadPassengerName ?? "").trim();
   const parts: string[] = [];
+  if (email) parts.push(email);
   if (phone) parts.push(phone);
   if (lead) parts.push(`Lead: ${lead}`);
   return parts.join(" · ");

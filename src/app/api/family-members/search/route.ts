@@ -3,37 +3,6 @@ import { API_BASE_URL_USER, API_KEY } from "@/lib/config";
 import { getServerDomainTokenCached, refreshServerDomainTokenCached } from "@/lib/serverTokenCache";
 import { normalizeTravellerMember } from "@/lib/travellerFields";
 
-function travellerNameMatchesQuery(member: Record<string, unknown>, query: string): boolean {
-  const q = query.trim().toLowerCase();
-  if (!q) return false;
-  const fn = String(member.firstName ?? member.FirstName ?? "").trim().toLowerCase();
-  const ln = String(member.lastName ?? member.LastName ?? "").trim().toLowerCase();
-  const full = `${fn} ${ln}`.trim();
-  const lead = String(member.leadPassengerName ?? member.LeadPassengerName ?? "").trim().toLowerCase();
-  return (
-    fn.startsWith(q) ||
-    ln.startsWith(q) ||
-    full.includes(q) ||
-    lead.includes(q)
-  );
-}
-
-async function fetchSavedPaxList(
-  userId: string,
-  headers: Record<string, string>,
-): Promise<Record<string, unknown>[]> {
-  const endpoint = `${API_BASE_URL_USER}/userTravellerDetails/getSavedPaxById/${encodeURIComponent(userId)}`;
-  const response = await fetch(endpoint, { method: "GET", headers });
-  const text = await response.text().catch(() => "");
-  if (!response.ok) return [];
-  try {
-    const json = text ? JSON.parse(text) : null;
-    return Array.isArray(json?.response) ? json.response : [];
-  } catch {
-    return [];
-  }
-}
-
 const API_HEADERS = {
   "Content-Type": "application/json",
   "X-API-KEY": API_KEY,
@@ -67,11 +36,9 @@ export async function GET(request: NextRequest) {
     const headers = { ...API_HEADERS, Authorization: `Bearer ${token}` };
 
     const doCall = async (h: Record<string, string>) => {
-      const start = Date.now();
       const response = await fetch(endpoint, { method: "GET", headers: h });
-      const durationMs = Date.now() - start;
       const responseText = await response.text().catch(() => "");
-      return { response, durationMs, responseText };
+      return { response, responseText };
     };
 
     let { response, responseText } = await doCall(headers);
@@ -88,30 +55,24 @@ export async function GET(request: NextRequest) {
       ({ response, responseText } = await doCall(retryHeaders));
     }
 
-    let result = responseText ? JSON.parse(responseText) : null;
-    let rows: Record<string, unknown>[] = Array.isArray(result?.response) ? result.response : [];
-
-    const searchUnavailable =
-      !response.ok ||
-      result?.status === "failed" ||
-      (response.status === 404);
-
-    if (searchUnavailable || rows.length === 0) {
-      const allSaved = await fetchSavedPaxList(userId, headers);
-      const filtered = allSaved.filter((row) => travellerNameMatchesQuery(row, q));
-      if (filtered.length > 0) {
-        rows = filtered;
-        result = { status: "success", response: rows };
-      }
+    let result: { status?: string; response?: Record<string, unknown>[]; message?: string } | null = null;
+    try {
+      result = responseText ? JSON.parse(responseText) : null;
+    } catch {
+      result = { status: "failed", message: responseText };
     }
 
-    if (rows.length > 0) {
-      result = { ...(result ?? { status: "success" }), response: rows };
-      result.response = rows.map((row: Record<string, unknown>) => normalizeTravellerMember(row));
+    if (!response.ok || result?.status === "failed") {
+      return NextResponse.json(
+        result ?? { status: "failed", message: "Search failed" },
+        { status: response.ok ? 200 : response.status },
+      );
     }
 
-    return NextResponse.json(result ?? { status: "success", response: [] }, {
-      status: searchUnavailable && rows.length === 0 ? (response.ok ? 200 : response.status) : 200,
+    const rows: Record<string, unknown>[] = Array.isArray(result?.response) ? result.response : [];
+    return NextResponse.json({
+      ...(result ?? { status: "success" }),
+      response: rows.map((row) => normalizeTravellerMember(row)),
     });
   } catch (error) {
     console.error("Search saved travellers error:", error);

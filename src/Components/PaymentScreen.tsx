@@ -42,6 +42,8 @@ interface PaymentScreenProps {
   cellCountryCode: string;
   discount: number;
   promoCode: string;
+  markupAmount?: number;
+  markupRuleId?: number | null;
   leadPassengerAddress?: LeadPassengerAddress;
   tripType: string;
   timeRemaining?: number;
@@ -62,6 +64,7 @@ export default function PaymentScreen({
   cellCountryCode,
   discount,
   promoCode,
+  markupAmount = 0,
   leadPassengerAddress,
   tripType,
   timeRemaining = 900,
@@ -253,7 +256,7 @@ export default function PaymentScreen({
   const addOnSeatCost    = passengerDetails.reduce((sum, p) => sum + (p.obSeat?.Price || 0)    + (p.ibSeat?.Price || 0), 0);
   const addOnTotal       = addOnBaggageCost + addOnMealCost + addOnSeatCost;
   // Preserve paise precision (e.g. ₹10,813.79) like the booking page; avoid float noise.
-  const totalAmount = Math.round((baseTotal + addOnTotal - discount) * 100) / 100;
+  const totalAmount = Math.round((baseTotal + addOnTotal + markupAmount - discount) * 100) / 100;
 
   useEffect(() => {
     if (!holdBooking) {
@@ -446,6 +449,7 @@ export default function PaymentScreen({
           cellCountryCode,
           discount,
           promoCode,
+          markupAmount,
           leadPassengerAddress,
           tripType,
           domainToken: tokenForPaymentApis,
@@ -1012,6 +1016,12 @@ export default function PaymentScreen({
                 <div className="flex justify-between text-gray-700">
                   <span>💺 Seats</span>
                   <span>₹{addOnSeatCost.toLocaleString()}</span>
+                </div>
+              )}
+              {markupAmount > 0 && (
+                <div className="flex justify-between text-gray-700">
+                  <span>Agent Markup</span>
+                  <span>₹{markupAmount.toLocaleString()}</span>
                 </div>
               )}
               {!holdBooking && discount > 0 && (

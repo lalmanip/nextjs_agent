@@ -340,6 +340,8 @@ export default function PaymentPage() {
             cellCountryCode={paymentData.cellCountryCode || "+91"}
             discount={paymentData.discount}
             promoCode={paymentData.promoCode}
+            markupAmount={paymentData.markupAmount ?? 0}
+            markupRuleId={paymentData.markupRuleId}
             leadPassengerAddress={paymentData.leadPassengerAddress}
             tripType={tripType}
             timeRemaining={bookingTimeRemaining}

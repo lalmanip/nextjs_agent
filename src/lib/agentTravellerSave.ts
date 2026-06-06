@@ -46,6 +46,8 @@ export function bookingPaxToTravellerCreatePayload(
   userId: number | string,
   options: {
     leadPassengerName: string;
+    /** Lead adult contact — saved only on the first adult row. */
+    leadContact?: { email?: string; phoneNumber?: string };
   },
 ) {
   const exp = passportExpiryParts(pax.passportExpiry);
@@ -73,6 +75,14 @@ export function bookingPaxToTravellerCreatePayload(
 
   if (enteredDob) {
     payload.dateOfBirth = enteredDob;
+  }
+
+  const isLeadAdult = pax.type === "Adult" && Number(pax.index ?? 0) === 0;
+  if (isLeadAdult && options.leadContact) {
+    const email = String(options.leadContact.email ?? "").trim();
+    const phone = String(options.leadContact.phoneNumber ?? "").trim();
+    if (email) payload.email = email;
+    if (phone) payload.phoneNumber = phone;
   }
 
   return withPassportIssuingCountryForApi(payload);
@@ -104,8 +114,9 @@ export async function saveBookingPassengersAsTravellers(options: {
   passengers: BookingPassengerRow[];
   userId: number | string;
   familyMembers: Record<string, unknown>[];
+  leadContact?: { email?: string; phoneNumber?: string };
 }): Promise<void> {
-  const { passengers, userId, familyMembers } = options;
+  const { passengers, userId, familyMembers, leadContact } = options;
 
   const leadName = getLeadPassengerDisplayName(passengers);
 
@@ -117,6 +128,7 @@ export async function saveBookingPassengersAsTravellers(options: {
 
     const payload = bookingPaxToTravellerCreatePayload(pax, userId, {
       leadPassengerName: leadName,
+      leadContact,
     });
 
     try {

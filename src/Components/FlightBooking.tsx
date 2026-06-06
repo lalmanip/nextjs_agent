@@ -36,8 +36,9 @@ import { useDateLocale } from "@/Components/DateLocaleProvider";
 import {
   applySavedTravellerToPassenger,
   getTravellerIdFromMember,
-  normalizeTravellerMember,
   readTravellerTitle,
+  readTravellerEmail,
+  readTravellerPhoneLocal,
   toDateOnlyIso,
 } from "@/lib/travellerFields";
 import { saveBookingPassengersAsTravellers } from "@/lib/agentTravellerSave";
@@ -73,6 +74,7 @@ import {
   couponErrorMessage,
   getBookingChannel,
 } from "@/lib/couponClient";
+import { getLeadAirlineCode, quoteMarkup } from "@/lib/markupClient";
 
 const OG = "#FC6603";
 const HOLD_BLUE = "#1e40af";
@@ -98,7 +100,7 @@ interface FlightBookingProps {
   ) => void;
 }
 
-const STEPS = ["Contact Info", "Passengers", "Review & Pay"];
+const STEPS = ["Passengers", "Review & Pay"];
 const SESSION_DURATION = 15 * 60; // 15 minutes in seconds
 
 export default function FlightBooking({
@@ -118,8 +120,8 @@ export default function FlightBooking({
     : `linear-gradient(90deg, ${OG}, #ff8c38)`;
 
   const [step, setStep]                   = useState(0); // 0=contact, 1=passengers, 2=verify
-  const [guestEmail, setGuestEmail]       = useState(user?.email || "");
-  const [guestMobile, setGuestMobile]     = useState(user?.phone ? String(user.phone) : "");
+  const [guestEmail, setGuestEmail]       = useState("");
+  const [guestMobile, setGuestMobile]     = useState("");
   const [cellCountryCode, setCellCountryCode] = useState("+91");
   const [dialCodeOpen, setDialCodeOpen] = useState(false);
   const loadHoldFeeFnRef = useRef<null | (() => Promise<number | null>)>(null);
@@ -131,11 +133,11 @@ export default function FlightBooking({
   const [promoApplied, setPromoApplied]   = useState(false);
   const [promoApplying, setPromoApplying]   = useState(false);
   const promoFareSnapshotRef = useRef<number | null>(null);
+  const [markupAmount, setMarkupAmount] = useState(0);
+  const [markupRuleId, setMarkupRuleId] = useState<number | null>(null);
   const [passengerDetails, setPassengerDetails] = useState<any[]>([]);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [editingIdx, setEditingIdx]       = useState<number | null>(null);
-  const [familyMembers, setFamilyMembers] = useState<any[]>([]);
-  const [loadingFamily, setLoadingFamily] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(initialTimeRemaining || SESSION_DURATION);
   const [sessionExpired, setSessionExpired] = useState(false);
   const [showAddOns, setShowAddOns] = useState(false);
@@ -187,7 +189,7 @@ export default function FlightBooking({
   }, [selectedFlight, bookingItineraryDetails]);
 
   useEffect(() => {
-    if (step < 1 || passengerDetails.length === 0) return;
+    if (step !== 0 || passengerDetails.length === 0) return;
     setPassengerDetails((prev) =>
       applyDefaultFreeAncillariesToPassengers(
         prev,
@@ -364,7 +366,12 @@ export default function FlightBooking({
   const addOnMealCost    = passengerDetails.reduce((sum, p) => sum + (p.obMeal?.Price || 0)    + (p.ibMeal?.Price || 0), 0);
   const addOnSeatCost    = passengerDetails.reduce((sum, p) => sum + (p.obSeat?.Price || 0)    + (p.ibSeat?.Price || 0), 0);
   const addOnTotal       = addOnBaggageCost + addOnMealCost + addOnSeatCost;
-  const grandTotal       = totalFare + addOnTotal - discount;
+  const markupTripType = flightIsInternational(displayFlightDetails) ? "INTERNATIONAL" : "DOMESTIC";
+  const leadAirlineCode = useMemo(
+    () => getLeadAirlineCode(displayFlightDetails),
+    [displayFlightDetails],
+  );
+  const grandTotal       = totalFare + addOnTotal + markupAmount - discount;
 
   console.log('=== FLIGHT BOOKING DEBUG ===');
   console.log('tripType:', tripType);
@@ -397,119 +404,6 @@ export default function FlightBooking({
     return `${Math.floor(ms / 3600000)}h ${Math.floor((ms % 3600000) / 60000)}m`;
   };
 
-  // ── Step 0: Contact Info ──
-  const handleContactNext = async () => {
-    if (!guestEmail.trim() || !guestMobile.trim()) {
-      alert("Please enter email and mobile number"); return;
-    }
-    if (isFlightHoldFeatureEnabled()) {
-      await loadHoldFeeFnRef.current?.();
-    }
-
-    const leadTitle = readTravellerTitle(user, "Adult") || "Mr";
-    const defaultAdultDob = getDefaultAdultDateOfBirth();
-    const leadGender = getFixedGenderForTitle(leadTitle) || "Male";
-    const list: any[] = [];
-    for (let i = 0; i < (passengers?.adults  || 1); i++) {
-      list.push({
-        type: "Adult",
-        title: i === 0 ? leadTitle : "Mr",
-        firstName: "",
-        lastName: "",
-        dob: defaultAdultDob,
-        gender: i === 0 ? leadGender : "Male",
-        index: i,
-        pan: "",
-        passport: "",
-        passportIssue: "",
-        passportExpiry: "",
-        passportIssueCountry: "IN",
-        ffAirlineCode: "",
-        ffNumber: "",
-        obMeal: null, obBaggage: null, obSeat: null,
-        ibMeal: null, ibBaggage: null, ibSeat: null,
-        savedTravellerOrigin: null,
-      });
-    }
-    for (let i = 0; i < (passengers?.children || 0); i++) list.push({ type: "Child",  title: "Mstr", firstName: "", lastName: "", dob: "", gender: "Male", index: i, pan: "", passport: "", passportIssue: "", passportExpiry: "", passportIssueCountry: "IN", ffAirlineCode: "", ffNumber: "", obMeal: null, obBaggage: null, obSeat: null, ibMeal: null, ibBaggage: null, ibSeat: null, savedTravellerOrigin: null });
-    for (let i = 0; i < (passengers?.infants  || 0); i++) list.push({ type: "Infant", title: "Mstr", firstName: "", lastName: "", dob: "", gender: "Male", index: i, pan: "", passport: "", passportIssue: "", passportExpiry: "", passportIssueCountry: "IN", ffAirlineCode: "", ffNumber: "", obMeal: null, obBaggage: null, obSeat: null, ibMeal: null, ibBaggage: null, ibSeat: null, savedTravellerOrigin: null });
-    setPassengerDetails(
-      applyDefaultFreeAncillariesToPassengers(
-        list,
-        selectedFlight,
-        bookingItineraryDetails,
-        fareQuoteAncillaryOptions,
-      ),
-    );
-    if (user?.userId) fetchFamilyMembers();
-    // Auto-open ancillary panel if airline requires meal or seat selection
-    if (obMealRequired || obSeatRequired || ibMealRequired || ibSeatRequired) {
-      setShowAddOns(true);
-    }
-    // PAN / passport / GST from update-fare-quote (OB + return leg when present; flags may live on FareQuoteDetails or UpdateFareQuote)
-    const readFq = (fq: any) => {
-      if (!fq || typeof fq !== "object") {
-        return {
-          panBook: false,
-          panTicket: false,
-          passportBook: false,
-          passportTicket: false,
-          gstMandatory: false,
-        };
-      }
-      const uq = fq.UpdateFareQuote ?? fq.updateFareQuote ?? fq;
-      const fd = uq?.FareQuoteDetails ?? uq?.fareQuoteDetails ?? {};
-      return {
-        panBook: !!(fd.IsPanRequiredAtBook ?? fd.isPanRequiredAtBook ?? uq?.IsPanRequiredAtBook ?? uq?.isPanRequiredAtBook),
-        panTicket: !!(fd.IsPanRequiredAtTicket ?? fd.isPanRequiredAtTicket ?? uq?.IsPanRequiredAtTicket ?? uq?.isPanRequiredAtTicket),
-        passportBook: !!(fd.IsPassportRequiredAtBook ?? fd.isPassportRequiredAtBook ?? uq?.IsPassportRequiredAtBook ?? uq?.isPassportRequiredAtBook),
-        passportTicket: !!(fd.IsPassportRequiredAtTicket ?? fd.isPassportRequiredAtTicket ?? uq?.IsPassportRequiredAtTicket ?? uq?.isPassportRequiredAtTicket),
-        gstMandatory: !!(fd.IsGSTMandatory ?? fd.isGSTMandatory ?? uq?.IsGSTMandatory ?? uq?.isGSTMandatory),
-      };
-    };
-    const obFq = selectedFlight?.fareQuoteData;
-    const ibFq = selectedFlight?.returnFareQuoteData;
-    const ob = readFq(obFq);
-    const ib = readFq(ibFq);
-    const panReqBook = ob.panBook || ib.panBook;
-    const panReqTicket = ob.panTicket || ib.panTicket;
-    const passportReqBook = ob.passportBook || ib.passportBook;
-    const passportReqTicket = ob.passportTicket || ib.passportTicket;
-    const intlItinerary = flightIsInternational(displayFlightDetails ?? flightDetails);
-    const passportFullDetailAtBook = mergePassportFullDetailRequiredAtBook(
-      obFq,
-      ibFq,
-      intlItinerary,
-    );
-    setIsPanRequiredAtBook(panReqBook);
-    setIsPanRequiredAtTicket(panReqTicket);
-    setIsPassportRequiredAtBook(passportReqBook);
-    setIsPassportRequiredAtTicket(passportReqTicket);
-    setIsPassportFullDetailRequiredAtBook(passportFullDetailAtBook);
-    const gstMandatory = ob.gstMandatory || ib.gstMandatory;
-    setIsGSTMandatory(gstMandatory);
-    // If GST is mandatory, auto-enable it
-    if (gstMandatory) {
-      setGstEnabled(true);
-    }
-    setStep(1);
-  };
-
-  const fetchFamilyMembers = async () => {
-    setLoadingFamily(true);
-    try {
-      const response = await fetch(`/api/family-members?userId=${user.userId}`);
-      if (response.ok) {
-        const data = await response.json();
-        const rows = Array.isArray(data.response) ? data.response : [];
-        setFamilyMembers(rows.map((m: Record<string, unknown>) => normalizeTravellerMember(m)));
-      }
-    } catch (error) {
-      console.error('Fetch Family Members Error:', error);
-    }
-    setLoadingFamily(false);
-  };
-
   const showPassportFieldsForBooking = () =>
     isPassportRequiredAtBook ||
     isPassportRequiredAtTicket ||
@@ -528,62 +422,6 @@ export default function FlightBooking({
     passportExpiry: "",
     passportIssueCountry: "IN",
   });
-
-  const passengerNameMatchKey = passengerDetails
-    .map(
-      (p) =>
-        `${String(p.firstName || "").trim().toLowerCase()}|${String(p.lastName || "").trim().toLowerCase()}`,
-    )
-    .join(";");
-
-  // When family list loads after names are filled, sync title/DOB (not passport on domestic).
-  useEffect(() => {
-    if (!familyMembers.length || passengerDetails.length === 0) return;
-    const includePassport = showPassportFieldsForBooking();
-    setPassengerDetails((prev) => {
-      let changed = false;
-      const next = prev.map((pax) => {
-        const fn = String(pax.firstName || "").trim().toLowerCase();
-        const ln = String(pax.lastName || "").trim().toLowerCase();
-        if (!fn && !ln) return pax;
-        const member = familyMembers.find((m) => {
-          const mfn = String(m.firstName ?? m.FirstName ?? "").trim().toLowerCase();
-          const mln = String(m.lastName ?? m.LastName ?? "").trim().toLowerCase();
-          return mfn === fn && mln === ln;
-        });
-        if (!member) return pax;
-        let merged = applySavedTravellerToPassenger(pax, member, {
-          sanitizeFirstName: (raw) => sanitizePassengerFirstName(raw, passengerNameRulesCtx),
-          sanitizeLastName: (raw) => sanitizePassengerLastName(raw, passengerNameRulesCtx),
-          includePassport,
-        });
-        if (!includePassport) {
-          merged = clearPassportFields(merged);
-        }
-        if (merged.type === "Adult") {
-          merged.dob = getDefaultAdultDateOfBirth();
-        } else {
-          const refDay = getPassengerAgeReferenceDate();
-          if (merged.dob) {
-            merged.dob = clampDobToBounds(merged.dob, merged.type, refDay);
-          }
-        }
-        if (JSON.stringify(merged) === JSON.stringify(pax)) return pax;
-        changed = true;
-        return merged;
-      });
-      return changed ? next : prev;
-    });
-  }, [
-    familyMembers,
-    passengerDetails.length,
-    passengerNameMatchKey,
-    isPassportRequiredAtBook,
-    isPassportRequiredAtTicket,
-    isPassportFullDetailRequiredAtBook,
-    displayFlightDetails,
-    passengerNameRulesCtx,
-  ]);
 
   // Strip profile passport data whenever this booking does not require passport.
   useEffect(() => {
@@ -708,6 +546,12 @@ export default function FlightBooking({
     updated[idx].obMeal = null; updated[idx].obBaggage = null; updated[idx].obSeat = null;
     updated[idx].ibMeal = null; updated[idx].ibBaggage = null; updated[idx].ibSeat = null;
     updated[idx].savedTravellerOrigin = getTravellerIdFromMember(member) || null;
+    if (idx === 0 && updated[idx].type === "Adult") {
+      const email = readTravellerEmail(member);
+      const phone = readTravellerPhoneLocal(member);
+      if (email) setGuestEmail(email);
+      if (phone) setGuestMobile(phone);
+    }
     setPassengerDetails(
       applyDefaultFreeAncillariesToPassengers(
         updated,
@@ -765,6 +609,19 @@ export default function FlightBooking({
   };
 
   const handlePassengerNext = async () => {
+    if (!guestEmail.trim()) {
+      alert("Please enter the lead passenger email address");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail.trim())) {
+      alert("Please enter a valid email address for the lead passenger");
+      return;
+    }
+    if (!guestMobile.trim()) {
+      alert("Please enter the lead passenger mobile number");
+      return;
+    }
+
     if (!showPassportFieldsForBooking()) {
       const needsClear = passengerDetails.some((p) => passengerHasSubstantivePassportData(p));
       if (needsClear) {
@@ -1005,12 +862,15 @@ export default function FlightBooking({
       await saveBookingPassengersAsTravellers({
         passengers: passengerDetails,
         userId: user.userId,
-        familyMembers,
+        familyMembers: [],
+        leadContact: {
+          email: guestEmail.trim(),
+          phoneNumber: guestMobile.trim(),
+        },
       });
-      await fetchFamilyMembers();
     }
 
-    setStep(2);
+    setStep(1);
   };
 
   const handleAddOnSelect = (paxIdx: number, flight: "ob" | "ib", type: "meal" | "baggage" | "seat", value: any) => {
@@ -1086,6 +946,9 @@ export default function FlightBooking({
       discount,
       promoCode,
       appliedToken: appliedToken || undefined,
+      markupAmount: markupAmount > 0 ? markupAmount : undefined,
+      markupRuleId: markupRuleId ?? undefined,
+      fareBeforeMarkup: totalFare > 0 ? totalFare : undefined,
     };
     if (isLccBooking) {
       data.leadPassengerAddress = getLccDefaultLeadPassengerAddress();
@@ -1149,7 +1012,7 @@ export default function FlightBooking({
       alert("Please sign in to apply a promo code");
       return;
     }
-    const fareForCoupon = Math.round((totalFare + addOnTotal) * 100) / 100;
+    const fareForCoupon = Math.round((totalFare + addOnTotal + markupAmount) * 100) / 100;
     setPromoApplying(true);
     try {
       const result = await validateCoupon({
@@ -1178,13 +1041,45 @@ export default function FlightBooking({
   };
 
   useEffect(() => {
+    const userOid = Number(user?.userId);
+    if (!userOid || userOid <= 0 || totalFare <= 0) {
+      setMarkupAmount(0);
+      setMarkupRuleId(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const result = await quoteMarkup({
+          userOid,
+          baseFare: totalFare,
+          tripType: markupTripType,
+          airlineCode: leadAirlineCode,
+        });
+        if (!cancelled) {
+          setMarkupAmount(Math.round(result.markupAmount * 100) / 100);
+          setMarkupRuleId(result.ruleId ?? null);
+        }
+      } catch {
+        if (!cancelled) {
+          setMarkupAmount(0);
+          setMarkupRuleId(null);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.userId, totalFare, markupTripType, leadAirlineCode]);
+
+  useEffect(() => {
     if (!promoApplied || promoFareSnapshotRef.current == null) return;
-    const current = Math.round((totalFare + addOnTotal) * 100) / 100;
+    const current = Math.round((totalFare + addOnTotal + markupAmount) * 100) / 100;
     if (Math.abs(current - promoFareSnapshotRef.current) > 0.01) {
       void handleRemovePromo();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalFare, addOnTotal, promoApplied]);
+  }, [totalFare, addOnTotal, markupAmount, promoApplied]);
 
 
   const paxTypeIcon: Record<string, string> = { Adult: "🧑", Child: "👦", Infant: "👶" };
@@ -1226,6 +1121,111 @@ export default function FlightBooking({
 
   const ibMealRequired = !!(returnFareQuoteDetails?.IsMealRequired || returnFareQuoteDetails?.isMealRequired);
   const ibSeatRequired = !!(returnFareQuoteDetails?.IsSeatRequired || returnFareQuoteDetails?.isSeatRequired);
+
+  const initializePassengerStep = useCallback(() => {
+    const leadTitle = readTravellerTitle(user, "Adult") || "Mr";
+    const defaultAdultDob = getDefaultAdultDateOfBirth();
+    const leadGender = getFixedGenderForTitle(leadTitle) || "Male";
+    const list: any[] = [];
+    for (let i = 0; i < (passengers?.adults  || 1); i++) {
+      list.push({
+        type: "Adult",
+        title: i === 0 ? leadTitle : "Mr",
+        firstName: "",
+        lastName: "",
+        dob: defaultAdultDob,
+        gender: i === 0 ? leadGender : "Male",
+        index: i,
+        pan: "",
+        passport: "",
+        passportIssue: "",
+        passportExpiry: "",
+        passportIssueCountry: "IN",
+        ffAirlineCode: "",
+        ffNumber: "",
+        obMeal: null, obBaggage: null, obSeat: null,
+        ibMeal: null, ibBaggage: null, ibSeat: null,
+        savedTravellerOrigin: null,
+      });
+    }
+    for (let i = 0; i < (passengers?.children || 0); i++) list.push({ type: "Child",  title: "Mstr", firstName: "", lastName: "", dob: "", gender: "Male", index: i, pan: "", passport: "", passportIssue: "", passportExpiry: "", passportIssueCountry: "IN", ffAirlineCode: "", ffNumber: "", obMeal: null, obBaggage: null, obSeat: null, ibMeal: null, ibBaggage: null, ibSeat: null, savedTravellerOrigin: null });
+    for (let i = 0; i < (passengers?.infants  || 0); i++) list.push({ type: "Infant", title: "Mstr", firstName: "", lastName: "", dob: "", gender: "Male", index: i, pan: "", passport: "", passportIssue: "", passportExpiry: "", passportIssueCountry: "IN", ffAirlineCode: "", ffNumber: "", obMeal: null, obBaggage: null, obSeat: null, ibMeal: null, ibBaggage: null, ibSeat: null, savedTravellerOrigin: null });
+    setPassengerDetails(
+      applyDefaultFreeAncillariesToPassengers(
+        list,
+        selectedFlight,
+        bookingItineraryDetails,
+        fareQuoteAncillaryOptions,
+      ),
+    );
+    if (obMealRequired || obSeatRequired || ibMealRequired || ibSeatRequired) {
+      setShowAddOns(true);
+    }
+    const readFq = (fq: any) => {
+      if (!fq || typeof fq !== "object") {
+        return {
+          panBook: false,
+          panTicket: false,
+          passportBook: false,
+          passportTicket: false,
+          gstMandatory: false,
+        };
+      }
+      const uq = fq.UpdateFareQuote ?? fq.updateFareQuote ?? fq;
+      const fd = uq?.FareQuoteDetails ?? uq?.fareQuoteDetails ?? {};
+      return {
+        panBook: !!(fd.IsPanRequiredAtBook ?? fd.isPanRequiredAtBook ?? uq?.IsPanRequiredAtBook ?? uq?.isPanRequiredAtBook),
+        panTicket: !!(fd.IsPanRequiredAtTicket ?? fd.isPanRequiredAtTicket ?? uq?.IsPanRequiredAtTicket ?? uq?.isPanRequiredAtTicket),
+        passportBook: !!(fd.IsPassportRequiredAtBook ?? fd.isPassportRequiredAtBook ?? uq?.IsPassportRequiredAtBook ?? uq?.isPassportRequiredAtBook),
+        passportTicket: !!(fd.IsPassportRequiredAtTicket ?? fd.isPassportRequiredAtTicket ?? uq?.IsPassportRequiredAtTicket ?? uq?.isPassportRequiredAtTicket),
+        gstMandatory: !!(fd.IsGSTMandatory ?? fd.isGSTMandatory ?? uq?.IsGSTMandatory ?? uq?.isGSTMandatory),
+      };
+    };
+    const obFq = selectedFlight?.fareQuoteData;
+    const ibFq = selectedFlight?.returnFareQuoteData;
+    const ob = readFq(obFq);
+    const ib = readFq(ibFq);
+    const panReqBook = ob.panBook || ib.panBook;
+    const panReqTicket = ob.panTicket || ib.panTicket;
+    const passportReqBook = ob.passportBook || ib.passportBook;
+    const passportReqTicket = ob.passportTicket || ib.passportTicket;
+    const intlItinerary = flightIsInternational(displayFlightDetails ?? flightDetails);
+    const passportFullDetailAtBook = mergePassportFullDetailRequiredAtBook(
+      obFq,
+      ibFq,
+      intlItinerary,
+    );
+    setIsPanRequiredAtBook(panReqBook);
+    setIsPanRequiredAtTicket(panReqTicket);
+    setIsPassportRequiredAtBook(passportReqBook);
+    setIsPassportRequiredAtTicket(passportReqTicket);
+    setIsPassportFullDetailRequiredAtBook(passportFullDetailAtBook);
+    const gstMandatory = ob.gstMandatory || ib.gstMandatory;
+    setIsGSTMandatory(gstMandatory);
+    if (gstMandatory) {
+      setGstEnabled(true);
+    }
+  }, [
+    user,
+    passengers,
+    selectedFlight,
+    bookingItineraryDetails,
+    fareQuoteAncillaryOptions,
+    obMealRequired,
+    obSeatRequired,
+    ibMealRequired,
+    ibSeatRequired,
+    displayFlightDetails,
+    flightDetails,
+  ]);
+
+  useEffect(() => {
+    if (passengerDetails.length > 0) return;
+    initializePassengerStep();
+    if (isFlightHoldFeatureEnabled()) {
+      void loadHoldFeeFnRef.current?.();
+    }
+  }, [passengerDetails.length, initializePassengerStep]);
 
   /** Env flag + update-fare-quote `isHoldAllowed`. */
   const holdTicketEnabled =
@@ -1461,105 +1461,12 @@ export default function FlightBooking({
             </div>
           </div>
 
-          {/* ── STEP 0: Contact Info ── */}
+          {/* ── STEP 0: Passengers ── */}
           {step === 0 && (
-            <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-visible">
-              <div className="px-5 py-3 border-b border-gray-100" style={{ background: "#fff7ed" }}>
-                <h3 className="font-bold text-gray-800">📧 Contact Information</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Booking confirmation will be sent to this contact</p>
-              </div>
-              <div className="p-5 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Email Address *</label>
-                    <input
-                      type="email" value={guestEmail} onChange={e => setGuestEmail(e.target.value)}
-                      placeholder="you@example.com"
-                      disabled={!!user}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      style={{ focusRingColor: OG } as any}
-                      onFocus={e => e.target.style.boxShadow = `0 0 0 2px ${OG}33`}
-                      onBlur={e => e.target.style.boxShadow = ""}
-                    />
-                    {user && <p className="text-xs text-gray-500 mt-1">✓ Using your account email</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Mobile Number *</label>
-                    <div className="flex">
-                      <div ref={dialCodeRef} className="relative">
-                        <button
-                          type="button"
-                          className="border border-r-0 border-gray-200 rounded-l-xl px-3 py-2.5 text-sm text-gray-700 bg-gray-50 focus:outline-none hover:bg-gray-100 min-w-[84px] flex items-center justify-between gap-2"
-                          onClick={() => setDialCodeOpen((v) => !v)}
-                          aria-haspopup="listbox"
-                          aria-expanded={dialCodeOpen}
-                        >
-                          <span>{cellCountryCode}</span>
-                          <span className="text-[10px] text-gray-400">▼</span>
-                        </button>
-                        {dialCodeOpen && (
-                          <div
-                            role="listbox"
-                            className="absolute z-50 mt-1 w-80 max-h-80 overflow-auto rounded-xl border border-gray-200 bg-white shadow-xl"
-                          >
-                            {[
-                              // Ensure default exists even if API list is empty
-                              ...(countryList && countryList.length
-                                ? countryList
-                                    .map((c) => ({
-                                      isoCountryCode: c.isoCountryCode,
-                                      countryName: c.countryName,
-                                      countryCode: String(c.countryCode || "").trim(),
-                                    }))
-                                    .filter((c) => c.countryCode.startsWith("+"))
-                                : [{ isoCountryCode: "IN", countryName: "India", countryCode: "+91" }]),
-                            ].map((c) => (
-                              <button
-                                key={c.isoCountryCode}
-                                type="button"
-                                className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center justify-between"
-                                onClick={() => {
-                                  setCellCountryCode(c.countryCode || "+91");
-                                  setDialCodeOpen(false);
-                                }}
-                              >
-                                <span className="text-gray-800">{c.countryName}</span>
-                                <span className="text-gray-500 font-semibold">{c.countryCode}</span>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <input
-                        type="tel" value={guestMobile}
-                        onChange={e => setGuestMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                        inputMode="numeric"
-                        placeholder="Phone number"
-                        className="flex-1 border border-gray-200 rounded-r-xl px-4 py-2.5 text-sm focus:outline-none"
-                        onFocus={e => e.target.style.boxShadow = `0 0 0 2px ${OG}33`}
-                        onBlur={e => e.target.style.boxShadow = ""}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleContactNext}
-                  className="w-full py-3 rounded-xl font-bold text-white text-sm transition-all hover:opacity-90 active:scale-[0.99]"
-                  style={{ background: ctaGradient }}
-                >
-                  Continue to Passenger Details →
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── STEP 1: Passengers ── */}
-          {step === 1 && (
             <div className="relative z-10 bg-white rounded-2xl shadow-md border border-gray-100 overflow-visible">
               <div className="px-5 py-3 border-b border-gray-100" style={{ background: "#fff7ed" }}>
                 <h3 className="font-bold text-gray-800">🧑‍✈️ Passenger Details</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Enter names exactly as on passport / government ID</p>
+                <p className="text-xs text-gray-500 mt-0.5">Enter names as on ID. Lead passenger email and mobile are used for booking confirmation.</p>
               </div>
               <div className="p-5 space-y-3">
                 {(() => {
@@ -1571,6 +1478,9 @@ export default function FlightBooking({
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-lg">{paxTypeIcon[pax.type]}</span>
                       <span className="text-sm font-semibold text-gray-700">{pax.type} {pax.index + 1}</span>
+                      {idx === 0 && pax.type === "Adult" && (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-blue-100 text-blue-800">Lead</span>
+                      )}
                       <span className="ml-auto text-[11px] px-2 py-0.5 rounded-full font-semibold text-white" style={{ background: OG }}>{pax.type}</span>
                     </div>
                     
@@ -1580,7 +1490,7 @@ export default function FlightBooking({
                       </p>
                     )}
 
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-3 gap-3 min-w-0">
                       <div>
                         <label className="block text-[11px] font-semibold text-gray-500 mb-1">Title *</label>
                         <select
@@ -1696,6 +1606,80 @@ export default function FlightBooking({
                           </p>
                         )}
                       </div>
+                      {idx === 0 && pax.type === "Adult" && (
+                        <div className="col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0 w-full">
+                          <div className="min-w-0">
+                            <label className="block text-[11px] font-semibold text-gray-500 mb-1">Email Address *</label>
+                            <input
+                              type="email"
+                              value={guestEmail}
+                              onChange={(e) => setGuestEmail(e.target.value)}
+                              placeholder="lead@example.com"
+                              className="w-full min-w-0 border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none"
+                              onFocus={(e) => { e.target.style.boxShadow = `0 0 0 2px ${OG}33`; }}
+                              onBlur={(e) => { e.target.style.boxShadow = ""; }}
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <label className="block text-[11px] font-semibold text-gray-500 mb-1">Mobile Number *</label>
+                            <div className="flex min-w-0 w-full max-w-full">
+                              <div ref={dialCodeRef} className="relative flex-shrink-0">
+                                <button
+                                  type="button"
+                                  className="border border-r-0 border-gray-200 rounded-l-lg px-2.5 py-2 text-sm text-gray-700 bg-gray-50 focus:outline-none hover:bg-gray-100 min-w-[72px] flex items-center justify-between gap-1"
+                                  onClick={() => setDialCodeOpen((v) => !v)}
+                                  aria-haspopup="listbox"
+                                  aria-expanded={dialCodeOpen}
+                                >
+                                  <span>{cellCountryCode}</span>
+                                  <span className="text-[10px] text-gray-400">▼</span>
+                                </button>
+                                {dialCodeOpen && (
+                                  <div
+                                    role="listbox"
+                                    className="absolute z-50 mt-1 w-72 max-h-64 overflow-auto rounded-xl border border-gray-200 bg-white shadow-xl"
+                                  >
+                                    {[
+                                      ...(countryList && countryList.length
+                                        ? countryList
+                                            .map((c) => ({
+                                              isoCountryCode: c.isoCountryCode,
+                                              countryName: c.countryName,
+                                              countryCode: String(c.countryCode || "").trim(),
+                                            }))
+                                            .filter((c) => c.countryCode.startsWith("+"))
+                                        : [{ isoCountryCode: "IN", countryName: "India", countryCode: "+91" }]),
+                                    ].map((c) => (
+                                      <button
+                                        key={c.isoCountryCode}
+                                        type="button"
+                                        className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center justify-between"
+                                        onClick={() => {
+                                          setCellCountryCode(c.countryCode || "+91");
+                                          setDialCodeOpen(false);
+                                        }}
+                                      >
+                                        <span className="text-gray-800">{c.countryName}</span>
+                                        <span className="text-gray-500 font-semibold">{c.countryCode}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                              <input
+                                type="tel"
+                                value={guestMobile}
+                                onChange={(e) => setGuestMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                                inputMode="numeric"
+                                placeholder="Phone number"
+                                className="flex-1 min-w-0 w-0 border border-gray-200 rounded-r-lg px-3 py-2 text-sm bg-white focus:outline-none"
+                                onFocus={(e) => { e.target.style.boxShadow = `0 0 0 2px ${OG}33`; }}
+                                onBlur={(e) => { e.target.style.boxShadow = ""; }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       {pax.type !== "Adult" && (
                         <div>
                           <label className="block text-[11px] font-semibold text-gray-500 mb-1">
@@ -2220,7 +2204,7 @@ export default function FlightBooking({
                 </label>
 
                 <div className="flex gap-3 pt-1">
-                  <button onClick={() => setStep(0)} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50">← Back</button>
+                  <button onClick={onBack} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50">← Back</button>
                   <button
                     onClick={handlePassengerNext} disabled={!acceptedTerms}
                     className="flex-1 py-2.5 rounded-xl font-bold text-white text-sm transition-all disabled:opacity-40"
@@ -2233,17 +2217,18 @@ export default function FlightBooking({
             </div>
           )}
 
-          {/* ── STEP 2: Review ── */}
-          {step === 2 && (
+          {/* ── STEP 1: Review ── */}
+          {step === 1 && (
             <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
               <div className="px-5 py-3 border-b border-gray-100" style={{ background: "#fff7ed" }}>
                 <h3 className="font-bold text-gray-800">✅ Review Your Booking</h3>
                 <p className="text-xs text-gray-500 mt-0.5">Verify all details before proceeding to payment</p>
               </div>
               <div className="p-5 space-y-4">
-                {/* Contact */}
+                {/* Lead contact */}
                 <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
                   <div className="text-sm">
+                    <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Lead passenger contact</div>
                     <span className="font-semibold text-gray-700">📧 {guestEmail}</span>
                     <span className="mx-2 text-gray-300">|</span>
                     <span className="text-gray-500">📱 {cellCountryCode} {guestMobile}</span>
@@ -2332,7 +2317,7 @@ export default function FlightBooking({
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3 pt-2">
                   <button
                     type="button"
-                    onClick={() => setStep(1)}
+                    onClick={() => setStep(0)}
                     className="flex-1 inline-flex h-10 items-center justify-center rounded-xl border-2 border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50"
                   >
                     ← Edit Passengers
@@ -2444,7 +2429,7 @@ export default function FlightBooking({
                   <span>₹{taxFare?.toLocaleString()}</span>
                 </div>
               )}
-              {step === 2 && holdTicketEnabled && !isHoldBooking && (
+              {step === 1 && holdTicketEnabled && !isHoldBooking && (
                 <div className="flex justify-between text-sm text-blue-900 pt-1 border-t border-dashed border-blue-100 mt-1">
                   <span>Hold fee (if you hold ticket)</span>
                   <span className="font-semibold tabular-nums">
@@ -2468,6 +2453,12 @@ export default function FlightBooking({
                 <div className="flex justify-between text-gray-700">
                   <span>💺 Seats</span>
                   <span>₹{addOnSeatCost.toLocaleString()}</span>
+                </div>
+              )}
+              {markupAmount > 0 && (
+                <div className="flex justify-between text-gray-700">
+                  <span>Agent Markup</span>
+                  <span>₹{markupAmount.toLocaleString()}</span>
                 </div>
               )}
               {promoApplied && (
