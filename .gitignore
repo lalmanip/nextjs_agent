@@ -21,7 +21,11 @@ next-env.d.ts
 
 # misc
 .DS_Store
+.env
+.env.*
 .env.local
+.env.example
+.env.production
 .env.development.local
 .env.test.local
 .env.production.local

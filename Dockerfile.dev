@@ -9,7 +9,6 @@ COPY package*.json ./
 RUN npm ci --include=dev
 
 COPY . .
-COPY .env.production ./.env.production
 
 ENV NODE_ENV=production
 RUN npm run build
