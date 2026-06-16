@@ -14,6 +14,7 @@ import {
 } from "@/lib/bookingState";
 import { commitBooking, commitBookingSkipBook } from "@/lib/commitBooking";
 import { isFlightHoldFeatureEnabled } from "@/lib/flightHoldConfig";
+import { redeemCoupon } from "@/lib/couponClient";
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -251,7 +252,12 @@ export default function PaymentPage() {
 
   const handlePaymentSuccess = async (
     validationData: any,
-    paymentProof: { gateway: "razorpay" | "hdfc"; payId?: string; orderId?: string },
+    paymentProof: {
+      gateway: "razorpay" | "hdfc" | "wallet";
+      payId?: string;
+      orderId?: string;
+      appReference?: string;
+    },
   ) => {
     const pData = {
       passengerDetails: paymentData.passengerDetails,
@@ -262,6 +268,15 @@ export default function PaymentPage() {
     };
     try {
       const result = await commitBooking(flightState.flight, pData, tripType);
+      const userOid = Number(user?.userId);
+      if (paymentData.appliedToken && userOid > 0) {
+        void redeemCoupon({
+          appliedToken: paymentData.appliedToken,
+          userOid,
+          appReference: result.appReference,
+          paymentOrderId: paymentProof.orderId,
+        }).catch((err) => console.warn("[coupon] redeem failed:", err));
+      }
       bookingState.saveTicket({
         ticketDetails: result.ticketDetails,
         pnr: result.pnr,
@@ -325,11 +340,14 @@ export default function PaymentPage() {
             cellCountryCode={paymentData.cellCountryCode || "+91"}
             discount={paymentData.discount}
             promoCode={paymentData.promoCode}
+            markupAmount={paymentData.markupAmount ?? 0}
+            markupRuleId={paymentData.markupRuleId}
             leadPassengerAddress={paymentData.leadPassengerAddress}
             tripType={tripType}
             timeRemaining={bookingTimeRemaining}
             onPaymentSuccess={handlePaymentSuccess}
             onBack={() => router.push("/flights/booking")}
+            user={user}
           />
         </div>
       </main>

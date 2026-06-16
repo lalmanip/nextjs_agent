@@ -1,0 +1,156 @@
+# Kong TLS + routing: next.vivancetravels.com (B2C) + agent-dev.vivancetravels.com (agent portal).
+#
+# Apply order on the VPS:
+#   kubectl apply -f vivance-combined-ingress.yaml
+#   kubectl describe certificate agent-dev-vivancetravels-com -n default   # must be Ready
+#   kubectl get secret agent-dev-vivancetravels-tls -n default
+#
+# next.vivancetravels.com: if HTTPS already works via Hostinger/outer proxy, you can
+# COMMENT OUT the next Certificate + nextjs-ingress spec.tls until needed.
+# Do NOT reference secretName next-vivancetravels-tls on Ingress until the secret exists
+# (missing secret can prevent Kong from serving agent-dev SNI correctly).
+#
+# If next Certificate fails with ACME "No order for ID", delete and re-create:
+#   kubectl delete certificate next-vivancetravels-com certificaterequest -l cert-manager.io/certificate-name=next-vivancetravels-com order -l acme.cert-manager.io/certificate-name=next-vivancetravels-com challenge -l acme.cert-manager.io/certificate-name=next-vivancetravels-com 2>/dev/null
+#   kubectl apply -f vivance-combined-ingress.yaml
+#
+# Cleanup legacy (when next + agent-dev work):
+#   kubectl delete ingress vivance-ingress agent-ingress agent-portal-ingress
+#
+# DNS A records -> same Kong/LB IP:
+#   next.vivancetravels.com
+#   agent-dev.vivancetravels.com
+---
+# ── TLS: next.vivancetravels.com ──
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: next-vivancetravels-com
+  namespace: default
+  annotations:
+    cert-manager.io/acme-http01-ingress-class: kong
+spec:
+  secretName: next-vivancetravels-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - next.vivancetravels.com
+---
+# ── TLS: agent-dev.vivancetravels.com (skip if already applied) ──
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: agent-dev-vivancetravels-com
+  namespace: default
+  annotations:
+    cert-manager.io/acme-http01-ingress-class: kong
+spec:
+  secretName: agent-dev-vivancetravels-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - agent-dev.vivancetravels.com
+---
+# ── Ingress: next.vivancetravels.com ──
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextjs-ingress
+  namespace: default
+  annotations:
+    konghq.com/strip-path: "false"
+    konghq.com/protocols: "http,https"
+    konghq.com/ssl-redirect: "false"
+    konghq.com/https-redirect-status-code: "301"
+spec:
+  ingressClassName: kong
+  tls:
+    - hosts:
+        - next.vivancetravels.com
+      secretName: next-vivancetravels-tls
+  rules:
+    - host: next.vivancetravels.com
+      http:
+        paths:
+          - path: /vivapi-user
+            pathType: Prefix
+            backend:
+              service:
+                name: vivance-user-api-service
+                port:
+                  number: 8082
+          - path: /vivapi-mt
+            pathType: Prefix
+            backend:
+              service:
+                name: vivance-api-service
+                port:
+                  number: 8080
+          - path: /hdfc-pgw/api
+            pathType: Prefix
+            backend:
+              service:
+                name: hdfc-payment-service
+                port:
+                  number: 8083
+          - path: /vivapi-auth
+            pathType: Prefix
+            backend:
+              service:
+                name: vivance-auth-api-service
+                port:
+                  number: 8084
+          - path: /api/supervision
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-supervision-svc
+                port:
+                  number: 80
+          - path: /supervision
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-supervision-svc
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-svc
+                port:
+                  number: 80
+---
+# ── Ingress: agent-dev.vivancetravels.com ──
+# REQUIRED: spec.tls must reference agent-dev-vivancetravels-tls or Kong serves the wrong
+# default cert (openssl subject=CN = dev.vivancetravels.com → browser "Not secure").
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextjs-agent-dev-ingress
+  namespace: default
+  annotations:
+    konghq.com/protocols: http,https
+    konghq.com/strip-path: "false"
+    konghq.com/ssl-redirect: "true"
+    konghq.com/https-redirect-status-code: "301"
+spec:
+  ingressClassName: kong
+  tls:
+    - hosts:
+        - agent-dev.vivancetravels.com
+      secretName: agent-dev-vivancetravels-tls
+  rules:
+    - host: agent-dev.vivancetravels.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-agent-svc
+                port:
+                  number: 80

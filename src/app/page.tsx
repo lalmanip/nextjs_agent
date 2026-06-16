@@ -14,6 +14,8 @@ import {
   type SearchState,
 } from "@/lib/bookingState";
 import { commitBooking } from "@/lib/commitBooking";
+import { getAgentPortalLoginUrl } from "@/lib/agentPortal";
+import { getUserSessionRaw, syncUserSessionFromCookie } from "@/lib/authSession";
 
 export default function Home() {
   const router = useRouter();
@@ -25,6 +27,17 @@ export default function Home() {
     return null;
   });
   const [showPendingBookingBanner, setShowPendingBookingBanner] = useState(false);
+
+  // Auth gate: agents must sign in via the agent login screen before accessing
+  // the B2C app. Skip the redirect on the HDFC payment return (handled below).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("hdfc_return") === "1") return;
+    const saved = getUserSessionRaw();
+    if (!saved) {
+      window.location.href = getAgentPortalLoginUrl();
+    }
+  }, [router]);
 
   // Handle return from HDFC payment gateway (full-page redirect back to /)
   useEffect(() => {

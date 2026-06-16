@@ -58,10 +58,12 @@ export const API_BASE_URL = API_BASE_URL_MT;
 
 export const API_KEY = 'viv-8806f318-1ecf-11ee-b64f-36e9be0141c6';
 
-console.log('🔧 API Configuration:');
-console.log('  Mode:', API_MODE);
-console.log('  MT Base URL:', API_BASE_URL_MT);
-console.log('  User Base URL:', API_BASE_URL_USER);
-console.log('  Hotel Base URL:', API_BASE_URL_HOTEL);
-console.log('  Auth Base URL:', API_BASE_URL_AUTH);
-console.log('  Holiday Base URL:', API_BASE_URL_HOLIDAY);
+if (process.env.NODE_ENV !== 'production') {
+  console.log('🔧 API Configuration:');
+  console.log('  Mode:', API_MODE);
+  console.log('  MT Base URL:', API_BASE_URL_MT);
+  console.log('  User Base URL:', API_BASE_URL_USER);
+  console.log('  Hotel Base URL:', API_BASE_URL_HOTEL);
+  console.log('  Auth Base URL:', API_BASE_URL_AUTH);
+  console.log('  Holiday Base URL:', API_BASE_URL_HOLIDAY);
+}

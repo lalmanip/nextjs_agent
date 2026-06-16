@@ -14,9 +14,23 @@ const config: Config = {
       colors: {
         primary: "#FC6603",
         "primary-dark": "#e55a03",
+        brand: {
+          DEFAULT: "#fc6603",
+          light: "#fd8535",
+          dark: "#d95200",
+        },
       },
     },
   },
   plugins: [],
+  safelist: [
+    "bg-gradient-to-br",
+    "from-orange-950",
+    "via-orange-900",
+    "to-stone-900",
+    "bg-white/10",
+    "backdrop-blur-md",
+    "text-orange-200",
+  ],
 };
 export default config;

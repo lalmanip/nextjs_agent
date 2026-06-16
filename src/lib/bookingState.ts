@@ -55,6 +55,13 @@ export interface PaymentDataState {
   cellCountryCode: string;
   discount: number;
   promoCode: string;
+  /** Server-issued token from POST /api/coupons/validate — required for redeem at payment. */
+  appliedToken?: string;
+  /** Agent markup applied to base fare (from POST /api/markup/quote). */
+  markupAmount?: number;
+  markupRuleId?: number | null;
+  /** Base fare before markup — for audit/display on payment. */
+  fareBeforeMarkup?: number;
   /** LCC — configured default address, sent on lead passenger in commit-booking. */
   leadPassengerAddress?: LeadPassengerAddress;
 }

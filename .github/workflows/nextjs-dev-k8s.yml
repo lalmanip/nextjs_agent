@@ -6,8 +6,8 @@ on:
       - dev
 
 env:
-  IMAGE_NAME: vivance/nextjs-app
-  DEPLOYMENT_NAME: nextjs
+  IMAGE_NAME: vivance/nextjs-agent-app
+  DEPLOYMENT_NAME: nextjs-agent
   IMAGE_TAG: dev-${{ github.sha }}
 
 jobs:
@@ -47,10 +47,9 @@ jobs:
             echo "Deploying $IMAGE_NAME:$IMAGE_TAG"
 
             kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} \
-              nextjs=$IMAGE_NAME:$IMAGE_TAG
+              nextjs-agent=$IMAGE_NAME:$IMAGE_TAG
 
-
-            kubectl annotate deployment/nextjs \
+            kubectl annotate deployment/${{ env.DEPLOYMENT_NAME }} \
               kubernetes.io/change-cause="Deploy dev-${GITHUB_SHA} via GitHub Actions" \
-              --overwrite  
+              --overwrite
             kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }}

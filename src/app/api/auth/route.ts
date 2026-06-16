@@ -23,12 +23,17 @@ export async function POST(request: NextRequest) {
     const { action, ...data } = await request.json();
 
     let url = '';
-    const needsBearer = action === 'signup' || action === 'signin';
+    const needsBearer = action === 'signup' || action === 'signin' || action === 'agent-add';
     switch (action) {
       case 'signup': {
         const errors = validateSignUpPayload(data);
-        if (errors.length > 0)
+        if (errors.length > 0) {
+          console.error(
+            '[auth] signup Validation failed on fields:',
+            errors.map((e) => `${e.field} -> ${e.message}`),
+          );
           return NextResponse.json({ error: 'Validation failed', errors }, { status: 400 });
+        }
         url = `${API_BASE_URL_USER}/user/create`;
         break;
       }
@@ -37,6 +42,10 @@ export async function POST(request: NextRequest) {
         if (errors.length > 0)
           return NextResponse.json({ error: 'Validation failed', errors }, { status: 400 });
         url = `${API_BASE_URL_USER}/user/authenticate`;
+        break;
+      }
+      case 'agent-add': {
+        url = `${API_BASE_URL_USER}/user/agent/add`;
         break;
       }
       case 'reset':
@@ -63,29 +72,13 @@ export async function POST(request: NextRequest) {
       bearer = toBearer(domainToken);
     }
 
-    const isCreate = action === 'signup' && url.includes('/user/create');
-    if (isCreate) {
-      console.log('\n========== USER CREATE (vivapi-user/user/create) ==========');
-      console.log('Timestamp:', new Date().toISOString());
-      console.log('Endpoint:', url);
-      console.log('Method: POST');
-      console.log('Params:', {}); // none
-      console.log('Headers (safe):', {
-        'content-type': 'application/json',
-        'x-api-key': API_KEY ? `${String(API_KEY).slice(0, 6)}…` : '(missing)',
-        authorization: bearerPreview(bearer),
-      });
-      console.log('Request Body:', JSON.stringify(data, null, 2).slice(0, 2000));
-    } else {
-      console.log('USER API URL:', url);
-    }
-
     /** Body sent to vivapi-user (action stripped; signin sends only credentials). */
     const buildUpstreamBody = (): string => {
       if (action === 'signin') {
         return JSON.stringify({
           userName: String(data.userName ?? '').trim(),
           password: String(data.password ?? ''),
+          userType: 3,
         });
       }
       const { action: _a, token: _t, accessToken: _at, jwt: _j, bearer: _b, ...rest } =
@@ -94,14 +87,28 @@ export async function POST(request: NextRequest) {
     };
     const upstreamBody = buildUpstreamBody();
 
+    const requestHeaders = {
+      'Content-Type': 'application/json',
+      'X-API-KEY': API_KEY,
+      ...(bearer ? { Authorization: bearer } : {}),
+    };
+
+    console.log(`\n========== AUTH API CALL [action=${action}] ==========`);
+    console.log('Timestamp     :', new Date().toISOString());
+    console.log('Endpoint (URL):', url);
+    console.log('Method        :', 'POST');
+    console.log('Query Params  :', Object.fromEntries(new URL(request.url).searchParams));
+    console.log('Headers       :', {
+      'Content-Type': 'application/json',
+      'X-API-KEY': API_KEY ? `${String(API_KEY).slice(0, 6)}…(len=${String(API_KEY).length})` : '(missing)',
+      Authorization: bearerPreview(bearer),
+    });
+    console.log('Request Body  :', upstreamBody.slice(0, 2000));
+
     const postUser = () =>
       fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-KEY': API_KEY,
-          ...(bearer ? { Authorization: bearer } : {}),
-        },
+        headers: requestHeaders,
         body: upstreamBody,
       });
 
@@ -118,23 +125,15 @@ export async function POST(request: NextRequest) {
     const responseText = await response.text().catch(() => '');
     const durationMs = Date.now() - start;
 
-    if (isCreate) {
-      console.log('--- RESPONSE FROM BACKEND ---');
-      console.log('Status Code:', response.status);
-      console.log('Status Text:', response.statusText);
-      console.log('Response Time:', `${durationMs}ms`);
-      console.log('Response Headers:', {
-        'content-type': response.headers.get('content-type'),
-        'content-length': response.headers.get('content-length'),
-      });
-      console.log('Response Body (Raw preview):', responseText.slice(0, 2000));
-      console.log('==========================================================\n');
-    } else {
-      console.log('USER API Req (object):', data);
-      console.log('USER API Req (JSON on wire):', upstreamBody);
-      console.log('USER API Res status:', response.status, response.statusText);
-      console.log('USER API Res body:', responseText.slice(0, 2000));
-    }
+    console.log('--- RESPONSE FROM BACKEND ---');
+    console.log('Status        :', response.status, response.statusText);
+    console.log('Response Time :', `${durationMs}ms`);
+    console.log('Resp Headers  :', {
+      'content-type': response.headers.get('content-type'),
+      'content-length': response.headers.get('content-length'),
+    });
+    console.log('Response Body :', responseText.slice(0, 2000));
+    console.log('======================================================\n');
 
     let result: unknown = null;
     try {

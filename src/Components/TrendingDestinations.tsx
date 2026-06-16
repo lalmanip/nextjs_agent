@@ -8,6 +8,7 @@ import {
   fetchTrendingDestinations,
   type ApiTrendingDestination,
 } from "@/lib/holidaysApi";
+import { resolveHolidayImageUrl } from "@/lib/holidayImageUrl";
 
 export type DestinationTile = {
   id: string;
@@ -24,7 +25,7 @@ function mapTrendingTile(d: ApiTrendingDestination): DestinationTile {
   return {
     id: String(d.id),
     title: destinationListingTitle(d.name),
-    img: d.imageUrl,
+    img: resolveHolidayImageUrl(d.imageUrl),
     price: d.startingPrice,
     href,
   };

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type MouseEvent as ReactMouseEvent } from "react";
 import { flightAPI, Airport, FlightSearchRequest, CalendarFareRequest } from "@/lib/api";
 import FlightSearchLoading from "@/Components/FlightSearchLoading";
 import { useDateLocale } from "@/Components/DateLocaleProvider";
@@ -254,12 +254,19 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
   };
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (fromRef.current && !fromRef.current.contains(event.target as Node))
+    const handleClickOutside = (event: globalThis.MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        target instanceof Element &&
+        target.closest("[data-airport-dropdown]")
+      ) {
+        return;
+      }
+      if (fromRef.current && !fromRef.current.contains(target))
         setShowFromDropdown(false);
-      if (toRef.current && !toRef.current.contains(event.target as Node))
+      if (toRef.current && !toRef.current.contains(target))
         setShowToDropdown(false);
-      if (mcFormRef.current && !mcFormRef.current.contains(event.target as Node))
+      if (mcFormRef.current && !mcFormRef.current.contains(target))
         setMcDropdown(null);
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -374,7 +381,7 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
       const allowedForSenior = ["6E", "SG"];
       setSources((prev) => prev.filter((s) => allowedForSenior.includes(s)));
     }
-  }, [selectedFare, sources]);
+  }, [selectedFare]);
 
   const updateMcLeg = (idx: number, updates: Partial<typeof multiCityLegs[0]>) => {
     setMultiCityLegs(prev => prev.map((leg, i) => i === idx ? { ...leg, ...updates } : leg));
@@ -671,8 +678,18 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
     const recentAirports = getRecentAirports();
     const showRecent = !query && recentAirports.length > 0;
     const list = query ? options : [];
+    const pickAirport = (airport: Airport, e: ReactMouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onSelect(airport);
+    };
+
     return (
-      <div className="absolute z-10 w-full bg-white border rounded-lg mt-1 max-h-72 overflow-y-auto shadow-lg">
+      <div
+        data-airport-dropdown
+        className="absolute z-[210] w-full bg-white border rounded-lg mt-1 max-h-72 overflow-y-auto shadow-lg"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         {showRecent && (
           <>
             <div className="px-3 pt-2 pb-1 text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
@@ -681,7 +698,9 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
             {recentAirports.map((airport) => (
               <div
                 key={`recent-${airport.airportCode}`}
-                onClick={() => onSelect(airport)}
+                role="button"
+                tabIndex={0}
+                onMouseDown={(e) => pickAirport(airport, e)}
                 className="px-3 py-2 hover:bg-orange-50 cursor-pointer flex items-center gap-2"
               >
                 <span className="text-gray-400 text-sm">🕐</span>
@@ -709,7 +728,9 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
           list.map((airport) => (
             <div
               key={airport.airportCode}
-              onClick={() => onSelect(airport)}
+              role="button"
+              tabIndex={0}
+              onMouseDown={(e) => pickAirport(airport, e)}
               className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
             >
               <div className="font-medium">
@@ -889,7 +910,10 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
         <div className="border border-orange-200 rounded-xl bg-orange-50/40 p-5 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             {/* From */}
-            <div className="md:col-span-1 relative" ref={fromRef}>
+            <div
+              className={`md:col-span-1 relative ${showFromDropdown ? "z-[95]" : ""}`}
+              ref={fromRef}
+            >
               <label className="block text-sm font-medium mb-1">Departure</label>
               <input
                 type="text"
@@ -916,7 +940,10 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
             </div>
 
             {/* To */}
-            <div className="md:col-span-1 relative" ref={toRef}>
+            <div
+              className={`md:col-span-1 relative ${showToDropdown ? "z-[95]" : ""}`}
+              ref={toRef}
+            >
               <label className="block text-sm font-medium mb-1">Arrival</label>
               <input
                 type="text"
@@ -984,7 +1011,10 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
         <div className="border border-orange-200 rounded-xl bg-orange-50/40 p-5 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             {/* From */}
-            <div className="relative" ref={fromRef}>
+            <div
+              className={`relative ${showFromDropdown ? "z-[95]" : ""}`}
+              ref={fromRef}
+            >
               <label className="block text-sm font-medium mb-1">Departure</label>
               <input
                 type="text"
@@ -1006,7 +1036,10 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
             </div>
 
             {/* To */}
-            <div className="relative" ref={toRef}>
+            <div
+              className={`relative ${showToDropdown ? "z-[95]" : ""}`}
+              ref={toRef}
+            >
               <label className="block text-sm font-medium mb-1">Arrival</label>
               <input
                 type="text"
@@ -1058,7 +1091,13 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
           {multiCityLegs.map((leg, idx) => (
             <div key={idx} className="flex items-end gap-0 mb-3">
               {/* Departure */}
-              <div className="flex-1 relative">
+              <div
+                className={`flex-1 relative ${
+                  mcDropdown?.legIdx === idx && mcDropdown?.field === "from"
+                    ? "z-[95]"
+                    : ""
+                }`}
+              >
                 {idx === 0 && <label className="block text-xs font-medium text-gray-600 mb-1">Departure</label>}
                 <input
                   type="text"
@@ -1099,7 +1138,13 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
               </button>
 
               {/* Arrival */}
-              <div className="flex-1 relative">
+              <div
+                className={`flex-1 relative ${
+                  mcDropdown?.legIdx === idx && mcDropdown?.field === "to"
+                    ? "z-[95]"
+                    : ""
+                }`}
+              >
                 {idx === 0 && <label className="block text-xs font-medium text-gray-600 mb-1">Arrival</label>}
                 <input
                   type="text"
@@ -1296,9 +1341,13 @@ export default function FlightSearch({ onSearchComplete, initialTripType }: Flig
       {/* Standard Search Fields */}
       {tripType !== "advance" && tripType !== "calendar" && tripType !== "multicity" && (
       <>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div
+        className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 overflow-visible ${
+          showFromDropdown || showToDropdown ? "relative z-[200]" : ""
+        }`}
+      >
         {/* From + Swap + To */}
-        <div className="md:col-span-2 flex items-end gap-0 relative">
+        <div className="md:col-span-2 flex items-end gap-0 relative overflow-visible">
           {/* From */}
           <div className="relative flex-1" ref={fromRef}>
             <label className="block text-sm font-medium mb-1">From</label>

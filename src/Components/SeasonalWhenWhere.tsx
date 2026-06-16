@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, CloudRain, Snowflake, Sun } from "lucide-react";
 import { fetchSeasons, type ApiSeason } from "@/lib/holidaysApi";
+import { resolveHolidayImageUrl } from "@/lib/holidayImageUrl";
 
 type Season = "winter" | "summer" | "monsoon";
 
@@ -149,7 +150,7 @@ function mapApiSeason(s: ApiSeason): { key: Season; label: string; content: Seas
         title: p.title,
         days: p.daysLabel,
         price: p.price,
-        img: p.imageUrl,
+        img: resolveHolidayImageUrl(p.imageUrl),
       })),
     },
   };

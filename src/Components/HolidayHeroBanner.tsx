@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { fetchHolidayHero, type ApiHeroSlide } from "@/lib/holidaysApi";
+import { resolveHolidayImageUrl } from "@/lib/holidayImageUrl";
 
 const ROTATE_MS = 5000;
 
@@ -14,7 +15,7 @@ type HeroSlide = {
 
 function mapSlide(slide: ApiHeroSlide): HeroSlide {
   return {
-    img: slide.imageUrl,
+    img: resolveHolidayImageUrl(slide.imageUrl),
     title: slide.title,
     subtitle: slide.subtitle ?? "",
     objectPosition: slide.objectPosition ?? "center",

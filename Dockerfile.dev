@@ -1,18 +1,33 @@
-# Dev image for Kubernetes (Next.js dev server)
-FROM node:20-alpine
-
+# Production build for Kubernetes (standalone output serves /_next/static correctly)
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY package*.json ./
-RUN npm ci
+# Install devDependencies too (tailwind/postcss/typescript required for next build)
+RUN npm ci --include=dev
 
 COPY . .
+COPY .env.production ./.env.production
+
+ENV NODE_ENV=production
+RUN npm run build
+RUN test -d .next/static && test -f .next/standalone/server.js
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3005
+
+# Standalone server + static assets (see Next.js Docker docs)
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3005
 
-# Bind to all interfaces for K8s
-CMD ["npm", "run", "dev", "--", "-H", "0.0.0.0", "-p", "3005"]
-
+CMD ["node", "server.js"]

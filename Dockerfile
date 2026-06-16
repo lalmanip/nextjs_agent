@@ -6,10 +6,10 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY tsconfig.json ./
-COPY .env.production ./.env.production
 
 RUN npm ci
 
+# Runtime config comes from K8s env / ConfigMap. .env.production is optional if present locally.
 COPY . ./
 
 # Optional: Disable Next.js telemetry (not necessary but cleaner)
@@ -29,6 +29,8 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3005
 
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/.next ./.next

@@ -19,6 +19,9 @@ import {
   MY_BOOKINGS_VIEW_OTP_REQUEST_TYPE,
   otpApiMessage,
 } from "@/lib/myBookingsOtp";
+import { getAgentPortalLoginUrl } from "@/lib/agentPortal";
+import { clearUserSession } from "@/lib/authSession";
+import AgentMarkupPanel from "@/Components/AgentMarkupPanel";
 
 interface UserDashboardProps {
   user: any;
@@ -326,7 +329,7 @@ function getPassengerMealAndSeatDisplay(p: any): { meals: string; seats: string 
     /* ignore */
   }
 
-  const uniq = (arr: string[]) => [...new Set(arr)];
+  const uniq = (arr: string[]) => Array.from(new Set(arr));
   return {
     meals: uniq(meals).join(" · ") || "",
     seats: uniq(seats).join(" · ") || "",
@@ -343,20 +346,20 @@ export default function UserDashboard({
   const { inputLang } = useDateLocale();
 
   const handleSignOut = () => {
-    try {
-      localStorage.removeItem("user");
-    } catch {}
-    onBack();
+    clearUserSession();
+    window.location.href = getAgentPortalLoginUrl();
   };
 
-  const resolveDashboardTab = (tab: string): "overview" | "bookings" | "family" =>
+  type DashboardTab = "overview" | "bookings" | "family" | "markup";
+
+  const resolveDashboardTab = (tab: string): DashboardTab =>
     tab === "manage"
       ? "bookings"
-      : tab === "overview" || tab === "bookings" || tab === "family"
+      : tab === "overview" || tab === "bookings" || tab === "family" || tab === "markup"
         ? tab
         : "overview";
 
-  const [activeTab, setActiveTab] = useState<"overview" | "bookings" | "family">(() =>
+  const [activeTab, setActiveTab] = useState<DashboardTab>(() =>
     resolveDashboardTab(initialTab),
   );
   const [bookings, setBookings] = useState<any[]>([]);
@@ -2400,11 +2403,12 @@ export default function UserDashboard({
             { id: "overview", icon: "🏠", label: "Overview" },
             { id: "bookings", icon: "🎫", label: "My Bookings" },
             { id: "family", icon: "👨‍👩‍👧‍👦", label: "Family" },
+            { id: "markup", icon: "📈", label: "Markup" },
           ].map((t) => (
             <button
               key={t.id}
               onClick={() => {
-                setActiveTab(t.id as "overview" | "bookings" | "family");
+                setActiveTab(t.id as DashboardTab);
                 setSelectedBooking(null);
                 setBookingDetail(null);
               }}
@@ -4592,6 +4596,13 @@ export default function UserDashboard({
                   </div>
                 )}
               </div>
+            )}
+
+            {activeTab === "markup" && user?.userId && (
+              <AgentMarkupPanel userId={user.userId} />
+            )}
+            {activeTab === "markup" && !user?.userId && (
+              <p style={{ fontSize: 13, color: "#9ca3af" }}>Sign in to manage markup rules.</p>
             )}
           </div>
           {/* end booking panel */}
