@@ -1,0 +1,86 @@
+# PROD: build + optional deploy on push to main.
+# If "Deploy to Prod" fails (missing PROD_VPS_* secrets), use manual kubectl after Build & Push.
+#
+# Secrets: DOCKERHUB_USERNAME, DOCKERHUB_TOKEN
+# Optional deploy: PROD_VPS_HOST, PROD_VPS_USER, PROD_VPS_SSH_KEY
+
+name: Deploy Agent Portal to Kubernetes (Prod)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: vivance/nextjs-agent-app
+  DEPLOYMENT_NAME: nextjs-agent
+  CONTAINER_NAME: nextjs-agent
+  K8S_NAMESPACE: vivancetravels
+
+jobs:
+  build-and-push:
+    name: Build & Push (Prod)
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.image_tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compute image tag
+        id: meta
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "image_tag=release-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "Image tag: release-${SHORT_SHA}"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.image_tag }}
+            ${{ env.IMAGE_NAME }}:prod-latest
+
+  deploy-prod:
+    name: Deploy to Prod
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Deploy to Kubernetes on prod VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_VPS_HOST }}
+          username: ${{ secrets.PROD_VPS_USER }}
+          key: ${{ secrets.PROD_VPS_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
+            IMAGE="${{ env.IMAGE_NAME }}:${IMAGE_TAG}"
+            NS="${{ env.K8S_NAMESPACE }}"
+            DEPLOY="${{ env.DEPLOYMENT_NAME }}"
+            CONTAINER="${{ env.CONTAINER_NAME }}"
+
+            echo "Deploying ${IMAGE} to namespace ${NS}..."
+            kubectl -n "${NS}" set env "deployment/${DEPLOY}" \
+              NODE_ENV=production HOSTNAME=0.0.0.0 PORT=3005
+            kubectl -n "${NS}" set image "deployment/${DEPLOY}" \
+              "${CONTAINER}=${IMAGE}"
+            kubectl -n "${NS}" annotate "deployment/${DEPLOY}" \
+              kubernetes.io/change-cause="Prod deploy ${IMAGE} via GitHub Actions" \
+              --overwrite
+            kubectl -n "${NS}" rollout status "deployment/${DEPLOY}" --timeout=180s
+            kubectl -n "${NS}" get pods -l app=nextjs-agent -o wide
+            echo "Prod deploy complete: ${IMAGE}"

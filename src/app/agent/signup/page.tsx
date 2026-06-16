@@ -44,6 +44,7 @@ function Field({
   required = false,
   error,
   maxLength,
+  max,
 }: {
   label: string;
   name: string;
@@ -54,6 +55,7 @@ function Field({
   required?: boolean;
   error?: string;
   maxLength?: number;
+  max?: string;
 }) {
   return (
     <div>
@@ -68,6 +70,7 @@ function Field({
         onChange={onChange}
         placeholder={placeholder}
         maxLength={maxLength}
+        max={max}
         className={inputCls(!!error)}
         aria-invalid={!!error}
         aria-describedby={error ? `${name}-error` : undefined}

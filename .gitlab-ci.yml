@@ -1,0 +1,101 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE: vivance/nextjs-agent-app
+  K8S_DEPLOYMENT: nextjs-agent
+  K8S_CONTAINER: nextjs-agent
+
+.build_template:
+  stage: build
+  image: docker:26
+  services:
+    - name: docker:26-dind
+      alias: docker
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+    - apk add --no-cache git
+  script:
+    - |
+      if [ "$CI_COMMIT_BRANCH" = "main" ]; then
+        IMAGE_TAG="release-${CI_COMMIT_SHA}"
+        DOCKERFILE="Dockerfile"
+        FLOATING_TAG="prod-latest"
+      else
+        IMAGE_TAG="dev-${CI_COMMIT_SHA}"
+        DOCKERFILE="Dockerfile.dev"
+        FLOATING_TAG="dev-latest"
+      fi
+    - FULL_IMAGE="${DOCKER_IMAGE}:${IMAGE_TAG}"
+    - echo "Building ${FULL_IMAGE} using ${DOCKERFILE}"
+    - docker context create vivance-ctx
+    - docker buildx create --use --name vivance-builder --driver docker-container --driver-opt network=host vivance-ctx
+    - docker buildx build --platform linux/amd64 -f "$DOCKERFILE" -t "$FULL_IMAGE" -t "${DOCKER_IMAGE}:${FLOATING_TAG}" --push .
+    - echo "IMAGE_TAG=${IMAGE_TAG}" > deploy.env
+  artifacts:
+    reports:
+      dotenv: deploy.env
+
+.deploy_template:
+  stage: deploy
+  image: alpine:3.19
+  before_script:
+    - apk add --no-cache openssh-client
+    - mkdir -p ~/.ssh
+    - echo "$SSH_KEY" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts || true
+  script:
+    - echo "Deploying ${DOCKER_IMAGE}:${IMAGE_TAG} to ${DEPLOY_ENV}"
+    - |
+      ssh "$DEPLOY_USER@$DEPLOY_HOST" "
+        kubectl set image deployment/${K8S_DEPLOYMENT} ${K8S_CONTAINER}=${DOCKER_IMAGE}:${IMAGE_TAG} && \
+        kubectl annotate deployment/${K8S_DEPLOYMENT} \
+          kubernetes.io/change-cause='Deploy ${DOCKER_IMAGE}:${IMAGE_TAG} to ${DEPLOY_ENV}' \
+          --overwrite && \
+        kubectl rollout status deployment/${K8S_DEPLOYMENT} --timeout=180s && \
+        kubectl get pods -l app=${K8S_DEPLOYMENT} -o wide
+      "
+
+build-and-push:
+  extends: .build_template
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+
+deploy:
+  extends: .deploy_template
+  needs:
+    - job: build-and-push
+      artifacts: true
+  variables:
+    DEPLOY_ENV: DEV
+    DEPLOY_HOST: "$VPS_HOST"
+    DEPLOY_USER: "$VPS_USER"
+    SSH_KEY: "$VPS_SSH_KEY"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+
+build-and-push-prod:
+  extends: .build_template
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+deploy-prod:
+  extends: .deploy_template
+  needs:
+    - job: build-and-push-prod
+      artifacts: true
+  variables:
+    DEPLOY_ENV: LIVE
+    DEPLOY_HOST: "$PROD_VPS_HOST"
+    DEPLOY_USER: "$PROD_VPS_USER"
+    SSH_KEY: "$PROD_VPS_SSH_KEY"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+      allow_failure: false
