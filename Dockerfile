@@ -9,7 +9,7 @@ COPY tsconfig.json ./
 
 RUN npm ci
 
-# Runtime config comes from K8s env / ConfigMap. .env.production is optional if present locally.
+# Runtime config comes from K8s ConfigMap/Secret — no .env files in the image.
 COPY . ./
 
 # Optional: Disable Next.js telemetry (not necessary but cleaner)

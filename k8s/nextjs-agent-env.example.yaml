@@ -1,5 +1,5 @@
-# Runtime env for deployment/nextjs-agent (merge into container env or envFrom).
-# Build-time copy: same keys in .env.production for middleware host detection.
+# Runtime env for deployment/nextjs-agent (env or envFrom on the Deployment).
+# DEV and PROD: apply this ConfigMap — do not use .env.production on the server.
 apiVersion: v1
 kind: ConfigMap
 metadata:
