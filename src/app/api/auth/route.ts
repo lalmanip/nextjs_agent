@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { API_BASE_URL_USER, API_KEY } from '@/lib/config';
+import { API_BASE_URL_USER, API_BASE_URL_AUTH, API_KEY } from '@/lib/config';
 import { validateSignUpPayload, validateSignInPayload } from '@/utils/validation';
 import { getServerDomainTokenCached, invalidateServerDomainToken } from '@/lib/serverTokenCache';
+import { loginViaAuthGatewayAndFetchProfile } from '@/lib/userAuthLogin';
 
 function toBearer(tokenLike: string) {
   const t = String(tokenLike || '').trim();
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
     const { action, ...data } = await request.json();
 
     let url = '';
-    const needsBearer = action === 'signup' || action === 'signin' || action === 'agent-add';
+    const needsBearer = action === 'signup' || action === 'agent-add';
     switch (action) {
       case 'signup': {
         const errors = validateSignUpPayload(data);
@@ -41,8 +42,19 @@ export async function POST(request: NextRequest) {
         const errors = validateSignInPayload(data);
         if (errors.length > 0)
           return NextResponse.json({ error: 'Validation failed', errors }, { status: 400 });
-        url = `${API_BASE_URL_USER}/user/authenticate`;
-        break;
+
+        console.log('\n========== AUTH API CALL [action=signin via vivapi-auth] ==========');
+        const signInResult = await loginViaAuthGatewayAndFetchProfile({
+          userName: String(data.userName ?? ''),
+          password: String(data.password ?? ''),
+          authBaseUrl: API_BASE_URL_AUTH,
+          userBaseUrl: API_BASE_URL_USER,
+          apiKey: API_KEY,
+          requiredUserType: 3,
+          rejectInactiveB2b: true,
+        });
+        const signInStatus = signInResult.status === 'success' ? 200 : 401;
+        return NextResponse.json(signInResult, { status: signInStatus });
       }
       case 'agent-add': {
         url = `${API_BASE_URL_USER}/user/agent/add`;
@@ -72,15 +84,8 @@ export async function POST(request: NextRequest) {
       bearer = toBearer(domainToken);
     }
 
-    /** Body sent to vivapi-user (action stripped; signin sends only credentials). */
+    /** Body sent to vivapi-user (action stripped). */
     const buildUpstreamBody = (): string => {
-      if (action === 'signin') {
-        return JSON.stringify({
-          userName: String(data.userName ?? '').trim(),
-          password: String(data.password ?? ''),
-          userType: 3,
-        });
-      }
       const { action: _a, token: _t, accessToken: _at, jwt: _j, bearer: _b, ...rest } =
         data as Record<string, unknown>;
       return JSON.stringify(rest);
