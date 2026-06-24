@@ -1,0 +1,3 @@
+-- Run on vivance_java before deploying agent markup APIs.
+-- Canonical copy: Vivance-User-Repository/src/main/resources/db/create_agent_markup_tables.sql
+-- Sample data:    Vivance-User-Repository/src/main/resources/db/seed_agent_markup_sample.sql
