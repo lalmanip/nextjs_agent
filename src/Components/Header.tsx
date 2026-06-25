@@ -197,7 +197,7 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
 
   return (
     <>
-      <header className="bg-white shadow-sm sticky top-0 z-40">
+      <header className="bg-white shadow-sm sticky top-[var(--env-ribbon-height,0px)] z-40">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
