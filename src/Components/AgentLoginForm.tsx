@@ -54,7 +54,7 @@ export default function AgentLoginForm() {
 
         {registered && (
           <div className="mb-4 rounded-lg bg-green-500/20 border border-green-400/40 px-4 py-2 text-sm text-green-300 text-center">
-            Account created successfully! Please sign in.
+            Account submitted successfully. Please wait for 48 hours for approval
           </div>
         )}
 

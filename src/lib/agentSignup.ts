@@ -3,7 +3,7 @@
 // token injected (same path the B2C AuthModal uses), rather than calling the
 // backend directly from the browser.
 
-export type AgentDocumentKind = "ADDRESS_PROOF" | "PAN" | "GST";
+export type AgentDocumentKind = "ADDRESS_PROOF" | "ID_PROOF" | "PAN" | "GST" | "BANK_PROOF";
 
 async function postAuth(action: string, payload: Record<string, unknown>) {
   console.log(`[agentSignup] REQUEST action="${action}" ->`, "/api/auth", payload);
@@ -118,8 +118,10 @@ export async function addAgentProfile(payload: {
   bankIfsc: string;
   bankAccountHolderName: string;
   addressProof: string;
+  idProof: string;
   panFilePath: string;
-  gstFilePath: string;
+  gstFilePath?: string;
+  bankProof: string;
 }) {
   return postAuth("agent-add", {
     userType: 3,
@@ -130,21 +132,29 @@ export async function addAgentProfile(payload: {
 
 export type AgentUploadedDocuments = {
   addressProof: string;
+  idProof: string;
   panFilePath: string;
-  gstFilePath: string;
+  gstFilePath?: string;
+  bankProof: string;
 };
 
-/** Upload address proof, PAN, and GST files for a new agent user. */
+/** Upload KYC and bank documents for a new agent user. */
 export async function uploadAgentSignupDocuments(
   userId: string | number,
   files: {
     addressProof: File;
+    idProof: File;
     panFile: File;
-    gstFile: File;
+    bankProof: File;
+    gstFile?: File | null;
   },
 ): Promise<AgentUploadedDocuments> {
   const addressProof = await uploadAgentDocument(userId, "ADDRESS_PROOF", files.addressProof);
+  const idProof = await uploadAgentDocument(userId, "ID_PROOF", files.idProof);
   const panFilePath = await uploadAgentDocument(userId, "PAN", files.panFile);
-  const gstFilePath = await uploadAgentDocument(userId, "GST", files.gstFile);
-  return { addressProof, panFilePath, gstFilePath };
+  const bankProof = await uploadAgentDocument(userId, "BANK_PROOF", files.bankProof);
+  const gstFilePath = files.gstFile
+    ? await uploadAgentDocument(userId, "GST", files.gstFile)
+    : undefined;
+  return { addressProof, idProof, panFilePath, bankProof, gstFilePath };
 }
