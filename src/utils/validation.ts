@@ -184,9 +184,17 @@ export function validateSignUpPayload(data: Record<string, any>): ValidationErro
   const errors: ValidationError[] = [];
   const push = (field: string, msg: string | null) => { if (msg) errors.push({ field, message: msg }); };
 
+  const loginId = String(data.userName ?? data.email ?? '').trim();
+  if (!loginId) {
+    push('userName', 'Username is required');
+  } else if (loginId.includes('@')) {
+    push('email', validateEmail(loginId));
+  } else if (!/^[a-zA-Z0-9_]{3,30}$/.test(loginId)) {
+    push('userName', 'User name must be 3–30 characters (letters, numbers, underscore) or a valid email');
+  }
+
   push('firstName', validateName(data.firstName, 'First name'));
   push('lastName', validateName(data.lastName, 'Last name'));
-  push('email', validateEmail(data.email));
   push('password', validatePassword(data.password));
   push('phone', validatePhone(data.phone));
 

@@ -3,6 +3,7 @@ import { API_BASE_URL_USER, API_BASE_URL_AUTH, API_KEY } from '@/lib/config';
 import { validateSignUpPayload, validateSignInPayload } from '@/utils/validation';
 import { getServerDomainTokenCached, invalidateServerDomainToken } from '@/lib/serverTokenCache';
 import { loginViaAuthGatewayAndFetchProfile } from '@/lib/userAuthLogin';
+import { registerViaAuthGateway } from '@/lib/userAuthGateway';
 
 function toBearer(tokenLike: string) {
   const t = String(tokenLike || '').trim();
@@ -35,7 +36,60 @@ export async function POST(request: NextRequest) {
           );
           return NextResponse.json({ error: 'Validation failed', errors }, { status: 400 });
         }
+
+        const loginId = String(data.userName ?? data.email ?? '').trim();
+        const password = String(data.password ?? '');
+        const firstName = String(data.firstName ?? '').trim();
+        const lastName = String(data.lastName ?? '').trim();
+        const countryCodeRaw = data.countryCode;
+        const countryCode =
+          countryCodeRaw != null && String(countryCodeRaw).trim() !== ''
+            ? parseInt(String(countryCodeRaw), 10)
+            : undefined;
+        const userTypeRaw = data.userType;
+        const userType =
+          userTypeRaw != null && String(userTypeRaw).trim() !== ''
+            ? parseInt(String(userTypeRaw), 10)
+            : undefined;
+        const statusRaw = data.status;
+        const status =
+          statusRaw != null && String(statusRaw).trim() !== ''
+            ? parseInt(String(statusRaw), 10)
+            : undefined;
+
+        console.log('\n========== AGENT SIGNUP (vivapi-auth register + vivapi-user/create) ==========');
+        console.log('Login id:', loginId);
+
+        const authRegister = await registerViaAuthGateway(
+          API_BASE_URL_AUTH,
+          API_KEY,
+          {
+            userName: loginId,
+            email: loginId.includes('@') ? loginId : undefined,
+            password,
+            firstName,
+            lastName,
+            countryCode: Number.isFinite(countryCode) ? countryCode : undefined,
+            userType: Number.isFinite(userType) ? userType : 3,
+            status: Number.isFinite(status) ? status : 0,
+          },
+        );
+
+        if (!authRegister.ok) {
+          console.warn('[auth] vivapi-auth register failed:', authRegister.message);
+          const httpStatus =
+            authRegister.status === 409 ? 409 : authRegister.status >= 400 ? authRegister.status : 400;
+          return NextResponse.json(
+            { status: 'failed', message: authRegister.message, response: null },
+            { status: httpStatus },
+          );
+        }
+
+        console.log('[auth] vivapi-auth register OK, authUserId:', authRegister.userId);
+
         url = `${API_BASE_URL_USER}/user/create`;
+        (data as Record<string, unknown>).uuid = authRegister.userId;
+        delete (data as Record<string, unknown>).password;
         break;
       }
       case 'signin': {
