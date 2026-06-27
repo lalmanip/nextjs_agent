@@ -6,10 +6,10 @@ import AgentWalletModal from "./AgentWalletModal";
 import { Plane, Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
-  getHeaderNavMode,
   HEADER_NAV_MAINTENANCE_MESSAGE,
   type HeaderNavProductKey,
 } from "@/lib/headerNavConfig";
+import { useHeaderNavMode } from "@/Components/HeaderNavConfigProvider";
 import {
   fetchAgentWallet,
   formatWalletAmount,
@@ -158,7 +158,7 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
     closeMobileMenu?: boolean;
   }) {
     const { navKey, className, onLiveClick, children, closeMobileMenu } = props;
-    const mode = getHeaderNavMode(navKey);
+    const mode = useHeaderNavMode(navKey);
     if (mode === "hidden") return null;
 
     const afterClick = () => {

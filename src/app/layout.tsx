@@ -4,7 +4,12 @@ import "./globals.css";
 import "leaflet/dist/leaflet.css";
 import { DateLocaleProvider } from "@/Components/DateLocaleProvider";
 import EnvRibbon from "@/Components/EnvRibbon";
+import { HeaderNavConfigProvider } from "@/Components/HeaderNavConfigProvider";
+import { getAllHeaderNavModes } from "@/lib/headerNavConfig";
 import { parseEnvRibbonLabel } from "@/lib/envRibbon";
+
+/** Pod env (APP_ENVIRONMENT, HEADER_NAV_*) is applied at runtime — do not bake at build only. */
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Vivance Travels - Book Flights, Hotels, Cruises & Holiday Packages",
@@ -21,6 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const envRibbonLabel = parseEnvRibbonLabel();
+  const headerNavModes = getAllHeaderNavModes();
   const ribbonStyle = envRibbonLabel
     ? ({ ["--env-ribbon-height" as string]: "2rem" } as React.CSSProperties)
     : undefined;
@@ -33,7 +39,9 @@ export default function RootLayout({
           strategy="lazyOnload"
         />
         {envRibbonLabel ? <EnvRibbon label={envRibbonLabel} /> : null}
-        <DateLocaleProvider>{children}</DateLocaleProvider>
+        <HeaderNavConfigProvider modes={headerNavModes}>
+          <DateLocaleProvider>{children}</DateLocaleProvider>
+        </HeaderNavConfigProvider>
       </body>
     </html>
   );

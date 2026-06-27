@@ -30,18 +30,41 @@ function parseHeaderNavMode(raw: string | undefined): HeaderNavMode {
   return "on";
 }
 
-const ENV_BY_KEY: Record<HeaderNavProductKey, string | undefined> = {
-  flights: process.env.NEXT_PUBLIC_HEADER_NAV_FLIGHTS,
-  hotels: process.env.NEXT_PUBLIC_HEADER_NAV_HOTELS,
-  cruises: process.env.NEXT_PUBLIC_HEADER_NAV_CRUISES,
-  /** Legacy /holidays page — shown in nav as "Old Holidays". */
-  holidays: process.env.NEXT_PUBLIC_HEADER_NAV_HOLIDAYS,
-  /** /holiday-partners — shown in nav as "Holidays". */
-  holidayPartners: process.env.NEXT_PUBLIC_HEADER_NAV_HOLIDAY_PARTNERS,
-};
+function envForNavKey(key: HeaderNavProductKey): string | undefined {
+  switch (key) {
+    case "flights":
+      return process.env.NEXT_PUBLIC_HEADER_NAV_FLIGHTS;
+    case "hotels":
+      return process.env.NEXT_PUBLIC_HEADER_NAV_HOTELS;
+    case "cruises":
+      return process.env.NEXT_PUBLIC_HEADER_NAV_CRUISES;
+    /** Legacy /holidays page — shown in nav as "Old Holidays". */
+    case "holidays":
+      return process.env.NEXT_PUBLIC_HEADER_NAV_HOLIDAYS;
+    /** /holiday-partners — shown in nav as "Holidays". */
+    case "holidayPartners":
+      return (
+        process.env.NEXT_PUBLIC_HEADER_NAV_HOLIDAY_PARTNERS ??
+        process.env.NEXT_PUBLIC_HEADER_NAV_HOLIDAYS_PARTNERS
+      );
+    default:
+      return undefined;
+  }
+}
+
+/** Read all nav modes from process.env (works at Docker build time and K8s runtime on the server). */
+export function getAllHeaderNavModes(): Record<HeaderNavProductKey, HeaderNavMode> {
+  return {
+    flights: parseHeaderNavMode(envForNavKey("flights")),
+    hotels: parseHeaderNavMode(envForNavKey("hotels")),
+    cruises: parseHeaderNavMode(envForNavKey("cruises")),
+    holidays: parseHeaderNavMode(envForNavKey("holidays")),
+    holidayPartners: parseHeaderNavMode(envForNavKey("holidayPartners")),
+  };
+}
 
 export function getHeaderNavMode(key: HeaderNavProductKey): HeaderNavMode {
-  return parseHeaderNavMode(ENV_BY_KEY[key]);
+  return parseHeaderNavMode(envForNavKey(key));
 }
 
 export const HEADER_NAV_MAINTENANCE_MESSAGE =
