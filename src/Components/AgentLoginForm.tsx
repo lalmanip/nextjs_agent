@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { authAPI } from "@/lib/api";
-import { getAgentPortalSignupUrl, getB2cAppUrl } from "@/lib/agentPortal";
+import { getAgentPortalSignupUrl } from "@/lib/agentPortal";
 import { getUserSession, setUserSession } from "@/lib/authSession";
 
 export default function AgentLoginForm() {
@@ -18,7 +18,7 @@ export default function AgentLoginForm() {
     const session = getUserSession();
     if (!session) return;
     setUserSession(session);
-    window.location.href = getB2cAppUrl();
+    window.location.href = "/";
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -32,7 +32,7 @@ export default function AgentLoginForm() {
       const result = await authAPI.signIn({ userName: form.userName, password: form.password });
       if (result?.status === "success" && result?.response) {
         setUserSession(result.response);
-        window.location.href = getB2cAppUrl();
+        window.location.href = "/";
       } else {
         setError(result?.message || "Invalid credentials. Please try again.");
       }
