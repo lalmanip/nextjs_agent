@@ -5,7 +5,7 @@ import {
   refreshServerDomainTokenCached,
 } from "@/lib/serverTokenCache";
 
-const ALLOWED_TYPES = new Set(["ADDRESS_PROOF", "PAN", "GST"]);
+const ALLOWED_TYPES = new Set(["ADDRESS_PROOF", "ID_PROOF", "PAN", "GST", "BANK_PROOF"]);
 const MAX_BYTES = 5 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
     if (!ALLOWED_TYPES.has(documentType)) {
       return NextResponse.json(
-        { status: "failed", message: "documentType must be ADDRESS_PROOF, PAN, or GST" },
+        { status: "failed", message: "documentType must be ADDRESS_PROOF, ID_PROOF, PAN, GST, or BANK_PROOF" },
         { status: 400 },
       );
     }

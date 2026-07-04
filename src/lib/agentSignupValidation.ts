@@ -21,6 +21,7 @@ export type AgentPersonalInfo = {
   lastName: string;
   mobile: string;
   addressProof: File | null;
+  idProof: File | null;
 };
 
 export type AgentLocationSelection = {
@@ -53,6 +54,7 @@ export type AgentBankDetails = {
   accountNumber: string;
   ifscCode: string;
   accountHolderName: string;
+  bankProof: File | null;
 };
 
 export type AgentLoginInfo = {
@@ -77,6 +79,11 @@ function validateRequiredFile(file: File | null, label: string): string | null {
     ["application/pdf", "image/jpeg", "image/png"].includes(file.type);
   if (!okType) return `${label} must be PDF, JPG, or PNG`;
   return null;
+}
+
+function validateOptionalFile(file: File | null, label: string): string | null {
+  if (!file) return null;
+  return validateRequiredFile(file, label);
 }
 
 function validatePinCode(pinCode: string, countryIso: string): string | null {
@@ -193,6 +200,7 @@ export function validateAgentSignupPersonal(p: AgentPersonalInfo): Record<string
   set("lastName", validateName(p.lastName, "Last name"));
   set("mobile", validatePhone(p.mobile));
   set("addressProof", validateRequiredFile(p.addressProof, "Address proof"));
+  set("idProof", validateRequiredFile(p.idProof, "ID proof"));
 
   return errors;
 }
@@ -236,7 +244,7 @@ export function validateAgentSignupCompany(
   set("annualTransaction", validatePositiveAmount(c.annualTransaction, "Annual transaction"));
   set("noOfEmployee", validateEmployeeCount(c.noOfEmployee));
   set("iata", validateOptionalIata(c.iata));
-  set("gstFile", validateRequiredFile(c.gstFile, "GST file"));
+  set("gstFile", validateOptionalFile(c.gstFile, "GST file"));
   set("panFile", validateRequiredFile(c.panFile, "PAN file"));
 
   return errors;
@@ -251,6 +259,10 @@ export function validateAgentSignupBank(b: AgentBankDetails): Record<string, str
   set("accountNumber", validateAccountNumber(b.accountNumber));
   set("ifscCode", validateIfsc(b.ifscCode));
   set("accountHolderName", validateName(b.accountHolderName, "Account holder name"));
+  set(
+    "bankProof",
+    validateRequiredFile(b.bankProof, "Bank statement or cancelled cheque"),
+  );
 
   return errors;
 }

@@ -146,6 +146,7 @@ export default function SignUpPage() {
     lastName: "",
     mobile: "",
     addressProof: null,
+    idProof: null,
   });
   const [company, setCompany] = useState<AgentCompanyDetails>({
     corporateId: "",
@@ -167,6 +168,7 @@ export default function SignUpPage() {
     accountNumber: "",
     ifscCode: "",
     accountHolderName: "",
+    bankProof: null,
   });
   const [login, setLogin] = useState<AgentLoginInfo>({
     userName: "",
@@ -204,9 +206,13 @@ export default function SignUpPage() {
 
   const handleBank = (e: React.ChangeEvent<HTMLInputElement>) => {
     clearFieldError(e.target.name);
-    const v =
-      e.target.name === "ifscCode" ? e.target.value.toUpperCase() : e.target.value;
-    setBank((p) => ({ ...p, [e.target.name]: v }));
+    if (e.target.type === "file") {
+      setBank((p) => ({ ...p, [e.target.name]: e.target.files?.[0] ?? null }));
+    } else {
+      const v =
+        e.target.name === "ifscCode" ? e.target.value.toUpperCase() : e.target.value;
+      setBank((p) => ({ ...p, [e.target.name]: v }));
+    }
   };
 
   const handleLogin = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -276,8 +282,8 @@ export default function SignUpPage() {
       const annualAmount = parseFloat(company.annualTransaction.replace(/,/g, ""));
       const employeeCount = parseInt(company.noOfEmployee, 10);
 
-      if (!personal.addressProof || !company.panFile || !company.gstFile) {
-        setError("Address proof, PAN, and GST documents are required.");
+      if (!personal.addressProof || !personal.idProof || !company.panFile || !bank.bankProof) {
+        setError("Address proof, ID proof, PAN, and bank statement or cancelled cheque are required.");
         setLoading(false);
         return;
       }
@@ -295,7 +301,9 @@ export default function SignUpPage() {
 
       const docs = await uploadAgentSignupDocuments(userRes.userId, {
         addressProof: personal.addressProof,
+        idProof: personal.idProof,
         panFile: company.panFile,
+        bankProof: bank.bankProof,
         gstFile: company.gstFile,
       });
 
@@ -321,8 +329,10 @@ export default function SignUpPage() {
         bankIfsc: bank.ifscCode.trim().toUpperCase(),
         bankAccountHolderName: bank.accountHolderName.trim(),
         addressProof: docs.addressProof,
+        idProof: docs.idProof,
         panFilePath: docs.panFilePath,
-        gstFilePath: docs.gstFilePath,
+        bankProof: docs.bankProof,
+        ...(docs.gstFilePath ? { gstFilePath: docs.gstFilePath } : {}),
       });
       router.push("/?registered=1");
     } catch (err: unknown) {
@@ -421,16 +431,22 @@ export default function SignUpPage() {
               }}
               onCityChange={() => clearFieldError("city")}
             />
-            <div className="sm:col-span-2">
-              <FileField
-                label="Address Proof"
-                name="addressProof"
-                onChange={handlePersonal}
-                required
-                error={fieldErrors.addressProof}
-                fileName={personal.addressProof?.name}
-              />
-            </div>
+            <FileField
+              label="Address Proof"
+              name="addressProof"
+              onChange={handlePersonal}
+              required
+              error={fieldErrors.addressProof}
+              fileName={personal.addressProof?.name}
+            />
+            <FileField
+              label="ID Proof"
+              name="idProof"
+              onChange={handlePersonal}
+              required
+              error={fieldErrors.idProof}
+              fileName={personal.idProof?.name}
+            />
             <StepButtons step={step} setStep={setStep} loading={false} isLast={false} />
           </form>
         )}
@@ -552,7 +568,6 @@ export default function SignUpPage() {
               label="GST File"
               name="gstFile"
               onChange={handleCompany}
-              required
               error={fieldErrors.gstFile}
               fileName={company.gstFile?.name}
             />
@@ -597,6 +612,16 @@ export default function SignUpPage() {
                 required
                 error={fieldErrors.accountHolderName}
                 maxLength={50}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <FileField
+                label="Bank Statement or Cancelled Cheque"
+                name="bankProof"
+                onChange={handleBank}
+                required
+                error={fieldErrors.bankProof}
+                fileName={bank.bankProof?.name}
               />
             </div>
             <StepButtons step={step} setStep={setStep} loading={false} isLast={false} />
