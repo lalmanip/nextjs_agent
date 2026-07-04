@@ -8,8 +8,9 @@ metadata:
   labels:
     app.kubernetes.io/name: nextjs-agent
 data:
+# REQUIRED — no hardcoded defaults in app code. Without AGENT_PORTAL_HOSTS the site returns 503.
+  AGENT_PORTAL_HOSTS: "agent-dev.vivancetravels.com"
   NEXT_PUBLIC_AGENT_PORTAL_URL: "https://agent-dev.vivancetravels.com"
   NEXT_PUBLIC_B2C_APP_URL: "https://next.vivancetravels.com"
-  AGENT_PORTAL_HOSTS: "agent-dev.vivancetravels.com"
   API_MODE: "remote"
   NEXT_PUBLIC_API_MODE: "remote"

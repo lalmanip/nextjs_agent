@@ -1,0 +1,31 @@
+# Kong Ingress: agent.vivancetravels.com -> nextjs-agent-svc (all paths).
+# Agent registration uploads KYC files (up to 5 MB each) via POST /api/agent/documents/upload.
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextjs-agent-ingress
+  namespace: vivancetravels
+  annotations:
+    konghq.com/strip-path: "false"
+    konghq.com/protocols: "http,https"
+    konghq.com/ssl-redirect: "false"
+    konghq.com/https-redirect-status-code: "301"
+    # Upload body limit: set KONG_NGINX_HTTP_CLIENT_MAX_BODY_SIZE on kong-gateway (see k8s/kong-gateway-upload-limit.md).
+spec:
+  ingressClassName: kong
+  tls:
+    - hosts:
+        - agent.vivancetravels.com
+      secretName: agent-vivancetravels-tls
+  rules:
+    - host: agent.vivancetravels.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nextjs-agent-svc
+                port:
+                  number: 80

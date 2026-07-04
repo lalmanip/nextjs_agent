@@ -61,6 +61,31 @@ export async function POST(request: NextRequest) {
       text = await response.text().catch(() => "");
     }
 
+    if (response.status === 413) {
+      console.warn(
+        `[agent/documents/upload] upstream 413 userId=${userId} type=${documentType} fileBytes=${file.size} endpoint=${endpoint}`,
+      );
+      let upstreamMessage = "";
+      try {
+        const upstreamJson = text ? JSON.parse(text) : null;
+        if (upstreamJson && typeof upstreamJson === "object" && "message" in upstreamJson) {
+          upstreamMessage = String((upstreamJson as { message?: unknown }).message ?? "");
+        }
+      } catch {
+        upstreamMessage = text.slice(0, 200);
+      }
+      return NextResponse.json(
+        {
+          status: "failed",
+          message:
+            upstreamMessage ||
+            `Upload rejected by user API (HTTP 413). Received ${file.size} bytes. Ensure vivance-user-api multipart limits and Kong client_max_body_size allow at least 10 MB.`,
+          receivedBytes: file.size,
+        },
+        { status: 413 },
+      );
+    }
+
     let parsed: unknown = {};
     try {
       parsed = text ? JSON.parse(text) : {};

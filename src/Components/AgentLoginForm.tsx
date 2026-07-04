@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { authAPI } from "@/lib/api";
-import { getAgentPortalSignupUrl } from "@/lib/agentPortal";
+import { useAgentPortalSignupUrl } from "@/Components/AgentPortalConfigProvider";
 import { getUserSession, setUserSession } from "@/lib/authSession";
 
 export default function AgentLoginForm() {
   const params = useSearchParams();
   const registered = params.get("registered") === "1";
+  const agentPortalSignupUrl = useAgentPortalSignupUrl();
 
   const [form, setForm] = useState({ userName: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -95,9 +96,13 @@ export default function AgentLoginForm() {
 
         <p className="mt-5 text-center text-xs agent-auth-subtitle">
           New to Vivance?{" "}
-          <a href={getAgentPortalSignupUrl()} className="font-semibold text-white hover:underline">
-            Create an Account
-          </a>
+          {agentPortalSignupUrl ? (
+            <a href={agentPortalSignupUrl} className="font-semibold text-white hover:underline">
+              Create an Account
+            </a>
+          ) : (
+            <span className="text-white/50">Create an Account (portal not configured)</span>
+          )}
         </p>
       </div>
     </main>

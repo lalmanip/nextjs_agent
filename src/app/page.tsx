@@ -14,11 +14,12 @@ import {
   type SearchState,
 } from "@/lib/bookingState";
 import { commitBooking } from "@/lib/commitBooking";
-import { getAgentPortalLoginUrl } from "@/lib/agentPortal";
+import { useAgentPortalLoginUrl } from "@/Components/AgentPortalConfigProvider";
 import { getUserSessionRaw, syncUserSessionFromCookie } from "@/lib/authSession";
 
 export default function Home() {
   const router = useRouter();
+  const agentPortalLoginUrl = useAgentPortalLoginUrl();
   const [user, setUser] = useState<any>(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("user");
@@ -34,10 +35,10 @@ export default function Home() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("hdfc_return") === "1") return;
     const saved = getUserSessionRaw();
-    if (!saved) {
-      window.location.href = getAgentPortalLoginUrl();
+    if (!saved && agentPortalLoginUrl) {
+      window.location.href = agentPortalLoginUrl;
     }
-  }, [router]);
+  }, [router, agentPortalLoginUrl]);
 
   // Handle return from HDFC payment gateway (full-page redirect back to /)
   useEffect(() => {

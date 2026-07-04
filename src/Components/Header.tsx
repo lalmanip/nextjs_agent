@@ -15,7 +15,7 @@ import {
   formatWalletAmount,
   type AgentWallet,
 } from "@/lib/agentWallet";
-import { getAgentPortalLoginUrl } from "@/lib/agentPortal";
+import { useAgentPortalLoginUrl } from "@/Components/AgentPortalConfigProvider";
 import { clearUserSession, syncUserSessionFromCookie } from "@/lib/authSession";
 
 interface HeaderProps {
@@ -42,6 +42,7 @@ const CURRENCIES = [
 
 export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSignInSuccess, onShowContact, onShowAgentDashboard }: HeaderProps) {
   const router = useRouter();
+  const agentPortalLoginUrl = useAgentPortalLoginUrl();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
   const [showAgentModal, setShowAgentModal] = useState(false);
@@ -111,7 +112,7 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
     clearUserSession();
     setUser(null);
     setWallet(null);
-    window.location.href = getAgentPortalLoginUrl();
+    if (agentPortalLoginUrl) window.location.href = agentPortalLoginUrl;
   };
 
   const openAuthModal = (mode: "signin" | "signup") => { setAuthMode(mode); setShowAuthModal(true); };

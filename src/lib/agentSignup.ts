@@ -68,6 +68,11 @@ export async function uploadAgentDocument(
     throw new Error(`Unexpected upload response (${res.status}).`);
   }
   if (!res.ok || data?.status === "failed") {
+    if (res.status === 413) {
+      throw new Error(
+        "Document upload failed: file too large for the gateway (HTTP 413). Each file must be under 5 MB; the ingress/proxy must allow at least 10 MB request bodies.",
+      );
+    }
     throw new Error(data?.message || data?.error || `Document upload failed (${res.status}).`);
   }
   return extractStoredPath(data);
