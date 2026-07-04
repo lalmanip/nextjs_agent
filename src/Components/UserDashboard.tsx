@@ -19,7 +19,7 @@ import {
   MY_BOOKINGS_VIEW_OTP_REQUEST_TYPE,
   otpApiMessage,
 } from "@/lib/myBookingsOtp";
-import { getAgentPortalLoginUrl } from "@/lib/agentPortal";
+import { useAgentPortalLoginUrl } from "@/Components/AgentPortalConfigProvider";
 import { clearUserSession } from "@/lib/authSession";
 import AgentMarkupPanel from "@/Components/AgentMarkupPanel";
 
@@ -344,10 +344,11 @@ export default function UserDashboard({
 }: UserDashboardProps) {
   const router = useRouter();
   const { inputLang } = useDateLocale();
+  const agentPortalLoginUrl = useAgentPortalLoginUrl();
 
   const handleSignOut = () => {
     clearUserSession();
-    window.location.href = getAgentPortalLoginUrl();
+    if (agentPortalLoginUrl) window.location.href = agentPortalLoginUrl;
   };
 
   type DashboardTab = "overview" | "bookings" | "family" | "markup";

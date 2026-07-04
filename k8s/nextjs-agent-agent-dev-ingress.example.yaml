@@ -11,6 +11,7 @@ metadata:
     konghq.com/protocols: "http,https"
     konghq.com/ssl-redirect: "true"
     konghq.com/https-redirect-status-code: "301"
+    # Upload limit: configure kong-gateway env (see k8s/kong-gateway-upload-limit.md).
     # TLS secret from k8s/agent-dev-certificate.yaml (do not also rely on ingress-shim unless you remove the Certificate CR)
 spec:
   ingressClassName: kong

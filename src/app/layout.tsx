@@ -4,7 +4,9 @@ import "./globals.css";
 import "leaflet/dist/leaflet.css";
 import { DateLocaleProvider } from "@/Components/DateLocaleProvider";
 import EnvRibbon from "@/Components/EnvRibbon";
+import { AgentPortalConfigProvider } from "@/Components/AgentPortalConfigProvider";
 import { HeaderNavConfigProvider } from "@/Components/HeaderNavConfigProvider";
+import { getAgentPortalRuntimeConfig } from "@/lib/agentPortal";
 import { getAllHeaderNavModes } from "@/lib/headerNavConfig";
 import { parseEnvRibbonLabel } from "@/lib/envRibbon";
 
@@ -27,6 +29,7 @@ export default function RootLayout({
 }) {
   const envRibbonLabel = parseEnvRibbonLabel();
   const headerNavModes = getAllHeaderNavModes();
+  const agentPortalConfig = getAgentPortalRuntimeConfig();
   const ribbonStyle = envRibbonLabel
     ? ({ ["--env-ribbon-height" as string]: "2rem" } as React.CSSProperties)
     : undefined;
@@ -40,7 +43,9 @@ export default function RootLayout({
         />
         {envRibbonLabel ? <EnvRibbon label={envRibbonLabel} /> : null}
         <HeaderNavConfigProvider modes={headerNavModes}>
-          <DateLocaleProvider>{children}</DateLocaleProvider>
+          <AgentPortalConfigProvider config={agentPortalConfig}>
+            <DateLocaleProvider>{children}</DateLocaleProvider>
+          </AgentPortalConfigProvider>
         </HeaderNavConfigProvider>
       </body>
     </html>

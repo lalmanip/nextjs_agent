@@ -48,7 +48,6 @@ const nextConfig = {
   },
   allowedDevOrigins: [
     "next.vivancetravels.com",
-    "agent-dev.vivancetravels.com",
     "*.vivancetravels.com",
   ],
   images: {
@@ -60,6 +59,11 @@ const nextConfig = {
       "seeklogo.com",
     ],
     remotePatterns: [{ protocol: "https", hostname: "**" }],
+  },
+  // Agent signup uploads (multipart, up to 5 MB). Middleware buffers request bodies;
+  // without this, large uploads can be truncated before the route handler runs.
+  experimental: {
+    middlewareClientMaxBodySize: "10mb",
   },
 };
 
