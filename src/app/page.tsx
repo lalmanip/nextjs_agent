@@ -163,7 +163,6 @@ export default function Home() {
   const headerProps = {
     onShowProfile: (tab?: string) =>
       router.push(`/dashboard${tab ? `?tab=${tab}` : ""}`),
-    onShowHolidays: () => router.push("/holidays"),
     onShowHome: () => router.push("/"),
     onSignInSuccess: (userData: any) => {
       setUser(userData);
