@@ -14,7 +14,6 @@ export default function InternationalDestinationPage() {
   const headerProps = {
     onShowProfile: (tab?: string) =>
       router.push(`/dashboard${tab ? `?tab=${tab}` : ""}`),
-    onShowHolidays: () => router.push("/holidays"),
     onShowHome: () => router.push("/"),
     onSignInSuccess: (userData: unknown) => {
       localStorage.setItem("user", JSON.stringify(userData));

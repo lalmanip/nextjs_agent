@@ -20,7 +20,6 @@ import { clearUserSession, syncUserSessionFromCookie } from "@/lib/authSession";
 
 interface HeaderProps {
   onShowProfile?: (initialTab?: string) => void;
-  onShowHolidays?: () => void;
   onShowHome?: () => void;
   onSignInSuccess?: (user: any) => void;
   onShowContact?: () => void;
@@ -40,7 +39,7 @@ const CURRENCIES = [
   { code: "MYR", symbol: "RM", name: "Malaysian Ringgit", flag: "🇲🇾" },
 ];
 
-export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSignInSuccess, onShowContact, onShowAgentDashboard }: HeaderProps) {
+export default function Header({ onShowProfile, onShowHome, onSignInSuccess, onShowContact, onShowAgentDashboard }: HeaderProps) {
   const router = useRouter();
   const agentPortalLoginUrl = useAgentPortalLoginUrl();
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -232,13 +231,6 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
                 onLiveClick={() => {}}
               >
                 🚢 Cruises
-              </NavProductControl>
-              <NavProductControl
-                navKey="holidays"
-                className="text-gray-700 hover:text-primary text-sm font-medium"
-                onLiveClick={() => onShowHolidays?.()}
-              >
-                🏖️ Old Holidays
               </NavProductControl>
               <NavProductControl
                 navKey="holidayPartners"
@@ -477,14 +469,6 @@ export default function Header({ onShowProfile, onShowHolidays, onShowHome, onSi
             closeMobileMenu
           >
             🚢 Cruises
-          </NavProductControl>
-          <NavProductControl
-            navKey="holidays"
-            className="text-left text-gray-700 hover:text-primary py-2 text-sm font-medium"
-            onLiveClick={() => onShowHolidays?.()}
-            closeMobileMenu
-          >
-            🏖️ Old Holidays
           </NavProductControl>
           <NavProductControl
             navKey="holidayPartners"

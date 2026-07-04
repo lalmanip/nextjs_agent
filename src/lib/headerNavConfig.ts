@@ -17,7 +17,6 @@ export type HeaderNavProductKey =
   | "flights"
   | "hotels"
   | "cruises"
-  | "holidays"
   | "holidayPartners";
 
 const DEFAULT_MODE: HeaderNavMode = "on";
@@ -38,9 +37,6 @@ function envForNavKey(key: HeaderNavProductKey): string | undefined {
       return process.env.NEXT_PUBLIC_HEADER_NAV_HOTELS;
     case "cruises":
       return process.env.NEXT_PUBLIC_HEADER_NAV_CRUISES;
-    /** Legacy /holidays page — shown in nav as "Old Holidays". */
-    case "holidays":
-      return process.env.NEXT_PUBLIC_HEADER_NAV_HOLIDAYS;
     /** /holiday-partners — shown in nav as "Holidays". */
     case "holidayPartners":
       return (
@@ -58,7 +54,6 @@ export function getAllHeaderNavModes(): Record<HeaderNavProductKey, HeaderNavMod
     flights: parseHeaderNavMode(envForNavKey("flights")),
     hotels: parseHeaderNavMode(envForNavKey("hotels")),
     cruises: parseHeaderNavMode(envForNavKey("cruises")),
-    holidays: parseHeaderNavMode(envForNavKey("holidays")),
     holidayPartners: parseHeaderNavMode(envForNavKey("holidayPartners")),
   };
 }
