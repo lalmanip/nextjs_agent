@@ -1,0 +1,37 @@
+{
+  "scrapedAt": "2026-06-30T00:04:30.280Z",
+  "sourceBaseUrl": "",
+  "phase": 1,
+  "pageCounts": {
+    "experiences": 18,
+    "states": 36,
+    "regions": 4
+  },
+  "heroSlides": [
+    {
+      "imageUrl": "/india/images/hero/home-header-img1.jpg",
+      "title": "Create Unforgettable Travel Experiences",
+      "subtitle": "Discover the magic of India — from ancient heritage to vibrant cities"
+    },
+    {
+      "imageUrl": "/india/images/hero/home-header-img2.jpg",
+      "title": "Spiritual Journeys Across India",
+      "subtitle": "Pilgrimage tours, sacred rivers, and timeless traditions"
+    },
+    {
+      "imageUrl": "/india/images/hero/home-header-img3.jpg",
+      "title": "Hill Stations & Adventure Await",
+      "subtitle": "Mountains, wildlife, and breathtaking landscapes"
+    }
+  ],
+  "phase2": {
+    "scrapedAt": "2026-06-30T10:01:51.524Z",
+    "pageCount": 302,
+    "lastRun": {
+      "ok": 0,
+      "fail": 322,
+      "skipped": 302
+    }
+  },
+  "notes": "Location copy authored for Vivance Travels; not sourced from third-party tourism sites."
+}
