@@ -1,6 +1,6 @@
 /**
  * Header nav (Flights, Hotels, Cruises, Holidays) visibility / phased rollout.
- * Set in `.env.local` / `.env.production` — use NEXT_PUBLIC_* so the client bundle sees values.
+ * Prefer non-NEXT_PUBLIC keys in K8s (runtime); NEXT_PUBLIC_* for local dev build.
  *
  * Per product: `on` | `hidden` | `maintenance`
  * - on: normal behaviour (same as today)
@@ -17,7 +17,7 @@ export type HeaderNavProductKey =
   | "flights"
   | "hotels"
   | "cruises"
-  | "holidayPartners";
+  | "holidays";
 
 const DEFAULT_MODE: HeaderNavMode = "on";
 
@@ -29,23 +29,24 @@ function parseHeaderNavMode(raw: string | undefined): HeaderNavMode {
   return "on";
 }
 
-function envForNavKey(key: HeaderNavProductKey): string | undefined {
-  switch (key) {
-    case "flights":
-      return process.env.NEXT_PUBLIC_HEADER_NAV_FLIGHTS;
-    case "hotels":
-      return process.env.NEXT_PUBLIC_HEADER_NAV_HOTELS;
-    case "cruises":
-      return process.env.NEXT_PUBLIC_HEADER_NAV_CRUISES;
-    /** /holiday-partners — shown in nav as "Holidays". */
-    case "holidayPartners":
-      return (
-        process.env.NEXT_PUBLIC_HEADER_NAV_HOLIDAY_PARTNERS ??
-        process.env.NEXT_PUBLIC_HEADER_NAV_HOLIDAYS_PARTNERS
-      );
-    default:
-      return undefined;
+const HEADER_NAV_ENV_BY_KEY: Record<HeaderNavProductKey, readonly string[]> = {
+  flights: ["HEADER_NAV_FLIGHTS", "NEXT_PUBLIC_HEADER_NAV_FLIGHTS"],
+  hotels: ["HEADER_NAV_HOTELS", "NEXT_PUBLIC_HEADER_NAV_HOTELS"],
+  cruises: ["HEADER_NAV_CRUISES", "NEXT_PUBLIC_HEADER_NAV_CRUISES"],
+  /** /holidays — India & international location selector */
+  holidays: ["HEADER_NAV_HOLIDAYS", "NEXT_PUBLIC_HEADER_NAV_HOLIDAYS"],
+};
+
+function readFirstEnv(keys: readonly string[]): string | undefined {
+  for (const key of keys) {
+    const value = process.env[key]?.trim();
+    if (value) return value;
   }
+  return undefined;
+}
+
+function envForNavKey(key: HeaderNavProductKey): string | undefined {
+  return readFirstEnv(HEADER_NAV_ENV_BY_KEY[key]);
 }
 
 /** Read all nav modes from process.env (works at Docker build time and K8s runtime on the server). */
@@ -54,7 +55,7 @@ export function getAllHeaderNavModes(): Record<HeaderNavProductKey, HeaderNavMod
     flights: parseHeaderNavMode(envForNavKey("flights")),
     hotels: parseHeaderNavMode(envForNavKey("hotels")),
     cruises: parseHeaderNavMode(envForNavKey("cruises")),
-    holidayPartners: parseHeaderNavMode(envForNavKey("holidayPartners")),
+    holidays: parseHeaderNavMode(envForNavKey("holidays")),
   };
 }
 
@@ -63,5 +64,5 @@ export function getHeaderNavMode(key: HeaderNavProductKey): HeaderNavMode {
 }
 
 export const HEADER_NAV_MAINTENANCE_MESSAGE =
-  process.env.NEXT_PUBLIC_HEADER_NAV_MAINTENANCE_MESSAGE?.trim() ||
+  readFirstEnv(["HEADER_NAV_MAINTENANCE_MESSAGE", "NEXT_PUBLIC_HEADER_NAV_MAINTENANCE_MESSAGE"]) ||
   "This section is under maintenance. We're launching in phases — please check back soon.";

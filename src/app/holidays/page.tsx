@@ -1,10 +1,8 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/Components/Header";
-import HolidayHeroBanner from "@/Components/HolidayHeroBanner";
-import Holidays from "@/Components/Holidays";
-import Footer from "@/Components/Footer";
+import HolidaysLocationSelector from "@/Components/HolidaysLocationSelector";
 
 export default function HolidaysPage() {
   const router = useRouter();
@@ -19,6 +17,7 @@ export default function HolidaysPage() {
   const headerProps = {
     onShowProfile: (tab?: string) =>
       router.push(`/dashboard${tab ? `?tab=${tab}` : ""}`),
+    onShowHolidays: () => router.push("/holidays"),
     onShowHome: () => router.push("/"),
     onSignInSuccess: (userData: any) => {
       setUser(userData);
@@ -26,12 +25,5 @@ export default function HolidaysPage() {
     },
   };
 
-  return (
-    <>
-      <Header {...headerProps} />
-      <HolidayHeroBanner />
-      <Holidays onBack={() => router.push("/")} />
-      <Footer />
-    </>
-  );
+  return <HolidaysLocationSelector headerProps={headerProps} />;
 }

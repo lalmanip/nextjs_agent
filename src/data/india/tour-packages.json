@@ -1,0 +1,1513 @@
+{
+  "hubTitle": "India Tour Packages",
+  "defaultCategory": "hot-selling",
+  "tabs": [
+    {
+      "slug": "hot-selling",
+      "label": "Hot Selling",
+      "shortLabel": "Tour Packages"
+    },
+    {
+      "slug": "luxury-train",
+      "label": "Luxury Train",
+      "shortLabel": "Tour Packages"
+    },
+    {
+      "slug": "golden-triangle",
+      "label": "Golden Triangle",
+      "shortLabel": "Tour Packages"
+    },
+    {
+      "slug": "north-india",
+      "label": "North India",
+      "shortLabel": "Tour Packages"
+    },
+    {
+      "slug": "region-wise",
+      "label": "Region Wise",
+      "shortLabel": "Tour Packages"
+    },
+    {
+      "slug": "theme-based",
+      "label": "Theme Based",
+      "shortLabel": "Tour Packages"
+    }
+  ],
+  "categories": {
+    "hot-selling": {
+      "slug": "hot-selling",
+      "title": "India Tour Packages",
+      "sourcePath": "tour-planner/india-tour-packages",
+      "intro": [
+        "Travel India with Vivance Travels to experience cultures, monuments, landscapes and festivals on a holiday shaped around you.",
+        "Explore India with Vivance Travels—heritage cities, hill stations, wildlife and coastal holidays tailored to your dates."
+      ],
+      "packages": [
+        {
+          "title": "Grand India Tour",
+          "duration": "21 Nights - 22 Days",
+          "itinerary": "Chennai - Mahabalipuram - Kanchipuram - Mahabalipuram - Tanjore - Trichy - Madurai - Thekkady - Cochin - Guruvayur - Mysore - Bangalore - Mumbai - Udaipur - Jaipur - Agra - Khajuraho - Varanasi - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--incredible-india-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/incredible-india-tour"
+        },
+        {
+          "title": "Colorful Heritage Rajasthan",
+          "duration": "14 Nights - 15 Days",
+          "itinerary": "Delhi - Mandawa - Bikaner - Jaisalmer - Jodhpur - Udaipur - Jaipur - Agra - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--colorful-heritage-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/colorful-heritage-tour"
+        },
+        {
+          "title": "Palaces Rajasthan with Classical India & kathmandu",
+          "duration": "16 Nights - 17 Days",
+          "itinerary": "Delhi - Udaipur - Ranakpur - Jodhpur - Pushkar - Jaipur - Fatehpur Sikri - Agra - Orcha - Khajuraho - varanasi",
+          "imageUrl": "/india/images/p/tour-planner--palaces-rajasthan-classical-india-kathmandu.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/palaces-rajasthan-classical-india-kathmandu"
+        },
+        {
+          "title": "Classical North India",
+          "duration": "09 Nights - 10 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Khajuraho - Varanasi",
+          "imageUrl": "/india/images/p/tour-planner--classical-north-india.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/classical-north-india"
+        },
+        {
+          "title": "Kerala Honeymoon Tour",
+          "duration": "09 Nights - 10 Days",
+          "itinerary": "Cochin - Munnar - Periyar - Kumarakom - Thothapalli - Kovalam - Trivandrum",
+          "imageUrl": "/india/images/p/tour-planner--kerala-honeymoon-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/kerala-honeymoon-tour"
+        },
+        {
+          "title": "Golden Triangle - 5 Days",
+          "duration": "04 Nights - 05 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-04-05.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-04-05"
+        },
+        {
+          "title": "Enchanting Kerala - Kerala",
+          "duration": "06 Nights - 07 Days",
+          "itinerary": "Cochin - Alleppey - Kumarakom - Periyar - Kovalam - Trivandrum",
+          "imageUrl": "/india/images/p/tour-planner--enchanting-kerala-gods-country.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/enchanting-kerala-gods-country"
+        },
+        {
+          "title": "Palace on Wheels",
+          "duration": "07 Nights - 08 Days",
+          "itinerary": "Delhi - Sawai Madhopur - Chittorgarh - Udaipur - Jaisalmer - Jodhpur - Bharatpur - Agra",
+          "imageUrl": "/india/images/p/luxury-trains-india--palace-on-wheels.jpg",
+          "detailsHref": "/holidays/india/p/luxury-trains-india/palace-on-wheels"
+        },
+        {
+          "title": "Classical North India Tour with Nepal",
+          "duration": "14 Nights - 15 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Khajuraho - Varanasi - Kathmandu - Pokhara - Nagarkot - Kathmandu - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--classical-north-india-nepal.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/classical-north-india-nepal"
+        },
+        {
+          "title": "Golden Triangle with Kerala & Mumbai",
+          "duration": "13 Nights - 14 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Delhi - Cochin - Periyar - Kumarakom - Thothapalli - Kovalam - Trivandrum - Mumbai",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-kerala-mumbai.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-kerala-mumbai"
+        },
+        {
+          "title": "Palaces of Rajasthan with Classical India",
+          "duration": "14 Nights - 15 Days",
+          "itinerary": "Delhi - Udaipur - Ranakpur - Jodhpur - Pushkar - Jaipur - Fatehpur Sikri - Agra - Orcha - Khajuraho - Varanasi",
+          "imageUrl": "/india/images/p/tour-planner--palaces-rajasthan-classical-india.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/palaces-rajasthan-classical-india"
+        },
+        {
+          "title": "Golden Triangle with Haridwar & Rishikesh",
+          "duration": "08 Nights - 09 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Mathura - Vrindavan - Delhi - Haridwar - Rishikesh - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-haridwar-rishikesh.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-haridwar-rishikesh"
+        },
+        {
+          "title": "Rapid Golden Triangle",
+          "duration": "04 Nights - 05 Days",
+          "itinerary": "Delhi - Agra - Fatehpur Sikri - Jaipur - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--rapid-golden-triangle-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/rapid-golden-triangle-tour"
+        }
+      ]
+    },
+    "luxury-train": {
+      "slug": "luxury-train",
+      "title": "Luxury Train Tour Packages",
+      "sourcePath": "tour-planner/luxury-train-packages",
+      "intro": [],
+      "packages": [
+        {
+          "title": "Royal Rajasthan on Wheels",
+          "duration": "",
+          "imageUrl": "/india/images/p/luxury-trains-india--royal-rajasthan-on-wheels.jpg",
+          "detailsHref": "/holidays/india/p/luxury-trains-india/royal-rajasthan-on-wheels"
+        },
+        {
+          "title": "Royal Orient Train",
+          "duration": "",
+          "imageUrl": "/india/images/p/luxury-trains-india--the-royal-orient-train.jpg",
+          "detailsHref": "/holidays/india/p/luxury-trains-india/the-royal-orient-train"
+        }
+      ]
+    },
+    "golden-triangle": {
+      "slug": "golden-triangle",
+      "title": "Golden Triangle Tour Packages",
+      "sourcePath": "tour-planner/golden-triangle-tours",
+      "intro": [],
+      "packages": [
+        {
+          "title": "Golden Triangle with Kerala",
+          "duration": "10 Nights - 11 Days",
+          "itinerary": "Delhi –Agra- Jaipur – Cochin – Periyar – Kumarakom – Alleppy –Cochin - Departure",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-with-kerala.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-with-kerala"
+        },
+        {
+          "title": "Golden Triangle with Goa - Mumbai",
+          "duration": "11 Nights - 12 Days",
+          "itinerary": "Delhi – Agra – -Jaipur – Goa - Mumbai",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-with-goa-mumbai.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-with-goa-mumbai"
+        },
+        {
+          "title": "Golden Triangle Khajuraho Varanasi",
+          "duration": "10 Nights - 11 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Jhansi - Orchha - Khajuraho - Varanasi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-khajuraho-varanasi.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-khajuraho-varanasi"
+        },
+        {
+          "title": "Golden Triangle with Haridwar & Rishikesh",
+          "duration": "08 Nights - 09 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Mathura - Vrindavan - Delhi - Haridwar - Rishikesh - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-haridwar-rishikesh.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-haridwar-rishikesh"
+        },
+        {
+          "title": "Golden Triangle - 5 Days",
+          "duration": "04 Nights - 05 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-04-05.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-04-05"
+        },
+        {
+          "title": "Rapid Golden Triangle",
+          "duration": "04 Nights - 05 Days",
+          "itinerary": "Delhi - Agra - Fatehpur Sikri - Jaipur - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--rapid-golden-triangle-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/rapid-golden-triangle-tour"
+        },
+        {
+          "title": "Golden Triangle with Himalayan Monasteries",
+          "duration": "12 Nights - 13 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Delhi - Bagdogara - Darjeeling - Pemayangtse - Gangtok - Kalimpong - Bagdogara - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-with-himalayan-monasteries.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-with-himalayan-monasteries"
+        },
+        {
+          "title": "Golden Triangle Tour by Private Charter Flight",
+          "duration": "04 Nights - 05 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-tour-charter-flight.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-tour-charter-flight"
+        },
+        {
+          "title": "Golden Triangle with Kerala & Mumbai",
+          "duration": "13 Nights - 14 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Delhi - Cochin - Periyar - Kumarakom - Thothapalli - Kovalam - Trivandrum - Mumbai",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-kerala-mumbai.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-kerala-mumbai"
+        },
+        {
+          "title": "Golden Triangle - 7 Days",
+          "duration": "06 Nights - 07 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Mathura - Vrindavan - Agra - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-06-07.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-06-07"
+        },
+        {
+          "title": "Golden Triangle with Ranthambhor",
+          "duration": "08 Nights - 09 Days",
+          "itinerary": "Delhi - Jaipur - Ranthambore - Bharatpur - Agra - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-ranthambore.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-ranthambore"
+        },
+        {
+          "title": "Golden Triangle with Corbett",
+          "duration": "08 Nights - 09 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Delhi - Corbett - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-with-corbett.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-with-corbett"
+        },
+        {
+          "title": "Enchanting Himachal with Golden Triangle Tour",
+          "duration": "16 Nights - 17 Days",
+          "itinerary": "Delhi - Amritsar - Dharamshala - Manali - Kullu - Shimla - Chail - Kufri - Nalderha - Chandigarh - Delhi - Jaipur - Agra via Fatehpur Sikri - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--enchanting-himachal-with-golden-triangle.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/enchanting-himachal-with-golden-triangle"
+        }
+      ]
+    },
+    "north-india": {
+      "slug": "north-india",
+      "title": "North India Tour Packages",
+      "sourcePath": "tour-planner/north-india-tour-packages",
+      "intro": [
+        "North India Tourism offers you an opportunity to explore the wonders of majestic landscapes, magnificent historical sites, royal cities, captivating mountain retreats, diverse ethnicity, rich cultures and vibrant festivities of North India. Travel to North India by choosing a North India Package from below given Popular North India Tours."
+      ],
+      "packages": [
+        {
+          "title": "Best of North India Pilgrimage Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--north-india-pilgrimage-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/north-india-pilgrimage-tour"
+        },
+        {
+          "title": "Land of Lamas...Ladakh",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--land-lamas-ladakh.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/land-lamas-ladakh"
+        },
+        {
+          "title": "India Wilderness Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--india-wilderness.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/india-wilderness"
+        },
+        {
+          "title": "Classical North India",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--classical-north-india.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/classical-north-india"
+        },
+        {
+          "title": "Colourful Gujarat",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--colourful-gujarat.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/colourful-gujarat"
+        },
+        {
+          "title": "Saurastra Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--saurastra-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/saurastra-tour"
+        },
+        {
+          "title": "Kashmir Delight",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--kashmir-delight.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/kashmir-delight"
+        },
+        {
+          "title": "Haridwar & Rishikesh Extension",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--haridwar-rishikesh-extension.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/haridwar-rishikesh-extension"
+        },
+        {
+          "title": "Char-Dham Yatra",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--char-dham-yatra.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/char-dham-yatra"
+        },
+        {
+          "title": "Rajasthan with Classical India & Kathmandu",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--palaces-rajasthan-classical-india-kathmandu.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/palaces-rajasthan-classical-india-kathmandu"
+        },
+        {
+          "title": "Classical North India Tour with Nepal",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--classical-north-india-nepal.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/classical-north-india-nepal"
+        },
+        {
+          "title": "Glimpse of Gujrat",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--glimpse-gujrat.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/glimpse-gujrat"
+        },
+        {
+          "title": "Nirvana Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--nirvana-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/nirvana-tour"
+        },
+        {
+          "title": "Kashmir at Glance",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--kashmir-at-glance.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/kashmir-at-glance"
+        },
+        {
+          "title": "Ladakh Cultural Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--ladakh-cultural-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/ladakh-cultural-tour"
+        }
+      ],
+      "subTabs": [
+        {
+          "slug": "rajasthan-tours",
+          "label": "Rajasthan Tours",
+          "sourcePath": "tour-planner/rajasthan-tours",
+          "title": "Rajasthan Tour Packages",
+          "intro": [
+            "Do not keep royal life limited to imaginations. Choose from plenty of Rajasthan tour packages and explore the wonderland that speaks volume about the rich Indian history. Rajasthan tours offer you a chance to experience royalty of bygone era."
+          ],
+          "packages": [
+            {
+              "title": "Forts and Palaces with Wildlife",
+              "duration": "11 Nights - 12 Days",
+              "itinerary": "Delhi - Agra - Ranthambore - Jaipur - Pushkar - Jodhpur - Udaipur - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--forts-palaces-rajasthan-wildlife.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/forts-palaces-rajasthan-wildlife"
+            },
+            {
+              "title": "Palaces Rajasthan with Classical India & Kathmandu",
+              "duration": "16 Nights - 17 Days",
+              "itinerary": "Delhi - Udaipur - Ranakpur - Jodhpur - Pushkar - Jaipur - Fatehpur Sikri - Agra - Orcha - Khajuraho - Varanasi",
+              "imageUrl": "/india/images/p/tour-planner--palaces-rajasthan-classical-india-kathmandu.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/palaces-rajasthan-classical-india-kathmandu"
+            },
+            {
+              "title": "Jewels of Rajasthan",
+              "duration": "09 Nights - 10 Days",
+              "itinerary": "Delhi - Agra - Jaipur - Jodhpur - Udaipur - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--jewels-rajasthan.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/jewels-rajasthan"
+            },
+            {
+              "title": "Explore Forts and Palaces of Rajasthan by Flight",
+              "duration": "09 Nights - 10 Days",
+              "itinerary": "Delhi - Jodhpur - Udaipur - Jaipur - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--explore-forts-palaces-rajasthan-flight.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/explore-forts-palaces-rajasthan-flight"
+            },
+            {
+              "title": "Colorful Heritage Rajasthan Tour",
+              "duration": "14 Nights - 15 Days",
+              "itinerary": "Delhi - Mandawa - Bikaner - Jaisalmer - Jodhpur - Udaipur - Jaipur - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--colorful-heritage-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/colorful-heritage-tour"
+            },
+            {
+              "title": "Explore Rajasthan By Rail",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Delhi - Jodhpur - Jaisalmer - Jodhpur - Ranakpur - Udaipur - Jaipur - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--explore-rajasthan-rail.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/explore-rajasthan-rail"
+            },
+            {
+              "title": "Forts and Palaces of Rajasthan",
+              "duration": "17 Nights - 18 Days",
+              "itinerary": "Delhi - Mandawa - Bikaner - Jaisalmer - Jodhpur - Udaipur - Jaipur - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--forts-palaces-rajasthan.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/forts-palaces-rajasthan"
+            },
+            {
+              "title": "Corbett Adventure Package",
+              "duration": "03 Nights - 04 Days",
+              "itinerary": "Delhi - Corbett National Park - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--corbett-adventure-package.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/corbett-adventure-package"
+            },
+            {
+              "title": "Palaces of Rajasthan with Classical India",
+              "duration": "14 Nights - 15 Days",
+              "itinerary": "Delhi - Udaipur - Ranakpur - Jodhpur - Pushkar - Jaipur - Fatehpur Sikri - Agra - Orcha - Khajuraho - Varanasi",
+              "imageUrl": "/india/images/p/tour-planner--palaces-rajasthan-classical-india.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/palaces-rajasthan-classical-india"
+            },
+            {
+              "title": "Colourful Rajasthan With Golden Beaches of Goa",
+              "duration": "14 Nights - 15 Days",
+              "itinerary": "Delhi - Agra - Jaipur - Pushkar - Jodhpur - Udaipur - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--palaces-rajasthan-golden-beaches-goa.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/palaces-rajasthan-golden-beaches-goa"
+            },
+            {
+              "title": "Heritage Rajasthan with Mumbai",
+              "duration": "14 Nights - 15 Days",
+              "itinerary": "Mumbai - Udaipur - Jodhpur - Jaisalmer - Bikaner - Mandawa - Jaipur - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--heritage-rajasthan-mumbai.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/heritage-rajasthan-mumbai"
+            },
+            {
+              "title": "Simply Rajasthan",
+              "duration": "12 Nights - 13 Days",
+              "itinerary": "Delhi - Jaipur - Bundi - Bassi - Udaipur - Kumbhalgarh - Jodhpur - Jaisalmer - Bikaner - Mandawa - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--simply-rajasthan.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/simply-rajasthan"
+            },
+            {
+              "title": "Forts and Battlefields of Rajputana",
+              "duration": "21 Nights - 22 Days",
+              "itinerary": "Delhi - Agra - Bharatpur - karauli - Ranthambhore - Bundi - Bassi - Udaipur - Kumbhalgarh - Jodhpur - Pushkar - Kuchaman - Nagaur - Jaipur - Sariska - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--forts-battlefields-rajputana.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/forts-battlefields-rajputana"
+            },
+            {
+              "title": "Rajasthan Wilderness",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Delhi - Ranthambore - Jaipur - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--rajasthan-wilderness.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/rajasthan-wilderness"
+            },
+            {
+              "title": "Classic India Heritage Tour",
+              "duration": "11 Nights - 12 Days",
+              "itinerary": "Delhi - Jaipur - Agra - Gwalior - Orchha - Khajuraho - Varanasi",
+              "imageUrl": "/india/images/p/tour-planner--classic-india-heritage-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/classic-india-heritage-tour"
+            }
+          ]
+        },
+        {
+          "slug": "himachal-pradesh-tours",
+          "label": "Himachal Tours",
+          "sourcePath": "tour-planner/himachal-pradesh-tours",
+          "title": "Himachal Pradesh Tour Packages",
+          "intro": [
+            "Known as 'Dev Bhoomi', Himachal Pradesh is the land where Gods reside. Embarking on Himachal Pradesh Tour transports you to a land, blessed by nature. Decked with snow lined slopes, steep waterfalls, gushing rivers and rich flora and fauna, Himachal Trek is the ultimate experience that you will cherish for lifetime."
+          ],
+          "packages": [
+            {
+              "title": "Hampta Pass Trek",
+              "duration": "11 Nights - 12 Days",
+              "itinerary": "Delhi - Nalagarh - Manali - Prini - Bhujdhar - Juara - Hamta Pass - Garu - Chatru",
+              "imageUrl": "/india/images/p/tour-planner--hampta-pass-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/hampta-pass-trek"
+            },
+            {
+              "title": "Pin Parvati Pass Trek",
+              "duration": "18 Nights - 19 Days",
+              "itinerary": "Delhi - Nalagarh - Manali - Manikaran - Khirganga - Tunda Bhuj - Thakar Kuan - Pandu Bridge - Mantalai Lake - Sagnam",
+              "imageUrl": "/india/images/p/tour-planner--pin-parvati-pass-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/pin-parvati-pass-trek"
+            },
+            {
+              "title": "Mystic Himachal Tour",
+              "duration": "08 Nights - 09 Days",
+              "itinerary": "Delhi - Kalka - Shimla - Kullu - Manali - Chandigarh - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--mystic-himachal-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/mystic-himachal-tour"
+            },
+            {
+              "title": "Himachal Chandertal Trek",
+              "duration": "11 Nights - 12 Days",
+              "itinerary": "Delhi - Nalagarh - Manali - Khanol - Chhika - Tenta - Chandertal - Bhanara - Jagatsukh",
+              "imageUrl": "/india/images/p/tour-planner--himachal-chandertal-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/himachal-chandertal-trek"
+            },
+            {
+              "title": "Enchanting Himachal Pradesh",
+              "duration": "11 Nights - 12 Days",
+              "itinerary": "Delhi - Amritsar - Dharamshala - Manali - Kullu - Shimla - Chail - Kufri - Nalderha - Chandigarh - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--enchanting-himachal-pradesh.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/enchanting-himachal-pradesh"
+            },
+            {
+              "title": "Enchanting Himachal with Golden Triangle Tour",
+              "duration": "16 Nights - 17 Days",
+              "itinerary": "Delhi - Amritsar - Dharamshala - Manali - Kullu - Shimla - Chail - Kufri - Nalderha - Chandigarh - Delhi - Jaipur - Agra via Fatehpur Sikri - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--enchanting-himachal-with-golden-triangle.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/enchanting-himachal-with-golden-triangle"
+            }
+          ]
+        },
+        {
+          "slug": "uttranchal-tours",
+          "label": "Uttranchal Tours",
+          "sourcePath": "tour-planner/uttranchal-tours",
+          "title": "Uttaranchal/ Uttarakhand Tour",
+          "intro": [],
+          "packages": [
+            {
+              "title": "Valley of Flowers",
+              "duration": "08 Nights - 09 Days",
+              "itinerary": "Delhi - Haridwar - Joshimath - Ghangaria - Valley of Flower - Hemkund Sahib - Rishikesh - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--valley-of-flowers-hemkund-sahib.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/valley-of-flowers-hemkund-sahib"
+            },
+            {
+              "title": "Source of the Ganges & beyond",
+              "duration": "10 Nights - 11 Days",
+              "itinerary": "Delhi - Haridwar - Rishikesh - Uttarkashi - Gangotri - Gaumukh - Nandanvan - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--source-of-ganges.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/source-of-ganges"
+            },
+            {
+              "title": "Kailash Mansarovar Yatra",
+              "duration": "17 Nights - 18 Days",
+              "itinerary": "Kathmandu - Nyalam - Yak Kharkha - New Dongba - Mayumla Phedi - Manasarovar - Darchen - Dira Puk - Zuthul Puk - Hor Qu (Lake Mansarovar) - Mayumala Phedi - New Dongba - Yak Kharkha - Nyalam",
+              "imageUrl": "/india/images/p/tour-planner--kailash-mansarovar-yatra.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/kailash-mansarovar-yatra"
+            },
+            {
+              "title": "Char-Dham Yatra",
+              "duration": "14 Nights - 15 Days",
+              "itinerary": "Delhi - Mussoorie - Barkot - Yamunotri - Uttarkashi - Gangotri - Guptkashi - Kedarnath - Joshimath - Badrinath - Rishikesh - Haridwar - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--char-dham-yatra.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/char-dham-yatra"
+            },
+            {
+              "title": "Kauri Pass Trek",
+              "duration": "10 Nights - 11 Days",
+              "itinerary": "Delhi - Haridwar - Ghat - Ramni - Jhenjhenpatni - Pana - Dakwani - Kauri Pass - Gailgarh - Joshimath - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--kuari-pass-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/kuari-pass-trek"
+            },
+            {
+              "title": "Pindari Glacier",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Delhi - Khatgodam - Song - Dhakuri - Khati - Dwali - Phurkiya - Ziro Point",
+              "imageUrl": "/india/images/p/tour-planner--pindari-glacier.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/pindari-glacier"
+            },
+            {
+              "title": "Namik Glacier Trek",
+              "duration": "14 Nights - 15 Days",
+              "itinerary": "Delhi - Kathgodam - Chaukori - Munsiyari - Dhaldauk - Sudamkhan - Hiramani Glacier - Namik Glacier - Gogina - Liti - Nanital",
+              "imageUrl": "/india/images/p/tour-planner--namik-glacier-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/namik-glacier-trek"
+            },
+            {
+              "title": "Chardham Yatra by Helicopter",
+              "duration": "01 Nights - 02 Days",
+              "itinerary": "Dehradun - Yamunotri - Gangotri - Harsil - Kedarnath - Badrinath",
+              "imageUrl": "/india/images/p/tour-planner--chardham-yatra-by-helicopter.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/chardham-yatra-by-helicopter"
+            }
+          ]
+        },
+        {
+          "slug": "delhi-tours",
+          "label": "Delhi Tours",
+          "sourcePath": "tour-planner/delhi-tours",
+          "title": "Delhi Tour Packages",
+          "intro": [
+            "Delhi city tours with Vivance Travels introduce monuments, markets and neighbourhoods across the capital."
+          ],
+          "packages": [
+            {
+              "title": "Golden Triangle with Kerala & Mumbai",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Delhi - Jaipur - Agra - Delhi - Cochin - Periyar - Kumarakom - Thothapalli - Kovalam - Trivandrum - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--golden-triangle-kerala-mumbai.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-kerala-mumbai"
+            },
+            {
+              "title": "Golden Triangle with Ranthambhor",
+              "duration": "08 Nights - 09 Days",
+              "itinerary": "Delhi - Jaipur - Ranthambore - Bharatpur - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--golden-triangle-ranthambore.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-ranthambore"
+            },
+            {
+              "title": "Golden Triangle with Himalayan Monasteries",
+              "duration": "12 Nights - 13 Days",
+              "itinerary": "Delhi - Jaipur - Agra - Delhi - Bagdogara - Darjeeling - Pemayangtse -Gangtok - Kalimpong - Bagdogara - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--golden-triangle-with-himalayan-monasteries.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-with-himalayan-monasteries"
+            },
+            {
+              "title": "North India Temple Tour",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Delhi - Agra - Gwalior - Orchha - Khajuraho - Bhopal - Indore - Ujjain - Bhopal - Varanasi",
+              "imageUrl": "/india/images/p/tour-planner--north-india-temple-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/north-india-temple-tour"
+            }
+          ]
+        },
+        {
+          "slug": "uttar-pradesh-tours",
+          "label": "Uttar Pradesh Tours",
+          "sourcePath": "tour-planner/uttar-pradesh-tours",
+          "title": "Uttar Pradesh Tour Packages",
+          "intro": [
+            "Uttar Pradesh is a beautiful land. Loaded with attractions, this is amongst the most beautiful lands that has different reasons to allure tourists. Travel to Uttar Pradesh to feast the traveller inside you. Choose one of the offered Uttar Pradesh Tour Packages to ensure an interesting and comfortable journey."
+          ],
+          "packages": [
+            {
+              "title": "Classical North India",
+              "duration": "09 Nights - 10 Days",
+              "itinerary": "Delhi - Jaipur - Agra - Khajuraho - Varanasi",
+              "imageUrl": "/india/images/p/tour-planner--classical-north-india.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/classical-north-india"
+            },
+            {
+              "title": "Indian Wilderness Tour",
+              "duration": "16 Nights - 17 Days",
+              "itinerary": "Delhi - Jaipur - Ranthambhore - Bharatpur - Agra - Umaria - Bandhavgarh - Kanha - Jabalpur - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--india-wilderness.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/india-wilderness"
+            },
+            {
+              "title": "Rajasthan with Classical India & Kathmandu",
+              "duration": "16 Nights - 17 Days",
+              "itinerary": "Delhi - Udaipur - Ranakpur - Jodhpur - Pushkar - Jaipur - Fatehpur Sikri - Agra - Orcha - Khajuraho - varanasi",
+              "imageUrl": "/india/images/p/tour-planner--palaces-rajasthan-classical-india-kathmandu.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/palaces-rajasthan-classical-india-kathmandu"
+            },
+            {
+              "title": "Classical North India Tour with Nepal",
+              "duration": "14 Nights - 15 Days",
+              "itinerary": "Delhi - Jaipur - Agra - Khajuraho - Varanasi - Kathmandu - Pokhara - Nagarkot - Kathmandu - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--classical-north-india-nepal.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/classical-north-india-nepal"
+            },
+            {
+              "title": "Buddhist Pilgrimage Tour",
+              "duration": "11 Nights - 12 Days",
+              "itinerary": "Delhi - Lucknow - Sravasti - Kushinagar - Patna - Rajgir - Bodhgaya - Varanasi",
+              "imageUrl": "/india/images/p/tour-planner--buddhist-pilgrimage-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/buddhist-pilgrimage-tour"
+            }
+          ]
+        },
+        {
+          "slug": "jammu-kashmir-tours",
+          "label": "J & K Tours",
+          "sourcePath": "tour-planner/jammu-kashmir-tours",
+          "title": "Jammu Kashmir Tour Packages",
+          "intro": [
+            "Wide range of Jammu Kashmir Tour Pacakges offers you an opportunity to unfold magical views of natural beauty. With its scintillating natural beauty, breathtaking valleys and appealing hill sides, these state create opportunities to celebrate a memorable Honeymoon in Jammu Kashmir."
+          ],
+          "packages": [
+            {
+              "title": "Honeymoon Tour Packages - 6 Days",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Srinagar - Gulmarg - Sonamarg - Pahalgam",
+              "imageUrl": "/india/images/p/tour-planner--honeymoon-tour-package-06days.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/honeymoon-tour-package-06days"
+            },
+            {
+              "title": "Honeymoond Tour Package - 8 Days",
+              "duration": "07 Nights - 08 Days",
+              "itinerary": "Srinagar - Gulmarg - Pahalgam - Srinagar",
+              "imageUrl": "/india/images/p/tour-planner--honeymoon-tour-package-08days.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/honeymoon-tour-package-08days"
+            },
+            {
+              "title": "Kashmir at Glance",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Delhi- Srinagar- Delhi",
+              "imageUrl": "/india/images/p/tour-planner--kashmir-at-glance.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/kashmir-at-glance"
+            },
+            {
+              "title": "House Boat Tour Package",
+              "duration": "06 Nights - 07 Days",
+              "itinerary": "Srinagar - Gulmarg - Pahalgam - Srinagar",
+              "imageUrl": "/india/images/p/tour-planner--houseboat-tour-package.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/houseboat-tour-package"
+            },
+            {
+              "title": "Kashmir Delight",
+              "duration": "07 Nights - 08 Days",
+              "itinerary": "Delhi- Srinagar- Gulmarg - Srinagar - Sonamarg - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--kashmir-delight.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/kashmir-delight"
+            },
+            {
+              "title": "Vaishno Devi Tour",
+              "duration": "07 Nights - 08 Days",
+              "itinerary": "Delhi - Jammu - Katra - Vaishno Devi - Katra - Jammu",
+              "imageUrl": "/india/images/p/tour-planner--vaishno-devi-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/vaishno-devi-tour"
+            }
+          ]
+        },
+        {
+          "slug": "ladakh-tours",
+          "label": "Ladakh Tours",
+          "sourcePath": "tour-planner/ladakh-tours",
+          "title": "Leh Ladakh Tour Packages",
+          "intro": [
+            "Travel to Ladakh to add more memories to your travelling experience. Enchanting, thrilling and beautiful locations will make you fall in love with the destination during your Ladakh tour. Be it adventure or the peace, Ladakh is the best place to enjoy the vacations."
+          ],
+          "packages": [
+            {
+              "title": "Markha Valley Trek",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--markha-valley-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/markha-valley-trek"
+            },
+            {
+              "title": "Land of Lamas...Ladakh",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--land-lamas-ladakh.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/land-lamas-ladakh"
+            },
+            {
+              "title": "Jhunglam Trek Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--jhunglam-trek-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/jhunglam-trek-tour"
+            },
+            {
+              "title": "Tingmosgam Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--tingmosgam-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/tingmosgam-tour"
+            },
+            {
+              "title": "Markha Valley via Ganda",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--markha-valley-via-ganda.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/markha-valley-via-ganda"
+            },
+            {
+              "title": "Sabu Nubra",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--sabu-nubra-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/sabu-nubra-tour"
+            },
+            {
+              "title": "Rupshu Kharnak",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--rupshu-kharnak-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/rupshu-kharnak-tour"
+            },
+            {
+              "title": "Ladakh Monastery Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--ladakh-monastery-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/ladakh-monastery-tour"
+            },
+            {
+              "title": "Lamayuru-Zanskar Trek",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--lamayuru-zanskar-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/lamayuru-zanskar-trek"
+            },
+            {
+              "title": "Trekking Monastery Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--trekking-monastery-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/trekking-monastery-tour"
+            },
+            {
+              "title": "Stok-Kangri Expedition",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--stok-kangri-expedition-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/stok-kangri-expedition-tour"
+            },
+            {
+              "title": "Tsomoriri - Kibber Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--tsomoriri-kibber-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/tsomoriri-kibber-tour"
+            },
+            {
+              "title": "Kangyatse Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--kangyatse-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/kangyatse-tour"
+            },
+            {
+              "title": "Markha Valley",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--markha-valley-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/markha-valley-tour"
+            },
+            {
+              "title": "Phyang Hunder Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--phyang-hunder-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/phyang-hunder-tour"
+            },
+            {
+              "title": "Spituk Stok",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--spituk-stok-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/spituk-stok-tour"
+            },
+            {
+              "title": "Ladakh Lakes Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--ladakh-lake-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/ladakh-lake-tour"
+            },
+            {
+              "title": "Lamayuru via Zanskar",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--lamayuru-via-zanskar.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/lamayuru-via-zanskar"
+            },
+            {
+              "title": "Rumtse-Tsomoriri Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--rumtse-tsomoriri-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/rumtse-tsomoriri-tour"
+            },
+            {
+              "title": "Lamayuru Alchi Trek",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--lamayuru-alchi-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/lamayuru-alchi-trek"
+            }
+          ]
+        }
+      ]
+    },
+    "region-wise": {
+      "slug": "region-wise",
+      "title": "North East India Tour Packages",
+      "sourcePath": "tour-planner/north-east-india-tours",
+      "intro": [],
+      "packages": [
+        {
+          "title": "Orissa Temple & Tribal Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--orissa-temple-tribal-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/orissa-temple-tribal-tour"
+        },
+        {
+          "title": "North East India - Seven Sister",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--north-east-india-seven-sisters.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/north-east-india-seven-sisters"
+        },
+        {
+          "title": "Grand East Himalayan Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--grand-east-himalayan-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/grand-east-himalayan-tour"
+        },
+        {
+          "title": "North East India Cultural Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--north-east-india-cultural-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/north-east-india-cultural-tour"
+        },
+        {
+          "title": "Golden Triangle with Himalayan Monasteries",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--golden-triangle-with-himalayan-monasteries.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-with-himalayan-monasteries"
+        },
+        {
+          "title": "Classical Sikkim",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--classical-sikkim.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/classical-sikkim"
+        },
+        {
+          "title": "Majestic Assam, Arunachal and Meghalaya",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--majestic-assam-arunachal-meghalaya-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/majestic-assam-arunachal-meghalaya-tour"
+        },
+        {
+          "title": "Sikkim Delight",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--sikkim-delight.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/sikkim-delight"
+        },
+        {
+          "title": "Standard Orissa Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--standard-orissa.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/standard-orissa"
+        },
+        {
+          "title": "Cultural East India Tour",
+          "duration": "",
+          "imageUrl": "/india/images/p/tour-planner--cultural-east-india-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/cultural-east-india-tour"
+        }
+      ],
+      "subTabs": [
+        {
+          "slug": "north-east-india-tours",
+          "label": "North East India Tours",
+          "sourcePath": "tour-planner/north-east-india-tours",
+          "title": "North East India Tour Packages",
+          "intro": [],
+          "packages": [
+            {
+              "title": "Orissa Temple & Tribal Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--orissa-temple-tribal-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/orissa-temple-tribal-tour"
+            },
+            {
+              "title": "North East India - Seven Sister",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--north-east-india-seven-sisters.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/north-east-india-seven-sisters"
+            },
+            {
+              "title": "Grand East Himalayan Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--grand-east-himalayan-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/grand-east-himalayan-tour"
+            },
+            {
+              "title": "North East India Cultural Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--north-east-india-cultural-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/north-east-india-cultural-tour"
+            },
+            {
+              "title": "Golden Triangle with Himalayan Monasteries",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--golden-triangle-with-himalayan-monasteries.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-with-himalayan-monasteries"
+            },
+            {
+              "title": "Classical Sikkim",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--classical-sikkim.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/classical-sikkim"
+            },
+            {
+              "title": "Majestic Assam, Arunachal and Meghalaya",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--majestic-assam-arunachal-meghalaya-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/majestic-assam-arunachal-meghalaya-tour"
+            },
+            {
+              "title": "Sikkim Delight",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--sikkim-delight.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/sikkim-delight"
+            },
+            {
+              "title": "Standard Orissa Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--standard-orissa.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/standard-orissa"
+            },
+            {
+              "title": "Cultural East India Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--cultural-east-india-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/cultural-east-india-tour"
+            }
+          ]
+        },
+        {
+          "slug": "south-india-tours",
+          "label": "South India Tours",
+          "sourcePath": "tour-planner/south-india-tours",
+          "title": "South India Tour Packages",
+          "intro": [
+            "South India tours are the best options to explore the southern part of this land. South India tour packages are designed to cover different aspects like culture, heritage, wildlife and pilgrimage. All you need to decide is your area of interest."
+          ],
+          "packages": [
+            {
+              "title": "Classic South India",
+              "duration": "20 Nights - 21 Days",
+              "itinerary": "Chennai - Mahabalipuram -Tanjore - Trichy - Madurai - Periyar- Kovalam - Thottapalli - Alleppey - Cochin - Mysore - Hassan - Hospet - Bangalore - Bombay",
+              "imageUrl": "/india/images/p/tour-planner--incredible-south-india.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/incredible-south-india"
+            },
+            {
+              "title": "Best of Two Cultures (Karnataka + Kerala )",
+              "duration": "10 Nights - 11 Days",
+              "itinerary": "Bangalore - Mysore - Ooty - Cochin - Alleppey - Kumarakom - Cochin",
+              "imageUrl": "/india/images/p/tour-planner--best-two-culture-karnataka-kerala.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/best-two-culture-karnataka-kerala"
+            },
+            {
+              "title": "South India Wildlife",
+              "duration": "15 Nights - 16 Days",
+              "itinerary": "Bangalore - Mysore - Nagarhole - BR Hills - Bandipur - Ooty - Munnar - Periyar - Kumarakom - Kovalam",
+              "imageUrl": "/india/images/p/tour-planner--south-india-wildlife.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/south-india-wildlife"
+            },
+            {
+              "title": "Mumbai with Aurangabad Caves",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Mumbai - Aurangabad",
+              "imageUrl": "/india/images/p/tour-planner--mumbai-aurangabad-caves.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/mumbai-aurangabad-caves"
+            },
+            {
+              "title": "Andaman Islands Tour",
+              "duration": "13 Nights -14 Days",
+              "itinerary": "Chennai- Kanchipuram - Mahabalipuram - Pondicherry - Thanjavur - Trichy - Port Blair - Havelock Island - Chennai",
+              "imageUrl": "/india/images/p/tour-planner--andaman-islands-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/andaman-islands-tour"
+            },
+            {
+              "title": "Exotic Andaman Tour",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Corbyn's Cove- Cellular Jail Light & Sound Show - Havelock Island - Kala Pathar - Port Blair City tour",
+              "imageUrl": "/india/images/p/tour-planner--exotic-andamans.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/exotic-andamans"
+            },
+            {
+              "title": "Temples and Spice",
+              "duration": "11 Nights - 12 Days",
+              "itinerary": "Chennai - Mahabalipuram - Tanjore - Madurai - Periyar - Kumarakom - Alleppey - Cochin",
+              "imageUrl": "/india/images/p/tour-planner--temple-spice.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/temple-spice"
+            },
+            {
+              "title": "South Karnataka Trail",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Mumbai - Bangalore - Mysore - Hassan - Hospet - Badami - Hubli - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--south-karnataka-trail.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/south-karnataka-trail"
+            },
+            {
+              "title": "Enchanting Karnataka with Goa",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Mumbai - Bangalore - Mysore - Hassan - Hospet - Badami - Hubli - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--enchanting-karnatka-goa.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/enchanting-karnatka-goa"
+            },
+            {
+              "title": "Aurangabad Extension",
+              "duration": "02 Nights - 03 Days",
+              "itinerary": "aipur - Mumbai - Aurangabad - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--aurangabad-extension.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/aurangabad-extension"
+            },
+            {
+              "title": "Magical Andamans Tour",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Port Blair - Corbyn’s Cove - North Bay Coral Island - Radhanagar Beach - Wandoor Beach - Port Blair",
+              "imageUrl": "/india/images/p/tour-planner--magical-andamans.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/magical-andamans"
+            }
+          ]
+        },
+        {
+          "slug": "kerala-tours",
+          "label": "Kerala Tours",
+          "sourcePath": "tour-planner/kerala-tours",
+          "title": "Kerala Tour Packages",
+          "intro": [
+            "Kerala tour packages with Vivance Travels balance backwaters, hills and coast at a comfortable pace and clear price point."
+          ],
+          "packages": [
+            {
+              "title": "Enchanting Kerala",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--enchanting-kerala-gods-country.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/enchanting-kerala-gods-country"
+            },
+            {
+              "title": "Best of Two Cultures (Tamilnadu & Kerala)",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--best-two-culture-tamilnadu-kerala.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/best-two-culture-tamilnadu-kerala"
+            },
+            {
+              "title": "Kerala Honeymoon Tour",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--kerala-honeymoon-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/kerala-honeymoon-tour"
+            },
+            {
+              "title": "Beaches and Backwaters of Kerala",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--beaches-backwaters-kerala.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/beaches-backwaters-kerala"
+            },
+            {
+              "title": "Best of two cultures (Karnataka & Kerala)",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--best-two-culture-karnataka-kerala.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/best-two-culture-karnataka-kerala"
+            },
+            {
+              "title": "Golden Triangle with Kerala & Mumbai",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--golden-triangle-kerala-mumbai.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-kerala-mumbai"
+            },
+            {
+              "title": "Kerala Ayurvedic & Spa",
+              "duration": "",
+              "imageUrl": "/india/images/p/tour-planner--kerala-ayurvedic-spa.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/kerala-ayurvedic-spa"
+            }
+          ]
+        },
+        {
+          "slug": "goa-tours",
+          "label": "Goa Tours",
+          "sourcePath": "tour-planner/goa-tours",
+          "title": "Goa Tour Packages",
+          "intro": [
+            "Are you planning to visit Goa? With our Goa Holiday Package, visit this tiny emerald land, which is internationally famed for its breathtaking beaches. Preferred by thousands of tourists, Goa Tours are the best way to view the scenic beauty, ancient churches and beautiful beaches of this enchanting destination."
+          ],
+          "packages": [
+            {
+              "title": "Goa Honeymoon Tour",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Delhi - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--goa-honeymoon-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/goa-honeymoon-tour"
+            },
+            {
+              "title": "Goa Carnival Tour",
+              "duration": "07 Nights - 08 Days",
+              "itinerary": "Mumbai - Goa - Cochin - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--goa-carnival-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/goa-carnival-tour"
+            },
+            {
+              "title": "Goa with South India",
+              "duration": "12 Nights - 13 Days",
+              "itinerary": "Chennai - Mahabalipuram - Tanjore - Madurai - Periyar - Cochin - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--goa-south-india-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/goa-south-india-tour"
+            },
+            {
+              "title": "Exotic Goa Vacations",
+              "duration": "07 Nights - 08 Days",
+              "itinerary": "Mumbai - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--exotic-goa-vacations.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/exotic-goa-vacations"
+            },
+            {
+              "title": "Goa with Kerala",
+              "duration": "10 Nights - 11 Days",
+              "itinerary": "Goa - Panjim - Cochin - Munnar - Periyar - Cochin",
+              "imageUrl": "/india/images/p/tour-planner--goa-with-kerala.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/goa-with-kerala"
+            },
+            {
+              "title": "Simply Goa",
+              "duration": "04 Nights - 05 Days",
+              "itinerary": "Goa - Panjim - Savoi - Panaji",
+              "imageUrl": "/india/images/p/tour-planner--simply-goa.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/simply-goa"
+            },
+            {
+              "title": "Goa Beaches Tour",
+              "duration": "03 Nights - 04 Days",
+              "itinerary": "Delhi - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--goa-beaches-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/goa-beaches-tour"
+            },
+            {
+              "title": "Goa Beaches with Rajasthan Forts",
+              "duration": "14 Nights - 15 Days",
+              "itinerary": "Delhi - Agra - Jaipur - Pushkar - Jodhpur - Udaipur - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--palaces-rajasthan-golden-beaches-goa.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/palaces-rajasthan-golden-beaches-goa"
+            },
+            {
+              "title": "North India with Goa Vacations",
+              "duration": "17 Nights - 18 Days",
+              "itinerary": "Delhi - Sariska - Jaipur - Ranthambhor - Bharatpur - Agra - Khajuraho - Bandhavgarh - Delhi - Goa - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--north-india-goa-vacations.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/north-india-goa-vacations"
+            },
+            {
+              "title": "Goa Holiday with Kerala & Mumbai",
+              "duration": "07 Nights - 08 Days",
+              "itinerary": "Mumbai - Goa - Cochin - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--goa-holiday-kerala-mumbai.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/goa-holiday-kerala-mumbai"
+            },
+            {
+              "title": "Enchanting Goa",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Chennai - Mahabalipuram - Kanchipuram - Mahabalipuram - Tanjore - Trichy - Madurai - Thekkady - Cochin - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--enchanting-goa.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/enchanting-goa"
+            },
+            {
+              "title": "Enchanting Karnataka with Goa",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Mumbai - Bangalore - Mysore - Hassan - Hospet - Badami - Hubli - Goa - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--enchanting-karnatka-goa.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/enchanting-karnatka-goa"
+            }
+          ]
+        }
+      ]
+    },
+    "theme-based": {
+      "slug": "theme-based",
+      "title": "India Cultural Tour Packages",
+      "sourcePath": "tour-planner/cultural-tours",
+      "intro": [],
+      "packages": [
+        {
+          "title": "Best of two cultures (Karnataka & Kerala)",
+          "duration": "10 Nights - 11 Days",
+          "itinerary": "Bangalore - Mysore - Ooty - Cochin - Alleppey - Kumarakom - Cochin",
+          "imageUrl": "/india/images/p/tour-planner--best-two-culture-karnataka-kerala.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/best-two-culture-karnataka-kerala"
+        },
+        {
+          "title": "Classical North India Tour",
+          "duration": "09 Nights - 10 Days",
+          "itinerary": "Delhi - Jaipur - Agra - Khajuraho - Varanasi",
+          "imageUrl": "/india/images/p/tour-planner--classical-north-india.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/classical-north-india"
+        },
+        {
+          "title": "Best of two cultures (Tamilnadu & Kerala)",
+          "duration": "11 Nights - 12 Days",
+          "itinerary": "Chennai - Mahabalipuram - Tanjore - Madurai - Periyar - Kumarakom - Alleppey - Cochin",
+          "imageUrl": "/india/images/p/tour-planner--best-two-culture-tamilnadu-kerala.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/best-two-culture-tamilnadu-kerala"
+        },
+        {
+          "title": "Cultural East India Tour",
+          "duration": "13 Nights - 14 Days",
+          "itinerary": "Delhi - Bhubaneswar - Puri - Calcutta - Bagdogara - Darjeeling - Gangtok - Kalimpong - Bagdogara - Delhi",
+          "imageUrl": "/india/images/p/tour-planner--cultural-east-india-tour.jpg",
+          "detailsHref": "/holidays/india/p/tour-planner/cultural-east-india-tour"
+        }
+      ],
+      "subTabs": [
+        {
+          "slug": "cultural-tours",
+          "label": "Cultural Tours",
+          "sourcePath": "tour-planner/cultural-tours",
+          "title": "India Cultural Tour Packages",
+          "intro": [],
+          "packages": [
+            {
+              "title": "Best of two cultures (Karnataka & Kerala)",
+              "duration": "10 Nights - 11 Days",
+              "itinerary": "Bangalore - Mysore - Ooty - Cochin - Alleppey - Kumarakom - Cochin",
+              "imageUrl": "/india/images/p/tour-planner--best-two-culture-karnataka-kerala.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/best-two-culture-karnataka-kerala"
+            },
+            {
+              "title": "Classical North India Tour",
+              "duration": "09 Nights - 10 Days",
+              "itinerary": "Delhi - Jaipur - Agra - Khajuraho - Varanasi",
+              "imageUrl": "/india/images/p/tour-planner--classical-north-india.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/classical-north-india"
+            },
+            {
+              "title": "Best of two cultures (Tamilnadu & Kerala)",
+              "duration": "11 Nights - 12 Days",
+              "itinerary": "Chennai - Mahabalipuram - Tanjore - Madurai - Periyar - Kumarakom - Alleppey - Cochin",
+              "imageUrl": "/india/images/p/tour-planner--best-two-culture-tamilnadu-kerala.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/best-two-culture-tamilnadu-kerala"
+            },
+            {
+              "title": "Cultural East India Tour",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Delhi - Bhubaneswar - Puri - Calcutta - Bagdogara - Darjeeling - Gangtok - Kalimpong - Bagdogara - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--cultural-east-india-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/cultural-east-india-tour"
+            }
+          ]
+        },
+        {
+          "slug": "trailing-adventure-tours",
+          "label": "Trailing & Adventure Tours",
+          "sourcePath": "tour-planner/trailing-adventure-tours",
+          "title": "India Adventure Tour Packages",
+          "intro": [
+            "Are you different from other travellers? Book a trailing and adventure tour in India and add more chapters in your records. Challenging treks and abundant natural beauty are waiting for you to hit the region."
+          ],
+          "packages": [
+            {
+              "title": "Bhagpura Trek",
+              "duration": "04 Nights - 05 Days",
+              "itinerary": "Trek Grade: Easy to Moderate, Highest Altitude: 3000 Metre",
+              "imageUrl": "/india/images/p/tour-planner--bhagpura-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/bhagpura-trek"
+            },
+            {
+              "title": "Chanderkhani Pass Trek",
+              "duration": "03 Nights - 04 Days",
+              "itinerary": "Highlights: High Himalayan peaks, Malana Tribal villages, alpine pasture, wild Himalayan flowers, etc.",
+              "imageUrl": "/india/images/p/tour-planner--chanderkhani-pass-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/chanderkhani-pass-trek"
+            },
+            {
+              "title": "Nagan – Giri Ganga Trek",
+              "duration": "04 Nights - 05 Days",
+              "itinerary": "Shimla – Kufri – Theog – Sainj – Ghoond – Banari - Nagan - Bhader (Drive + Hike)",
+              "imageUrl": "/india/images/p/tour-planner--nagan-giri-ganga-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/nagan-giri-ganga-trek"
+            },
+            {
+              "title": "Inderhara Pass Trek",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Max. Elevation: 4300 M, Starting Point of the Trek: Bhagsu Nag (Upper Dharamsala)",
+              "imageUrl": "/india/images/p/tour-planner--inderhara-pass-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/inderhara-pass-trek"
+            },
+            {
+              "title": "Laka Glacier Trek",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Dharamsala",
+              "imageUrl": "/india/images/p/tour-planner--laka-glacier-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/laka-glacier-trek"
+            },
+            {
+              "title": "Motorcycle Tour of Pangi Valley",
+              "duration": "07 Nights - 08 Days",
+              "itinerary": "Dharamsala",
+              "imageUrl": "/india/images/p/tour-planner--motorcycle-tour-of-pangi-valley.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/motorcycle-tour-of-pangi-valley"
+            },
+            {
+              "title": "Trans Himalayan Motorcycle Cultural Tour",
+              "duration": "14 Nights - 15 Days",
+              "itinerary": "Delhi - Manali - Jispa - Tsokar Lake - Leh - Alchi - Leh - Sarchu - Manali - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--trans-himalayan-motorcycle-cultural-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/trans-himalayan-motorcycle-cultural-tour"
+            },
+            {
+              "title": "Source of the Ganges & beyond",
+              "duration": "10 Nights - 11 Days",
+              "itinerary": "Delhi - Haridwar - Rishikesh - Uttarkashi - Gangotri - Gaumukh - Nandanvan - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--source-of-ganges.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/source-of-ganges"
+            },
+            {
+              "title": "Ladakh - Markha Valley Trek",
+              "duration": "12 Nights - 13 Days",
+              "itinerary": "Delhi - Leh - Stok La - Rumbak - Skiu - Markha - Hankar - Nyimaling - Chugdo - Hemis - Thiksey - Leh - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--markha-valley-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/markha-valley-trek"
+            },
+            {
+              "title": "Lamayuru - Chilling Trek",
+              "duration": "09 Nights - 10 Days",
+              "itinerary": "Delhi - Leh - Lamayuru - Wanla - Hinju - Somda Doksa - Dung Chan La Base - Leh - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--lamayuru-chilling-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/lamayuru-chilling-trek"
+            },
+            {
+              "title": "Kuari Pass Trek",
+              "duration": "10 Nights - 11 Days",
+              "itinerary": "Delhi - Haridwar - Ghat - Ramni - Jhenjhenpatni - Pana - Dakwani - Kauri Pass - Gailgarh - Joshimath - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--kuari-pass-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/kuari-pass-trek"
+            },
+            {
+              "title": "Roopkund (Mystery Lake) Trek",
+              "duration": "12 Nights - 13 Days",
+              "itinerary": "Delhi - Nanital - Mundoli - Bedni Bugyal - Bagubasa - Roopkund - Bhuna - Kanol - Ghat - Rishikesh - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--roopkund-trek.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/roopkund-trek"
+            },
+            {
+              "title": "Valley of Flowers & Hemkund Sahib",
+              "duration": "08 Nights - 09 Days",
+              "itinerary": "Delhi - Haridwar - Joshimath - Ghangaria - Valley of Flower - Hemkund Sahib - Rishikesh - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--valley-of-flowers-hemkund-sahib.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/valley-of-flowers-hemkund-sahib"
+            }
+          ]
+        },
+        {
+          "slug": "tribal-tours",
+          "label": "Tribal Tours",
+          "sourcePath": "tour-planner/tribal-tours",
+          "title": "India Tribal Tours",
+          "intro": [
+            "If you have interest in culture and tradition, Tribal tours are not less than any treat for you. India Tribal tours are the showcase to age-old tradition that still exist in the purest form. All these tribal tour packages are designed by travel experts to ensure the best for you."
+          ],
+          "packages": [
+            {
+              "title": "Orissa Temple & Tribal Tour",
+              "duration": "15 Nights - 16 Days",
+              "itinerary": "Delhi - Bhubaneswar - Puri - Gopalpur - Rayagada - Jeypore - Vishakhapatnam - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--orissa-temple-tribal-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/orissa-temple-tribal-tour"
+            },
+            {
+              "title": "Tribal Experience of Chhatisgarh",
+              "duration": "09 Nights - 10 Days",
+              "itinerary": "Delhi - Raipur - Kawardha - Raipur - Kanker - Kondagaon - Narayanpur - Jagdalpur - Raipur - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--tribal-experience-of-chattisgarh.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/tribal-experience-of-chattisgarh"
+            }
+          ]
+        },
+        {
+          "slug": "wildlife-tours",
+          "label": "Wildlife Tours",
+          "sourcePath": "tour-planner/wildlife-tours",
+          "title": "India Wildlife Tour Packages",
+          "intro": [],
+          "packages": [
+            {
+              "title": "Golden Triangle with Ranthambore Tour",
+              "duration": "08 Nights - 09 Days",
+              "itinerary": "Delhi - Jaipur - Ranthambore - Bharatpur - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--golden-triangle-ranthambore.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/golden-triangle-ranthambore"
+            },
+            {
+              "title": "Rajasthan Wilderness",
+              "duration": "05 Nights - 06 Days",
+              "itinerary": "Delhi - Ranthambore - Jaipur - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--rajasthan-wilderness.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/rajasthan-wilderness"
+            },
+            {
+              "title": "Enchanting Temple & Wildlife Tour",
+              "duration": "13 Nights - 14 Days",
+              "itinerary": "Delhi - Jaipur - Ranthambore - Bharatpur - Agra - Jhansi - Orcha - Khajuraho - Bandhavgarh - Kanha - Jabalpur - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--enchanting-temple-wildlife-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/enchanting-temple-wildlife-tour"
+            },
+            {
+              "title": "Taj & Tiger",
+              "duration": "06 Nights - 07 Days",
+              "itinerary": "Delhi - Corbett - Agra - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--taj-tiger.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/taj-tiger"
+            },
+            {
+              "title": "Corbett with Agra & Mussoorie",
+              "duration": "09 Nights - 10 Days",
+              "itinerary": "Delhi - Ramnagar - Dhikala - Corbett - Kathgodam - Dehradun - Mussoorie - Rishikesh - Haridwar - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--corbett-with-agra-mussoorie.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/corbett-with-agra-mussoorie"
+            },
+            {
+              "title": "South India Wildlife",
+              "duration": "15 Nights - 16 Days",
+              "itinerary": "angalore - Mysore - Nagarhole - BR Hills - Bandipur - Ooty - Munnar - Periyar - Kumarakom - Kovalam",
+              "imageUrl": "/india/images/p/tour-planner--south-india-wildlife.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/south-india-wildlife"
+            },
+            {
+              "title": "Tiger Trail Tour",
+              "duration": "09 Nights - 10 Days",
+              "itinerary": "Delhi - Jabalpur - Kanha - Bandhavgarh - Khajuraho - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--tiger-trail-tour.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/tiger-trail-tour"
+            },
+            {
+              "title": "Indian Wilderness Tour",
+              "duration": "16 Nights - 17 Days",
+              "itinerary": "Delhi - Jaipur - Ranthambhore - Bharatpur - Agra - Umaria - Bandhavgarh - Kanha - Jabalpur - Mumbai",
+              "imageUrl": "/india/images/p/tour-planner--india-wilderness.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/india-wilderness"
+            },
+            {
+              "title": "Corbett Adventure Package",
+              "duration": "03 Nights - 04 Days",
+              "itinerary": "Delhi - Corbett National Park - Delhi",
+              "imageUrl": "/india/images/p/tour-planner--corbett-adventure-package.jpg",
+              "detailsHref": "/holidays/india/p/tour-planner/corbett-adventure-package"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

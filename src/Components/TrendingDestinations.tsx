@@ -8,7 +8,6 @@ import {
   fetchTrendingDestinations,
   type ApiTrendingDestination,
 } from "@/lib/holidaysApi";
-import { resolveHolidayImageUrl } from "@/lib/holidayImageUrl";
 
 export type DestinationTile = {
   id: string;
@@ -25,7 +24,7 @@ function mapTrendingTile(d: ApiTrendingDestination): DestinationTile {
   return {
     id: String(d.id),
     title: destinationListingTitle(d.name),
-    img: resolveHolidayImageUrl(d.imageUrl),
+    img: d.imageUrl,
     price: d.startingPrice,
     href,
   };
@@ -147,7 +146,7 @@ function TrendingRow({
   );
 }
 
-export default function TrendingDestinations() {
+export default function TrendingDestinations({ internationalOnly = false }: { internationalOnly?: boolean }) {
   const [international, setInternational] = useState<DestinationTile[]>([]);
   const [india, setIndia] = useState<DestinationTile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,13 +155,14 @@ export default function TrendingDestinations() {
     let cancelled = false;
     (async () => {
       try {
-        const [intl, ind] = await Promise.all([
-          fetchTrendingDestinations("international"),
-          fetchTrendingDestinations("india"),
-        ]);
+        const intl = await fetchTrendingDestinations("international");
         if (cancelled) return;
         setInternational(intl.map(mapTrendingTile));
-        setIndia(ind.map(mapTrendingTile));
+        if (!internationalOnly) {
+          const ind = await fetchTrendingDestinations("india");
+          if (cancelled) return;
+          setIndia(ind.map(mapTrendingTile));
+        }
       } catch (err) {
         console.error("[TrendingDestinations] Failed to load:", err);
       } finally {
@@ -172,7 +172,7 @@ export default function TrendingDestinations() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [internationalOnly]);
 
   return (
     <>
@@ -183,13 +183,15 @@ export default function TrendingDestinations() {
         variant="light"
         loading={loading}
       />
-      <TrendingRow
-        title="Trending India and Around Destinations"
-        description="Explore India and neighbouring destinations with curated packages — spiritual journeys, wildlife safaris, mountains, beaches, and heritage trails."
-        tiles={india}
-        variant="muted"
-        loading={loading}
-      />
+      {!internationalOnly && (
+        <TrendingRow
+          title="Trending India and Around Destinations"
+          description="Explore India and neighbouring destinations with curated packages — spiritual journeys, wildlife safaris, mountains, beaches, and heritage trails."
+          tiles={india}
+          variant="muted"
+          loading={loading}
+        />
+      )}
     </>
   );
 }
