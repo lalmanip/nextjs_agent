@@ -32,7 +32,12 @@ export default function AgentLoginForm() {
     try {
       const result = await authAPI.signIn({ userName: form.userName, password: form.password });
       if (result?.status === "success" && result?.response) {
-        setUserSession(result.response);
+        setUserSession({
+          ...result.response,
+          ...(typeof result.accessToken === "string" && result.accessToken.trim()
+            ? { accessToken: result.accessToken.trim() }
+            : {}),
+        });
         window.location.href = "/";
       } else {
         setError(result?.message || "Invalid credentials. Please try again.");

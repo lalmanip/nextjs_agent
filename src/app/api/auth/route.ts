@@ -115,8 +115,14 @@ export async function POST(request: NextRequest) {
         break;
       }
       case 'reset':
-        url = `${API_BASE_URL_USER}/user/reset`;
-        break;
+        return NextResponse.json(
+          {
+            status: 'failed',
+            message:
+              'Password reset moved to auth. Use POST /api/auth/reset-password (forgot token) or POST /api/auth/change-password (logged in).',
+          },
+          { status: 410 },
+        );
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }

@@ -112,6 +112,11 @@ export interface ResetPasswordData {
   password: string;
 }
 
+export interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export interface PassengerData {
   userId: number;
   firstName: string;
@@ -711,6 +716,34 @@ export const authAPI = {
       console.error('Reset Password Error:', error);
       throw error;
     }
+  },
+
+  /** Logged-in password change via vivapi-auth (BCrypt). */
+  changePassword: async (data: ChangePasswordData, accessToken: string) => {
+    const response = await fetch('/api/auth/change-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      return {
+        status: 'failed',
+        message:
+          (typeof result?.message === 'string' && result.message) ||
+          (typeof result?.error === 'string' && result.error) ||
+          `Change password failed (HTTP ${response.status})`,
+      };
+    }
+    return {
+      status: 'success',
+      message:
+        (typeof result?.message === 'string' && result.message) ||
+        'Password changed successfully. Please sign in again.',
+    };
   },
 };
 

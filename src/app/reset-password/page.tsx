@@ -67,15 +67,21 @@ function ResetPasswordContent() {
       console.log("Response:", JSON.stringify(data, null, 2));
       console.log("===========================================\n");
 
-      if (response.ok && data.status === "success") {
+      if (response.ok && (data.status === "success" || data.message)) {
         setStatus("success");
-        setMessage("Password reset successfully! Redirecting to login...");
+        setMessage(
+          data.message || "Password reset successfully! Redirecting to login...",
+        );
         setTimeout(() => {
           router.push("/");
         }, 2000);
       } else {
         setStatus("error");
-        setMessage(data.message || "Failed to reset password. Please try again.");
+        setMessage(
+          data.message ||
+            data.error ||
+            "Failed to reset password. Please try again.",
+        );
       }
     } catch (error) {
       console.error("Reset password error:", error);
