@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { authAPI, SignUpData, SignInData, ResetPasswordData } from "@/lib/api";
+import { authAPI, SignUpData, SignInData } from "@/lib/api";
+import { clearUserSession, getUserSession, setUserSession } from "@/lib/authSession";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import PasswordInput from "./PasswordInput";
 import { getFixedGenderForTitle } from "@/lib/passengerTitleGender";
@@ -310,11 +311,16 @@ export default function AuthModal({
     try {
       const result = await authAPI.signIn(data);
       if (result.status === "success") {
-        localStorage.setItem("user", JSON.stringify(result.response));
+        setUserSession({
+          ...result.response,
+          ...(typeof result.accessToken === "string" && result.accessToken.trim()
+            ? { accessToken: result.accessToken.trim() }
+            : {}),
+        });
         onSignInSuccess?.(result.response);
         onClose();
       } else {
-        setMessage("Invalid credentials. Please try again.");
+        setMessage(result.message || "Invalid credentials. Please try again.");
       }
     } catch (error) {
       setMessage("An error occurred. Please try again.");
@@ -328,18 +334,45 @@ export default function AuthModal({
     setMessage("");
 
     const formData = new FormData(e.currentTarget);
-    const data: ResetPasswordData = {
-      userName: formData.get("userName") as string,
-      password: formData.get("password") as string,
-    };
+    const currentPassword = String(formData.get("currentPassword") || "");
+    const newPassword = String(formData.get("password") || "");
+    const confirmPassword = String(formData.get("confirmPassword") || "");
+
+    if (newPassword.length < 8) {
+      setMessage("Password must be at least 8 characters long");
+      setLoading(false);
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setMessage("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    const session = getUserSession<{ accessToken?: string }>();
+    const accessToken =
+      typeof session?.accessToken === "string" ? session.accessToken.trim() : "";
+    if (!accessToken) {
+      setMessage("Please sign in again to change your password.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const result = await authAPI.resetPassword(data);
-      if (result.response === "success") {
-        setMessage("Password reset successfully!");
-        setTimeout(() => setMode("signin"), 2000);
+      const result = await authAPI.changePassword(
+        { currentPassword, newPassword },
+        accessToken,
+      );
+      if (result.status === "success") {
+        clearUserSession();
+        setMessage(result.message || "Password changed successfully! Please sign in again.");
+        setTimeout(() => {
+          setMode("signin");
+          onClose();
+          window.location.href = "/agent/login";
+        }, 1500);
       } else {
-        setMessage("Password reset failed. Please try again.");
+        setMessage(result.message || "Password change failed. Please try again.");
       }
     } catch (error) {
       setMessage("An error occurred. Please try again.");
@@ -358,7 +391,7 @@ export default function AuthModal({
               ? "Sign In"
               : mode === "signup"
                 ? "Sign Up"
-                : "Reset Password"}
+                : "Change Password"}
           </h2>
           <button
             onClick={onClose}
@@ -752,15 +785,19 @@ export default function AuthModal({
 
         {mode === "reset" && (
           <form onSubmit={handleResetPassword} className="space-y-4">
-            <input
-              name="userName"
-              placeholder="Username"
+            <PasswordInput
+              name="currentPassword"
+              placeholder="Current Password"
               required
-              className="w-full border rounded px-3 py-2"
             />
             <PasswordInput
               name="password"
               placeholder="New Password"
+              required
+            />
+            <PasswordInput
+              name="confirmPassword"
+              placeholder="Confirm New Password"
               required
             />
             <button
@@ -768,7 +805,7 @@ export default function AuthModal({
               disabled={loading}
               className="w-full bg-primary text-white py-2 rounded hover:bg-primary-dark disabled:opacity-50"
             >
-              {loading ? "Resetting..." : "Reset Password"}
+              {loading ? "Updating..." : "Change Password"}
             </button>
             <p className="text-center">
               <button
